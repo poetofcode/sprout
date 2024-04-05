@@ -9,7 +9,7 @@ const axios = require('axios');
 const util = require('util');
 const repository = require('./repository');
 const cookieParser = require('cookie-parser');
-
+const worker = require('./worker');
 
 const app = express();
 const LOG_LIMIT_LENGTH = 100000;
@@ -28,6 +28,7 @@ class Application {
         app.locals.db = mongoClient.db(this.config.db.name);
         this.initHelpers();
         this.initAPI();
+        worker.launch(this.context);
         return app.listen(this.config.port);
 	}
 
