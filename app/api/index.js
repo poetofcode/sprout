@@ -1,9 +1,26 @@
 const SessionMiddleware = require('./sessions.js').SessionMiddleware;
 const repository = require('../repository');
 const { utils } = require('../utils');
+const fs = require('fs');
+const util = require('util');
 
-function initRoutes(router, context) {
-	const sessionMiddleware = new SessionMiddleware(context);
+async function requireAll(path) {
+	const readdir = util.promisify(fs.readdir);
+	const files = (await readdir(path)).filter((file) => file != 'index.js');
+
+	const loaded = {};
+	files.forEach((file) => {
+		const cleanFileName = file.replace('.js', '');
+		loaded[cleanFileName] = require(`./${file}`);
+	});
+
+	return loaded;
+}
+
+async function initRoutes(router, context) {
+	const middlewares = await requireAll('./app/api/');
+
+	const sessionMiddleware = middlewares.sessions.create(context);
 	const sessionRepository = new repository.SessionRepository(context);
 
 	router.use(async function (req, res, next) {

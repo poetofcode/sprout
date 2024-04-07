@@ -5,6 +5,7 @@ const { utils } = require('./utils');
 const frontMiddleware = require('./front');
 const expressHbs = require("express-handlebars");
 const hbs = require("hbs");
+
 const axios = require('axios');
 const util = require('util');
 const repository = require('./repository');
@@ -27,12 +28,12 @@ class Application {
         await mongoClient.connect();
         app.locals.db = mongoClient.db(this.config.db.name);
         this.initHelpers();
-        this.initAPI();
+        await this.initAPI();
         worker.launch(this.context);
         return app.listen(this.config.port);
 	}
 
-	initAPI() {
+	async initAPI() {
 		const apiRouter = express.Router();
 		const frontRouter = express.Router();
 		const viewsPath = `${__dirname}/views`;
@@ -52,7 +53,7 @@ class Application {
 		app.use(express.urlencoded());
 		app.use(cookieParser());
 
-		apiMiddleware.initRoutes(apiRouter, this.context);
+		await apiMiddleware.initRoutes(apiRouter, this.context);
 		app.use('/api/v1', apiRouter);
 		frontMiddleware.initRoutes(frontRouter, this.context);
 		app.use('/front', frontRouter);
