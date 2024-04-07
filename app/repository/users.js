@@ -18,10 +18,13 @@ class UserRepository {
             createdAt: new Date(),
             login: login,
             password: utils.sha1(password),
+            activated: false,
+            deleted: false,
         }
 
         const result = await this.userCollection.insertOne(newUser);
         delete newUser.password;
+        delete newUser.deleted;
         return newUser;
     }
 
