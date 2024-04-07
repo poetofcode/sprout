@@ -42,6 +42,8 @@ async function initRoutes(router, context) {
 	router.get('/sessions/:token', sessionMiddleware.fetchSessionByToken());
 	router.delete('/sessions/:token', sessionMiddleware.deleteSessionByToken());
 
+	router.post('/users', middlewares.users.createUser());
+
 	router.use((err, req, res, next) => {
 	  if (res.headersSent) {
     	return next(err)

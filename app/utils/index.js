@@ -3,6 +3,7 @@ const expressWinston = require('express-winston');
 const fs = require('fs');
 const util = require('util');
 const { dirname } = require('path');
+const crypto = require('crypto');
 
 const { createLogger, format, transports } = winston;
 const { combine, timestamp, label, printf } = format;
@@ -110,6 +111,13 @@ async function requireAll(path) {
 }
 
 
+function sha1(arg) {
+  var shasum = crypto.createHash('sha1');
+  shasum.update(arg);
+  return shasum.digest('hex').toString();
+}
+
+
 exports.utils = {
   appDir: appDir,
 	logger: logger,
@@ -118,4 +126,5 @@ exports.utils = {
   buildError: buildError,
   escapeHtml: escapeHtml,
   requireAll: requireAll,
+  sha1: sha1,
 }
