@@ -1,4 +1,3 @@
-const ObjectId = require("mongodb").ObjectId;
 const { utils } = require('../utils');
 
 class SessionMiddleware {
@@ -13,26 +12,34 @@ class SessionMiddleware {
             if(!req.body) {
                 return next(utils.buildError(400, 'Body is empty'))
             }
-            const userName = req.body.name;
+            const login = req.body.login;
             const password = req.body.password;
 
-            if (!userName || userName == 'undefined') {
-                return next(utils.buildError(400, '"name" is empty'))
+            if (!login || login == 'undefined') {
+                return next(utils.buildError(400, '"login" is empty'))
             }
             if (!password || password == 'undefined') {
                 return next(utils.buildError(400, '"password" is empty'))
             }
 
+            const foundUser = await this.repositories.users.findUserByLogin(login);
+            if (!foundUser) {
+                console.log(`foundUser: ${foundUser}`);
+                return next(utils.buildError(400, `User is not found, wrong login or password`));
+            }
 
+            if (!foundUser.activated) {
+                return next(utils.buildError(400, `User is not activated yet`));   
+            }
 
-
-            if (userName !== refName || password !== refPassword) {
-                return next(utils.buildError(400, 'Invalid login or password'));
+            if (utils.sha1(password) !== foundUser.password) {
+                console.log(`pass1: ${utils.sha1(password)}, pass2: ${foundUser.password}`);
+                return next(utils.buildError(400, `User is not found, wrong login or password`));
             }
 
             try {
                 const clientIP = parseIp(req);
-                const session = await this.sessionRepository.createSession(userName, clientIP);
+                const session = await this.sessionRepository.createSession(foundUser._id, clientIP);
                 res.send(utils.wrapResult(session));
             }
             catch(err) {

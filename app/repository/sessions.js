@@ -12,7 +12,7 @@ class SessionRepository {
         const newSession = {
             token: crypto.randomUUID(),
             createdAt: new Date(),
-            userId: userId,
+            userId: new ObjectId(userId),
             ip: clientIP
         }
         const sessions = await this.sessionCollection.insertOne(newSession);

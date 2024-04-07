@@ -9,7 +9,7 @@ class UserRepository {
 	}
 
     async createUser(login, password) {
-		const foundUser = await this.userCollection.findOne({ login : login });
+		const foundUser = await this.userCollection.findOne({ login : login /*, deleted: false */ });
         if (foundUser) {
             throw new Error(`User with login ${login} already exists`);
         }
@@ -26,6 +26,10 @@ class UserRepository {
         delete newUser.password;
         delete newUser.deleted;
         return newUser;
+    }
+
+    async findUserByLogin(login) {
+        return await this.userCollection.findOne({ login : login /*, deleted: false */ });
     }
 
 

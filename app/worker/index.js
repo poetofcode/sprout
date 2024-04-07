@@ -10,7 +10,7 @@ async function launch(context) {
     //     workers.forEach((worker) => worker(context));
     // }, 5000);
 
-    workers.forEach((worker) => worker(context));
+    // workers.forEach((worker) => worker(context));
 }
 
 
