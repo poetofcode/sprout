@@ -1,5 +1,4 @@
-const SessionMiddleware = require('./sessions.js').SessionMiddleware;
-const repository = require('../repository');
+// const repository = require('../repository');
 const { utils } = require('../utils');
 
 async function initRoutes(router, context) {
@@ -8,8 +7,13 @@ async function initRoutes(router, context) {
 		middlewares[name] = value.create(context);
 	});
 
+	const repositories = {};
+	(await utils.requireAll('app/repository/')).forEach((name, value) => {
+		repositories[name] = value.create(context);
+	});
+
 	const sessionMiddleware = middlewares.sessions;
-	const sessionRepository = new repository.SessionRepository(context);
+	const sessionRepository = repositories.sessions;
 
 	router.use(async function (req, res, next) {
 		const authHeader = req.header('Authorization');

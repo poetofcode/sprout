@@ -36,4 +36,4 @@ class SessionRepository {
 
 }
 
-exports.SessionRepository = SessionRepository;
+exports.create = (context) => new SessionRepository(context);
