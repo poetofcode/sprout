@@ -11,7 +11,7 @@ class UserRepository {
     async createUser(login, password) {
 		const foundUser = await this.userCollection.findOne({ login : login });
         if (foundUser) {
-            return new Error(`User with login ${login} already exists`);
+            throw new Error(`User with login ${login} already exists`);
         }
 
         const newUser = {
@@ -21,6 +21,7 @@ class UserRepository {
         }
 
         const result = await this.userCollection.insertOne(newUser);
+        delete newUser.password;
         return newUser;
     }
 

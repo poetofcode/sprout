@@ -22,7 +22,8 @@ async function initRoutes(router, context) {
 		const isSessionsPost = req.path === '/sessions' && req.method === 'POST';
 		const isSessionByTokenGet = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'GET';
 		const isSessionByTokenDelete = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'DELETE';
-		if (isSessionsPost || isSessionByTokenGet || isSessionByTokenDelete) {
+		const isUserCreate = req.path.startsWith('/users') && req.method === 'POST';
+		if (isSessionsPost || isSessionByTokenGet || isSessionByTokenDelete || isUserCreate) {
 			return next();
 		}
 
