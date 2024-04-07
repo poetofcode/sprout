@@ -1,8 +1,14 @@
 const winston = require('winston');
 const expressWinston = require('express-winston');
+const fs = require('fs');
+const util = require('util');
+const { dirname } = require('path');
 
 const { createLogger, format, transports } = winston;
 const { combine, timestamp, label, printf } = format;
+
+
+const appDir = dirname(require.main.filename);
 
 const ignoreList = [
   '/api/v1/sessions/',
@@ -76,10 +82,26 @@ function escapeHtml(unsafe) {
          .replace(/'/g, "&#039;");
 }
 
+async function requireAll(path) {
+  const readdir = util.promisify(fs.readdir);
+  const files = (await readdir(`${appDir}/${path}`)).filter((file) => file != 'index.js');
+
+  const loaded = {};
+  files.forEach((file) => {
+    const cleanFileName = file.replace('.js', '');
+    loaded[cleanFileName] = require(`${appDir}/${path}/${file}`);
+  });
+
+  return loaded;
+}
+
+
 exports.utils = {
+  appDir: appDir,
 	logger: logger,
   wrapResult: wrapResult,
   wrapError: wrapError,
   buildError: buildError,
-  escapeHtml: escapeHtml
+  escapeHtml: escapeHtml,
+  requireAll: requireAll,
 }
