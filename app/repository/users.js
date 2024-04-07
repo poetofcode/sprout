@@ -1,3 +1,4 @@
+const ObjectId = require("mongodb").ObjectId;
 const { utils } = require('../utils');
 
 class UserRepository {
@@ -32,6 +33,12 @@ class UserRepository {
         return await this.userCollection.findOne({ login : login /*, deleted: false */ });
     }
 
+    async findUserById(id) {
+    	const found = await this.userCollection.findOne({ _id : new ObjectId(id) });
+    	delete found.deleted;
+    	delete found.password;
+    	return found;
+    }
 
 }
 

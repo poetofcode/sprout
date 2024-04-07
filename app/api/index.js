@@ -3,6 +3,8 @@ const { utils } = require('../utils');
 
 async function initRoutes(router, context) {
 	const repositories = {};
+	context.repositories = repositories;
+	
 	(await utils.requireAll('app/repository/')).forEach((name, value) => {
 		repositories[name] = value.create(context);
 	});

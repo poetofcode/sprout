@@ -4,6 +4,7 @@ const crypto = require('crypto');
 class SessionRepository {
 
     constructor(context) {
+        this.context = context;
         this.db = context.getDb();
         this.sessionCollection = this.db.collection('sessions');
     }
@@ -16,6 +17,9 @@ class SessionRepository {
             ip: clientIP
         }
         const sessions = await this.sessionCollection.insertOne(newSession);
+        const user = await this.context.repositories.users.findUserById(newSession.userId.toString());
+        delete newSession.userId;
+        newSession.user = user;
         return newSession;
     }
 
