@@ -1,12 +1,12 @@
 const ObjectId = require("mongodb").ObjectId;
-const createSessionRepository = require('../repository/sessions.js');
+const sessionFactory = require('../repository/sessions.js');
 const { utils } = require('../utils');
 
 class SessionMiddleware {
 
     constructor(context) {
         this.context = context;
-        this.sessionRepository = createSessionRepository.create(context);
+        this.sessionRepository = sessionFactory.create(context);
     }
 
     createSession() {
