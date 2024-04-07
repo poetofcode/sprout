@@ -86,11 +86,25 @@ async function requireAll(path) {
   const readdir = util.promisify(fs.readdir);
   const files = (await readdir(`${appDir}/${path}`)).filter((file) => file != 'index.js');
 
-  const loaded = {};
+  const loaded = { all: [] };
   files.forEach((file) => {
     const cleanFileName = file.replace('.js', '');
-    loaded[cleanFileName] = require(`${appDir}/${path}/${file}`);
+    const required = require(`${appDir}/${path}/${file}`);
+    loaded[cleanFileName] = required;
+    loaded.all.push( { name: cleanFileName, value: required} );
   });
+
+  loaded.forEach = function(cb) {
+    loaded.all.forEach((pair) => {
+      cb(pair.name, pair.value);
+    })
+  }
+
+  loaded.map = function(cb) {
+    return loaded.all.map((pair) => {
+      return cb(pair.name, pair.value);
+    })
+  }
 
   return loaded;
 }

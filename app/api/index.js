@@ -3,9 +3,12 @@ const repository = require('../repository');
 const { utils } = require('../utils');
 
 async function initRoutes(router, context) {
-	const middlewares = await utils.requireAll('app/api/');
+	const middlewares = {};
+	(await utils.requireAll('app/api/')).forEach((name, value) => {
+		middlewares[name] = value.create(context);
+	});
 
-	const sessionMiddleware = middlewares.sessions.create(context);
+	const sessionMiddleware = middlewares.sessions;
 	const sessionRepository = new repository.SessionRepository(context);
 
 	router.use(async function (req, res, next) {
