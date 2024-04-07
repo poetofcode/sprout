@@ -4,7 +4,7 @@ class UserMiddleware {
 
 	constructor(context, repositories) {
 		this.context = context;
-        this.repositories = repositories;
+        this.repositories = context.repositories;
 	}
 
 	createUser() { 
@@ -36,4 +36,4 @@ class UserMiddleware {
 
 }
 
-exports.create = (context, repositories) => new UserMiddleware(context, repositories);
+exports.create = (context) => new UserMiddleware(context);

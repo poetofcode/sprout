@@ -2,9 +2,9 @@ const { utils } = require('../utils');
 
 class SessionMiddleware {
 
-    constructor(context, repositories) {
+    constructor(context) {
         this.context = context;
-        this.repositories = repositories;
+        this.repositories = context.repositories;
     }
 
     createSession() {
@@ -99,4 +99,4 @@ const parseIp = (req) =>
     || req.socket?.remoteAddress
 
 
-exports.create = (context, repositories) => new SessionMiddleware(context, repositories);
+exports.create = (context) => new SessionMiddleware(context);
