@@ -2,14 +2,14 @@
 const { utils } = require('../utils');
 
 async function initRoutes(router, context) {
-	const middlewares = {};
-	(await utils.requireAll('app/api/')).forEach((name, value) => {
-		middlewares[name] = value.create(context);
-	});
-
 	const repositories = {};
 	(await utils.requireAll('app/repository/')).forEach((name, value) => {
 		repositories[name] = value.create(context);
+	});
+
+	const middlewares = {};
+	(await utils.requireAll('app/api/')).forEach((name, value) => {
+		middlewares[name] = value.create(context, repositories);
 	});
 
 	const sessionMiddleware = middlewares.sessions;

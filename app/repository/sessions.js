@@ -8,11 +8,11 @@ class SessionRepository {
         this.sessionCollection = this.db.collection('sessions');
     }
 
-    async createSession(userName, clientIP) {
+    async createSession(userId, clientIP) {
         const newSession = {
             token: crypto.randomUUID(),
             createdAt: new Date(),
-            user: userName,
+            userId: userId,
             ip: clientIP
         }
         const sessions = await this.sessionCollection.insertOne(newSession);

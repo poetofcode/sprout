@@ -1,12 +1,10 @@
 const { utils } = require('../utils');
-const userRepositoryFactory = require('../repository/users.js');
-
 
 class UserMiddleware {
 
-	constructor(context) {
+	constructor(context, repositories) {
 		this.context = context;
-        this.userRepository = userRepositoryFactory.create(context);
+        this.repositories = repositories;
 	}
 
 	createUser() { 
@@ -28,7 +26,7 @@ class UserMiddleware {
             }
 
             try {
-            	const user = await this.userRepository.createUser(login, password);
+            	const user = await this.repositories.users.createUser(login, password);
             	res.send(utils.wrapResult(user));
         	} catch (err) {
         		next(err);
@@ -38,4 +36,4 @@ class UserMiddleware {
 
 }
 
-exports.create = (context) => new UserMiddleware(context);
+exports.create = (context, repositories) => new UserMiddleware(context, repositories);

@@ -1,12 +1,11 @@
 const ObjectId = require("mongodb").ObjectId;
-const sessionFactory = require('../repository/sessions.js');
 const { utils } = require('../utils');
 
 class SessionMiddleware {
 
-    constructor(context) {
+    constructor(context, repositories) {
         this.context = context;
-        this.sessionRepository = sessionFactory.create(context);
+        this.repositories = repositories;
     }
 
     createSession() {
@@ -24,9 +23,8 @@ class SessionMiddleware {
                 return next(utils.buildError(400, '"password" is empty'))
             }
 
-            // TODO remove hardcode
-            const refName = 'admin';
-            const refPassword = 'admin';
+
+
 
             if (userName !== refName || password !== refPassword) {
                 return next(utils.buildError(400, 'Invalid login or password'));
@@ -46,7 +44,7 @@ class SessionMiddleware {
     fetchSessions() {
         return async(req, res, next) => {
             try {
-                const sessions = await this.sessionRepository.fetchSessionsAll();
+                const sessions = await this.repositories.sessions.fetchSessionsAll();
                 res.send(utils.wrapResult(sessions));
             }
             catch(err) {
@@ -59,7 +57,7 @@ class SessionMiddleware {
         return async(req, res, next) => {
             try {
                 const token = req.params.token;
-                const session = await this.sessionRepository.fetchSessionByToken(token);
+                const session = await this.repositories.sessions.fetchSessionByToken(token);
                 if (!session) {
                     const err = new Error('Not found');
                     err.status = 400;
@@ -77,7 +75,7 @@ class SessionMiddleware {
         return async(req, res, next) => {
             try {
                 const token = req.params.token;
-                await this.sessionRepository.deleteSessionByToken(token);
+                await this.repositories.sessions.deleteSessionByToken(token);
                 res.send(utils.wrapResult('ok'));
             }
             catch(err) {
@@ -93,4 +91,4 @@ const parseIp = (req) =>
     || req.socket?.remoteAddress
 
 
-exports.create = (context) => new SessionMiddleware(context);
+exports.create = (context, repositories) => new SessionMiddleware(context, repositories);
