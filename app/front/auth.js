@@ -20,7 +20,7 @@ class AuthMiddleware {
 		return async(req, res, next) => {
 			try {
 	            var response = await this.context.apiPost(`/sessions`, {
-	            	name: req.body.username,
+	            	login: req.body.username,
 	            	password: req.body.password
 	            });
 	            const result = response.data.result;

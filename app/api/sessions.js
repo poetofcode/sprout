@@ -24,22 +24,23 @@ class SessionMiddleware {
 
             const foundUser = await this.repositories.users.findUserByLogin(login);
             if (!foundUser) {
-                console.log(`foundUser: ${foundUser}`);
                 return next(utils.buildError(400, `User is not found, wrong login or password`));
             }
 
+            // TODO uncomment
+            /*
             if (!foundUser.activated) {
                 return next(utils.buildError(400, `User is not activated yet`));   
             }
+            */
 
             if (utils.sha1(password) !== foundUser.password) {
-                console.log(`pass1: ${utils.sha1(password)}, pass2: ${foundUser.password}`);
                 return next(utils.buildError(400, `User is not found, wrong login or password`));
             }
 
             try {
                 const clientIP = parseIp(req);
-                const session = await this.sessionRepository.createSession(foundUser._id, clientIP);
+                const session = await this.repositories.sessions.createSession(foundUser._id, clientIP);
                 res.send(utils.wrapResult(session));
             }
             catch(err) {
