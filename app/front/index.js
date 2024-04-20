@@ -50,6 +50,8 @@ function initRoutes(router, context) {
 	router.get('/login', authMiddleware.loginPage());
 	router.post('/login', authMiddleware.loginAction());
 
+	router.get('/', indexPage());
+
 	router.use((err, req, res, next) => {
 	  if (res.headersSent) {
     	return next(err)
@@ -59,5 +61,16 @@ function initRoutes(router, context) {
 	});
 
 }
+
+function indexPage() {
+	return async(req, res, next) => {
+		try {
+			res.render("index.hbs");
+		} catch(err) {
+			next(err);
+		}
+	}
+}
+
 
 exports.initRoutes = initRoutes;
