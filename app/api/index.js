@@ -46,6 +46,9 @@ async function initRoutes(router, context) {
 
 	router.post('/users', middlewares.users.createUser());
 
+	router.post('/subscriptions', middlewares.subscriptions.subscribe());
+	router.delete('/subscriptions', middlewares.subscriptions.unsubscribe());
+
 	router.use((err, req, res, next) => {
 	  if (res.headersSent) {
     	return next(err)
