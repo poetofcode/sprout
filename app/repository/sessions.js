@@ -30,6 +30,9 @@ class SessionRepository {
 
     async fetchSessionByToken(token) {
         const session = await this.sessionCollection.findOne({ token : token });
+        if (!session) {
+            throw new Error('Not found session');
+        }
         const user = await this.context.repositories.users.findUserById(session.userId.toString());
         delete session.userId;
         session.user = user;

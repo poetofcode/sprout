@@ -66,15 +66,11 @@ class SessionMiddleware {
             try {
                 const token = req.params.token;
                 const session = await this.repositories.sessions.fetchSessionByToken(token);
-                if (!session) {
-                    const err = new Error('Not found');
-                    err.status = 400;
-                    return next(err)
-                }
                 res.send(utils.wrapResult(session));
             }
             catch(err) {
-                next(err);
+                err.status = 400;
+                return next(err)
             }  
         }
     }
