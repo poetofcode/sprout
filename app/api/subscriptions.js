@@ -9,20 +9,29 @@ class SubscriptionMiddleware {
 
     subscribe() { 
         return async (req, res, next) => {
-
-            console.log('Текущая сессия:');
-            console.log(res.locals.session);
-
-
-            res.status(500).send("Cannot subscribe");
+            const user = res.locals.session.user;
+            this.repositories.subscriptions.enableSubscription(user, true);
+            res.send(utils.wrapResult('Ok'));
         }
     }
 
     unsubscribe() {
         return async (req, res, next) => {
-            res.status(500).send("Cannot UNsubscribe");
+            const user = res.locals.session.user;
+            this.repositories.subscriptions.enableSubscription(user, false);
+            res.send(utils.wrapResult('Ok'));
         }
     }
 }
 
 exports.create = (context) => new SubscriptionMiddleware(context);
+
+
+/*
+            try {
+                const user = await this.repositories.users.createUser(login, password);
+                res.send(utils.wrapResult(user));
+            } catch (err) {
+                next(err);
+            }
+            */

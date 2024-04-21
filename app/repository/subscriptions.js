@@ -17,7 +17,11 @@ class SubscriptionRepository {
         console.log(this.subscribedUserIds);
 
         if (isEnabled) {
-           this.subscribedUserIds.append(user._id);
+            if (this.subscribedUserIds.includes(user._id.toString())) {
+                // Do nothing
+                return;
+            }
+            this.subscribedUserIds.push(user._id.toString());
         } else {
             this.subscribedUserIds = this.subscribedUserIds.filter((item) => item != user._id);
         }
