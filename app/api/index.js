@@ -47,11 +47,15 @@ function handleTokenValidation(sessionMiddleware, sessionRepository) {
 
 		if (authHeader) {
 			const token = authHeader.replace('Bearer ', '');
-	        const session = await sessionRepository.fetchSessionByToken(token);
-	        if (session) {
-	        	res.locals.session = session;
-	        	return next();
-	        }
+			try {
+		        const session = await sessionRepository.fetchSessionByToken(token);
+		        if (session) {
+		        	res.locals.session = session;
+		        	return next();
+		        }
+	    	} catch (err) {
+	    		console.log(err);
+	    	}
 		}
 
 		res.status(401).send(utils.wrapError(new Error('Not authorized')));

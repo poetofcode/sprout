@@ -6,11 +6,11 @@ const parser = new XMLParser();
 async function launch(context) {
     console.log("Workers started");
 
-    // setInterval(() => {
-    //     workers.forEach((worker) => worker(context));
-    // }, 5000);
+    setInterval(() => {
+        workers.forEach((worker) => worker(context));
+    }, 5000);
 
-    // workers.forEach((worker) => worker(context));
+    workers.forEach((worker) => worker(context));
 }
 
 
@@ -31,8 +31,14 @@ const jokeWorker = async (context) => {
 }
 
 
+const debugWorker = async (context) => {
+    console.log('Вывод debugWorker\'а:');
+    console.log(context.repositories.subscriptions.getSubscriptions());
+}
+
 const workers = [
-    jokeWorker
+//    jokeWorker,
+    debugWorker,
 ]
 
 

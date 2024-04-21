@@ -30,6 +30,10 @@ class SubscriptionRepository {
         console.log(this.subscribedUserIds);
     }
 
+    getSubscriptions() {
+        return this.subscribedUserIds;
+    }
+
 }
 
 exports.create = (context) => new SubscriptionRepository(context); 
