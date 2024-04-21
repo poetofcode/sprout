@@ -49,8 +49,7 @@ function handleTokenValidation(sessionMiddleware, sessionRepository) {
 			const token = authHeader.replace('Bearer ', '');
 	        const session = await sessionRepository.fetchSessionByToken(token);
 	        if (session) {
-	        	console.log('Нашли сессию:');
-	        	console.log(session);
+	        	res.locals.session = session;
 	        	return next();
 	        }
 		}

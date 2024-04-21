@@ -9,6 +9,11 @@ class SubscriptionMiddleware {
 
     subscribe() { 
         return async (req, res, next) => {
+
+            console.log('Текущая сессия:');
+            console.log(res.locals.session);
+
+
             res.status(500).send("Cannot subscribe");
         }
     }
