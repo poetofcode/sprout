@@ -16,7 +16,7 @@ async function initRoutes(router, context) {
 	const sessionMiddleware = middlewares.sessions;
 	const sessionRepository = repositories.sessions;
 
-	router.use(handleTokenValidation);
+	router.use(handleTokenValidation(sessionMiddleware, sessionRepository));
 
 	router.post('/sessions', sessionMiddleware.createSession());
 	router.get('/sessions', sessionMiddleware.fetchSessions());
@@ -31,27 +31,32 @@ async function initRoutes(router, context) {
 	router.use(handleErrors);
 }
 
-async function handleTokenValidation(req, res, next) {
-	const authHeader = req.header('Authorization');
 
-	// White-list эндпоинтов без авторизации:
-	const isSessionsPost = req.path === '/sessions' && req.method === 'POST';
-	const isSessionByTokenGet = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'GET';
-	const isSessionByTokenDelete = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'DELETE';
-	const isUserCreate = req.path.startsWith('/users') && req.method === 'POST';
-	if (isSessionsPost || isSessionByTokenGet || isSessionByTokenDelete || isUserCreate) {
-		return next();
+function handleTokenValidation(sessionMiddleware, sessionRepository) {
+	return async (req, res, next) => {
+		const authHeader = req.header('Authorization');
+
+		// White-list эндпоинтов без авторизации:
+		const isSessionsPost = req.path === '/sessions' && req.method === 'POST';
+		const isSessionByTokenGet = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'GET';
+		const isSessionByTokenDelete = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'DELETE';
+		const isUserCreate = req.path.startsWith('/users') && req.method === 'POST';
+		if (isSessionsPost || isSessionByTokenGet || isSessionByTokenDelete || isUserCreate) {
+			return next();
+		}
+
+		if (authHeader) {
+			const token = authHeader.replace('Bearer ', '');
+	        const session = await sessionRepository.fetchSessionByToken(token);
+	        if (session) {
+	        	console.log('Нашли сессию:');
+	        	console.log(session);
+	        	return next();
+	        }
+		}
+
+		res.status(401).send(utils.wrapError(new Error('Not authorized')));
 	}
-
-	if (authHeader) {
-		const token = authHeader.replace('Bearer ', '');
-        const session = await sessionRepository.fetchSessionByToken(token);
-        if (session) {
-        	return next();
-        }
-	}
-
-	res.status(401).send(utils.wrapError(new Error('Not authorized')));
 }
 
 
