@@ -8,9 +8,12 @@ async function launch(context) {
 
     // TODO оборачивать вызов в try/catch
 
+    const mailer = new Mailer(context);
+    context.mailer = mailer;
+
     setInterval(() => {
         workers.forEach((worker) => worker(context));
-    }, 1000);
+    }, 10000);
 
     workers.forEach((worker) => worker(context));
 
@@ -65,14 +68,14 @@ const debugWorker = async (context) => {
                 console.log("Found user:");
                 console.log(foundUser);
 
+                sendPromises.push(context.mailer.send(foundUser.login, lastJoke.text));
             })
             .catch((error) => {
                 console.log(`[workers] Found user error: ${error}`);
             })
     });
 
-
-
+    await Promise.all(sendPromises);
 }
 
 
