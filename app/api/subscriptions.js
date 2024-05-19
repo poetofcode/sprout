@@ -25,13 +25,3 @@ class SubscriptionMiddleware {
 }
 
 exports.create = (context) => new SubscriptionMiddleware(context);
-
-
-/*
-            try {
-                const user = await this.repositories.users.createUser(login, password);
-                res.send(utils.wrapResult(user));
-            } catch (err) {
-                next(err);
-            }
-            */

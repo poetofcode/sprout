@@ -8,11 +8,6 @@ class SubscriptionRepository {
 	}
 
     enableSubscription(user, isEnabled) {
-        if (isEnabled) {
-            console.log(`Подписываем юзера: ${user._id}`);
-        } else {
-            console.log(`Отписываем юзера: ${user._id}`);
-        }
         console.log('Подписки ДО:');
         console.log(this.subscribedUserIds);
 
@@ -22,8 +17,10 @@ class SubscriptionRepository {
                 return;
             }
             this.subscribedUserIds.push(user._id.toString());
+            console.log(`Подписываем юзера: ${user._id}`);
         } else {
             this.subscribedUserIds = this.subscribedUserIds.filter((item) => item != user._id);
+            console.log(`Отписываем юзера: ${user._id}`);
         }
 
         console.log('Подписки ПОСЛЕ:');
