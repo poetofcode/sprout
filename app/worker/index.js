@@ -11,23 +11,28 @@ async function launch(context) {
     // TODO оборачивать вызов в try/catch
 
     const mailer = createMailer(context);
+    await mailer.init();
     context.mailer = mailer;
 
     /*
     TODO: раскомментировать:
 
     setInterval(() => {
-        workers.forEach((worker) => worker(context));
+        workers.forEach((worker) => { await worker(context) });
     }, 10000);
     */
 
-    setInterval(() => {
-        workers.forEach((worker) => worker(context));
+
+    setInterval(async () => {
+        const workerPromises = workers.map((worker) => worker(context));
+        await Promise.all(workerPromises);
     }, 10000);
 
-    workers.forEach((worker) => worker(context));
 
-    console.log(context);
+    const workerPromises = workers.map((worker) => worker(context));
+    await Promise.all(workerPromises);
+
+    // console.log(context);
 }
 
 
@@ -67,24 +72,14 @@ const debugWorker = async (context) => {
     // console.log(lastJoke);
 
 
-    const sendPromises = [];
-    userIds.forEach((userId) => {
-        const foundUserPromise = context.repositories.users.findUserById(userId);
-        console.log(`userId: ${userId}`);
-        // console.log(foundUser);
-
-        foundUserPromise
-            .then((foundUser) => {
-                console.log("Found user:");
-                console.log(foundUser);
-
-                sendPromises.push(context.mailer.send(foundUser.login, lastJoke.text));
-            })
-            .catch((error) => {
-                console.log(`[workers] Found user error: ${error}`);
-            })
-    });
-
+    async function sendOneMail(userId, lastJoke) {
+        const foundUser = await context.repositories.users.findUserById(userId);
+        console.log(foundUser);
+        const mailerStatus = await context.mailer.send(foundUser.login, lastJoke.text);
+        console.log(mailerStatus);
+    }
+    
+    const sendPromises = userIds.map((userId) => sendOneMail(userId, lastJoke));
     await Promise.all(sendPromises);
 }
 
