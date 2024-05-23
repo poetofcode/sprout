@@ -1,5 +1,7 @@
 const axios = require('axios');
 const { XMLParser } = require('fast-xml-parser');
+const createMailer = require('../utils/mailer.js').createMailer;
+
 
 const parser = new XMLParser();
 
@@ -8,8 +10,16 @@ async function launch(context) {
 
     // TODO оборачивать вызов в try/catch
 
-    const mailer = new Mailer(context);
+    const mailer = createMailer(context);
     context.mailer = mailer;
+
+    /*
+    TODO: раскомментировать:
+
+    setInterval(() => {
+        workers.forEach((worker) => worker(context));
+    }, 10000);
+    */
 
     setInterval(() => {
         workers.forEach((worker) => worker(context));
@@ -76,17 +86,6 @@ const debugWorker = async (context) => {
     });
 
     await Promise.all(sendPromises);
-}
-
-
-class Mailer {
-    constructor(context) {
-        this.context = context;
-    }
-
-    async send(email, jokeText) {
-        console.log(`[Mailer] email: ${email}, joke: ${jokeText}`);
-    }
 }
 
 
