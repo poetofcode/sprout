@@ -6,17 +6,18 @@ class Mailer {
     }
 
     async init() {
-		let testEmailAccount = await nodemailer.createTestAccount();
+		this.testEmailAccount = await nodemailer.createTestAccount();
 		this.transporter = nodemailer.createTransport({
 		    host: 'smtp.ethereal.email',
 		    port: 587,
 		    secure: false,
 		    auth: {
-		        user: testEmailAccount.user,
-		        pass: testEmailAccount.pass,
+		        user: this.testEmailAccount.user,
+		        pass: this.testEmailAccount.pass,
 		    },
 		});
 
+		// GMAIL
 		// this.transporter = nodemailer.createTransport({
 		//     service: 'gmail',
 		//     auth: {
@@ -25,6 +26,7 @@ class Mailer {
 		//     },
 		// });
 
+		// YANDEX
 		// this.transporter = await nodemailer.createTransport({
 	 	// 	   service: 'Yandex',
 		//     auth: {
@@ -38,10 +40,10 @@ class Mailer {
         console.log(`[Mailer] email: ${email}, joke: ${jokeText}`);
 
 		let result = await this.transporter.sendMail({
-		    from: '"Node js" <example@gmail.com>',
-		    to: 'example@gmail.com',
-		    subject: 'Message from Node js',
-		    text: 'This message was sent from Node js server.',
+		    from: `"Nodemailer" <${this.testEmailAccount.user}>`,
+		    to: email,
+		    subject: 'New joke',
+		    text: jokeText,
 		    html:
 		        'This <i>message</i> was sent from <strong>Node js</strong> server.',
 		});
