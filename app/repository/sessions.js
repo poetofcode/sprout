@@ -4,18 +4,22 @@ const crypto = require('crypto');
 class SessionRepository {
 
     constructor(context) {
+        this.context = context;
         this.db = context.getDb();
         this.sessionCollection = this.db.collection('sessions');
     }
 
-    async createSession(userName, clientIP) {
+    async createSession(userId, clientIP) {
         const newSession = {
             token: crypto.randomUUID(),
             createdAt: new Date(),
-            user: userName,
+            userId: new ObjectId(userId),
             ip: clientIP
         }
         const sessions = await this.sessionCollection.insertOne(newSession);
+        const user = await this.context.repositories.users.findUserById(newSession.userId.toString());
+        delete newSession.userId;
+        newSession.user = user;
         return newSession;
     }
 
@@ -26,6 +30,12 @@ class SessionRepository {
 
     async fetchSessionByToken(token) {
         const session = await this.sessionCollection.findOne({ token : token });
+        if (!session) {
+            throw new Error('Not found session');
+        }
+        const user = await this.context.repositories.users.findUserById(session.userId.toString());
+        delete session.userId;
+        session.user = user;
         return session;
     }
 
@@ -36,4 +46,4 @@ class SessionRepository {
 
 }
 
-exports.SessionRepository = SessionRepository;
+exports.create = (context) => new SessionRepository(context);

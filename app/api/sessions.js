@@ -1,12 +1,10 @@
-const ObjectId = require("mongodb").ObjectId;
-const repository = require('../repository');
 const { utils } = require('../utils');
 
 class SessionMiddleware {
 
     constructor(context) {
         this.context = context;
-        this.sessionRepository = new repository.SessionRepository(context);
+        this.repositories = context.repositories;
     }
 
     createSession() {
@@ -14,27 +12,35 @@ class SessionMiddleware {
             if(!req.body) {
                 return next(utils.buildError(400, 'Body is empty'))
             }
-            const userName = req.body.name;
+            const login = req.body.login;
             const password = req.body.password;
 
-            if (!userName || userName == 'undefined') {
-                return next(utils.buildError(400, '"name" is empty'))
+            if (!login || login == 'undefined') {
+                return next(utils.buildError(400, '"login" is empty'))
             }
             if (!password || password == 'undefined') {
                 return next(utils.buildError(400, '"password" is empty'))
             }
 
-            // TODO remove hardcode
-            const refName = 'admin';
-            const refPassword = 'admin';
+            const foundUser = await this.repositories.users.findUserByLogin(login);
+            if (!foundUser) {
+                return next(utils.buildError(400, `User is not found, wrong login or password`));
+            }
 
-            if (userName !== refName || password !== refPassword) {
-                return next(utils.buildError(400, 'Invalid login or password'));
+            // TODO uncomment
+            /*
+            if (!foundUser.activated) {
+                return next(utils.buildError(400, `User is not activated yet`));   
+            }
+            */
+
+            if (utils.sha1(password) !== foundUser.password) {
+                return next(utils.buildError(400, `User is not found, wrong login or password`));
             }
 
             try {
                 const clientIP = parseIp(req);
-                const session = await this.sessionRepository.createSession(userName, clientIP);
+                const session = await this.repositories.sessions.createSession(foundUser._id, clientIP);
                 res.send(utils.wrapResult(session));
             }
             catch(err) {
@@ -46,7 +52,7 @@ class SessionMiddleware {
     fetchSessions() {
         return async(req, res, next) => {
             try {
-                const sessions = await this.sessionRepository.fetchSessionsAll();
+                const sessions = await this.repositories.sessions.fetchSessionsAll();
                 res.send(utils.wrapResult(sessions));
             }
             catch(err) {
@@ -59,16 +65,12 @@ class SessionMiddleware {
         return async(req, res, next) => {
             try {
                 const token = req.params.token;
-                const session = await this.sessionRepository.fetchSessionByToken(token);
-                if (!session) {
-                    const err = new Error('Not found');
-                    err.status = 400;
-                    return next(err)
-                }
+                const session = await this.repositories.sessions.fetchSessionByToken(token);
                 res.send(utils.wrapResult(session));
             }
             catch(err) {
-                next(err);
+                err.status = 400;
+                return next(err)
             }  
         }
     }
@@ -77,7 +79,7 @@ class SessionMiddleware {
         return async(req, res, next) => {
             try {
                 const token = req.params.token;
-                await this.sessionRepository.deleteSessionByToken(token);
+                await this.repositories.sessions.deleteSessionByToken(token);
                 res.send(utils.wrapResult('ok'));
             }
             catch(err) {
@@ -92,4 +94,5 @@ const parseIp = (req) =>
     req.headers['x-forwarded-for']?.split(',').shift()
     || req.socket?.remoteAddress
 
-exports.SessionMiddleware = SessionMiddleware;
+
+exports.create = (context) => new SessionMiddleware(context);
