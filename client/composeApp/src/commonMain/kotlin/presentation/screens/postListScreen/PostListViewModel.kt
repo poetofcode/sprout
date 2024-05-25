@@ -1,7 +1,6 @@
 package presentation.screens.postListScreen
 
 import androidx.compose.runtime.mutableStateOf
-import data.repository.BookmarkRepository
 import data.repository.FeedRepository
 import domain.model.PostModel
 import kotlinx.coroutines.launch
@@ -14,7 +13,6 @@ import presentation.model.Resource
 
 class PostListViewModel(
     val feedRepository: FeedRepository,
-    val bookmarkRepository: BookmarkRepository
 ) : BaseViewModel() {
 
     data class State(
@@ -56,11 +54,7 @@ class PostListViewModel(
         state.value = state.value.copy(posts = posts)
 
         updatedPost?.let {
-            if (it.isFavorite) {
-                bookmarkRepository.add(it)
-            } else {
-                bookmarkRepository.remove(it.id)
-            }
+
         }
 
     }
