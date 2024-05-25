@@ -1,0 +1,155 @@
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.*
+import data.repository.RepositoryFactoryImpl
+import data.service.NetworkingFactory
+import data.service.NetworkingFactoryImpl
+import data.utils.ContentBasedPersistentStorage
+import data.utils.FileContentProvider
+import data.utils.getValue
+import data.utils.setValue
+import dev.datlag.kcef.KCEF
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
+import presentation.App
+import presentation.base.Config
+import presentation.base.ViewModelStore
+import presentation.factories.viewModelFactories
+import java.io.File
+import kotlin.math.max
+
+
+const val DEFAULT_WINDOW_WIDTH = 600
+const val DEFAULT_WINDOW_HEIGHT = 400
+const val DEFAULT_POSITION_X = 300
+const val DEFAULT_POSITION_Y = 300
+
+fun main() = application {
+    // val repositoryFactory = MockRepositoryFactory()
+    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl()
+
+    val repositoryFactory = RepositoryFactoryImpl(
+        api = networkingFactory.createApi()
+    )
+
+    val vmStoreImpl = ViewModelStore(
+        coroutineScope = rememberCoroutineScope(),
+        vmFactories = viewModelFactories(repositoryFactory = repositoryFactory)
+    )
+
+    val storage = ContentBasedPersistentStorage(
+        FileContentProvider(
+            fileName = "config.json",
+            relativePath = "appcache",
+        )
+    )
+
+    var windowWidth: Int? by storage
+    var windowHeight: Int? by storage
+    var positionX: Int? by storage
+    var positionY: Int? by storage
+    var isMaximized: Boolean? by storage
+
+    val windowState = rememberWindowState(
+        size = DpSize(
+            windowWidth?.dp ?: DEFAULT_WINDOW_WIDTH.dp,
+            windowHeight?.dp ?: DEFAULT_WINDOW_HEIGHT.dp),
+        position = WindowPosition(
+            positionX?.dp ?: DEFAULT_POSITION_X.dp,
+            positionY?.dp ?: DEFAULT_POSITION_Y.dp
+        ),
+        placement = if (isMaximized == true) WindowPlacement.Maximized else WindowPlacement.Floating
+    )
+
+    LaunchedEffect(windowState) {
+        snapshotFlow {
+            windowState.size
+        }.onEach {
+            with(it) {
+                if (windowState.placement == WindowPlacement.Floating) {
+                    windowWidth = width.value.toInt()
+                    windowHeight = height.value.toInt()
+                }
+                if (width.value < DEFAULT_WINDOW_WIDTH) {
+                    windowState.size = DpSize(DEFAULT_WINDOW_WIDTH.dp, height)
+                }
+                if (height.value < DEFAULT_WINDOW_HEIGHT) {
+                    windowState.size = DpSize(height, DEFAULT_WINDOW_HEIGHT.dp)
+                }
+            }
+        }.launchIn(this)
+
+        snapshotFlow {
+            windowState.position
+        }.onEach {
+            with(it) {
+                if (windowState.placement == WindowPlacement.Floating) {
+                    positionX = x.value.toInt()
+                    positionY = y.value.toInt()
+                }
+            }
+        }.launchIn(this)
+
+        snapshotFlow {
+            windowState.placement
+        }.onEach {
+            isMaximized = it == WindowPlacement.Maximized
+        }.launchIn(this)
+    }
+
+    Window(state = windowState, onCloseRequest = ::exitApplication, title = "SproutClient") {
+        var restartRequired by remember { mutableStateOf(false) }
+        var downloading by remember { mutableStateOf(0F) }
+        var initialized by remember { mutableStateOf(false) }
+
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.IO) {
+                KCEF.init(builder = {
+                    installDir(File("kcef-bundle"))
+                    progress {
+                        onDownloading {
+                            downloading = max(it, 0F)
+                        }
+                        onInitialized {
+                            initialized = true
+                        }
+                    }
+                    settings {
+                        cachePath = File("cache").absolutePath
+                    }
+                }, onError = {
+                    it?.printStackTrace()
+                }, onRestartRequired = {
+                    restartRequired = true
+                })
+            }
+        }
+
+        if (restartRequired) {
+            Text(text = "Restart required.")
+        } else {
+            if (initialized) {
+                App(
+                    Config(
+                        deviceType = Config.DeviceTypes.DESKTOP,
+                        viewModelStore = vmStoreImpl,
+                        repositoryFactory = repositoryFactory,
+                    )
+                )
+
+            } else {
+                Text(text = "Downloading $downloading%")
+            }
+        }
+
+        DisposableEffect(Unit) {
+            onDispose {
+                KCEF.disposeBlocking()
+            }
+        }
+    }
+}
