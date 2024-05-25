@@ -3,9 +3,24 @@ package presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,15 +29,14 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import presentation.Tabs.*
+import presentation.Tabs.HOME
+import presentation.Tabs.PROFILE
 import presentation.base.Config
 import presentation.navigation.NavStateImpl
 import presentation.navigation.Navigator
-import presentation.screens.bookmarkTabScreen.BookmarkTabScreen
 import presentation.screens.homeTabScreen.HomeTabScreen
 import presentation.screens.profileTabScreen.ProfileTabScreen
 import sproutclient.composeapp.generated.resources.Res
-import sproutclient.composeapp.generated.resources.ic_fav_tab
 import sproutclient.composeapp.generated.resources.ic_home_tab
 import sproutclient.composeapp.generated.resources.ic_profile_tab
 
@@ -50,7 +64,6 @@ fun App(config: Config) {
             val navState = remember {
                 NavStateImpl(viewModelStore = config.viewModelStore).apply {
                     push(HomeTabScreen())
-                    push(BookmarkTabScreen())
                     push(ProfileTabScreen())
                 }
             }
@@ -73,7 +86,6 @@ fun App(config: Config) {
                             val icon = when (tab) {
                                 HOME -> Res.drawable.ic_home_tab
                                 PROFILE -> Res.drawable.ic_profile_tab
-                                BOOKMARK -> Res.drawable.ic_fav_tab
                             }
 
                             Image(
@@ -179,6 +191,5 @@ data class Menu(
 
 enum class Tabs(val key: String) {
     HOME("tab_home"),
-    BOOKMARK("tab_bookmark"),
     PROFILE("tab_profile"),
 }

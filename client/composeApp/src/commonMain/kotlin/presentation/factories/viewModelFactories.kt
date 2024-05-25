@@ -4,7 +4,6 @@ import data.repository.BookmarkRepository
 import data.repository.FeedRepository
 import data.repository.RepositoryFactory
 import presentation.base.ViewModelFactory
-import presentation.screens.bookmarkTabScreen.BookmarkTabViewModel
 import presentation.screens.homeTabScreen.HomeTabViewModel
 import presentation.screens.postDetailsScreen.PostDetailsViewModel
 import presentation.screens.postListScreen.PostListViewModel
@@ -41,17 +40,6 @@ class PostDetailsViewModelFactory() : ViewModelFactory<PostDetailsViewModel> {
 
 }
 
-class BookmarkTabViewModelFactory(val bookmarkRepository: BookmarkRepository)
-    : ViewModelFactory<BookmarkTabViewModel> {
-    override fun createViewModel(): BookmarkTabViewModel {
-        return BookmarkTabViewModel(bookmarkRepository = bookmarkRepository)
-    }
-
-    override val vmTypeName: String
-        get() = BookmarkTabViewModel::class.java.typeName
-
-}
-
 fun viewModelFactories(
     repositoryFactory: RepositoryFactory
 ): List<ViewModelFactory<*>> {
@@ -61,6 +49,5 @@ fun viewModelFactories(
         PostListViewModelFactory(repositoryFactory.createFeedRepository(),
             bookmarkRepository),
         PostDetailsViewModelFactory(),
-        BookmarkTabViewModelFactory(bookmarkRepository)
     )
 }
