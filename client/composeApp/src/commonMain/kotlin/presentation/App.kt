@@ -37,8 +37,8 @@ import presentation.navigation.Navigator
 import presentation.screens.homeTabScreen.HomeTabScreen
 import presentation.screens.profileTabScreen.ProfileTabScreen
 import sproutclient.composeapp.generated.resources.Res
-import sproutclient.composeapp.generated.resources.ic_home_tab
-import sproutclient.composeapp.generated.resources.ic_profile_tab
+import sproutclient.composeapp.generated.resources.ic_home_24
+import sproutclient.composeapp.generated.resources.ic_person_24
 
 
 const val VERTICAL_PANEL_SIZE = 60
@@ -84,8 +84,8 @@ fun App(config: Config) {
                         }
                         Box(Modifier.size(iconSize), contentAlignment = Alignment.Center) {
                             val icon = when (tab) {
-                                HOME -> Res.drawable.ic_home_tab
-                                PROFILE -> Res.drawable.ic_profile_tab
+                                HOME -> Res.drawable.ic_home_24
+                                PROFILE -> Res.drawable.ic_person_24
                             }
 
                             Image(
