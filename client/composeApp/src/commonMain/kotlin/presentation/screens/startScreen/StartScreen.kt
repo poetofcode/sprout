@@ -39,9 +39,6 @@ import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
 import presentation.navigation.BaseScreen
-import presentation.navigation.NavigateEffect
-import presentation.navigation.SharedMemory
-import presentation.screens.postDetailsScreen.PostDetailsScreen
 import specific.AsyncImage
 import specific.ScrollBar
 import specific.ScrollBarOrientation
@@ -156,13 +153,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
             modifier = Modifier
                 .clickable {
                     //>>>>>>>>
-                    SharedMemory.effectFlow.tryEmit(
-                        NavigateEffect(
-                            PostDetailsScreen(
-                                postUrl = post.link
-                            )
-                        )
-                    )
+                    // Do nothing
                 }
                 .padding(vertical = 5.dp)
                 .fillMaxWidth()
