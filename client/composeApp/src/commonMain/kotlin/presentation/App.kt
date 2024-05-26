@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -43,8 +44,9 @@ import sproutclient.composeapp.generated.resources.ic_person_24
 
 const val VERTICAL_PANEL_SIZE = 60
 const val VERTICAL_ICON_SIZE = 30
+
 const val HORIZONTAL_PANEL_SIZE = 60
-const val HORIZONTAL_ICON_SIZE = 50
+const val HORIZONTAL_ICON_SIZE = 60
 
 data class MainAppState(
     val isMenuVisible: MutableState<Boolean> = mutableStateOf(false)
@@ -91,6 +93,7 @@ fun App(config: Config) {
                             Image(
                                 painter = painterResource(icon),
                                 contentDescription = null,
+                                contentScale = ContentScale.None,
                                 colorFilter = ColorFilter.tint(
                                     if (isSelected) {
                                         MaterialTheme.colors.primary
@@ -143,7 +146,7 @@ fun AppLayout(
                 ) {
                     Row(
                         modifier = Modifier.height(HORIZONTAL_PANEL_SIZE.dp),
-                        horizontalArrangement = Arrangement.spacedBy((HORIZONTAL_ICON_SIZE / 3).dp),
+                        horizontalArrangement = Arrangement.spacedBy((HORIZONTAL_ICON_SIZE / 2).dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         menu.tabs.forEach { tab ->
