@@ -11,7 +11,7 @@ import presentation.model.IdleResource
 import presentation.model.LoadingResource
 import presentation.model.Resource
 
-class PostListViewModel(
+class StartViewModel(
     val feedRepository: FeedRepository,
 ) : BaseViewModel() {
 
@@ -23,7 +23,7 @@ class PostListViewModel(
     val state = mutableStateOf(State())
 
     init {
-        fetchFeed()
+        // fetchFeed()
     }
 
     fun fetchFeed() {

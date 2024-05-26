@@ -5,7 +5,7 @@ import data.repository.RepositoryFactory
 import presentation.base.ViewModelFactory
 import presentation.screens.homeTabScreen.HomeTabViewModel
 import presentation.screens.postDetailsScreen.PostDetailsViewModel
-import presentation.screens.postListScreen.PostListViewModel
+import presentation.screens.postListScreen.StartViewModel
 
 class HomeTabViewModelFactory() : ViewModelFactory<HomeTabViewModel> {
     override fun createViewModel(): HomeTabViewModel {
@@ -18,13 +18,13 @@ class HomeTabViewModelFactory() : ViewModelFactory<HomeTabViewModel> {
 }
 
 class PostListViewModelFactory(val feedRepository: FeedRepository)
-    : ViewModelFactory<PostListViewModel> {
-    override fun createViewModel(): PostListViewModel {
-        return PostListViewModel(feedRepository = feedRepository)
+    : ViewModelFactory<StartViewModel> {
+    override fun createViewModel(): StartViewModel {
+        return StartViewModel(feedRepository = feedRepository)
     }
 
     override val vmTypeName: String
-        get() = PostListViewModel::class.java.typeName
+        get() = StartViewModel::class.java.typeName
 
 }
 

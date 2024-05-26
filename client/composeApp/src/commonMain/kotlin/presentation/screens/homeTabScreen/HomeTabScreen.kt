@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.collectLatest
 import presentation.Tabs
 import presentation.navigation.*
-import presentation.screens.postListScreen.PostListScreen
+import presentation.screens.postListScreen.StartScreen
 
 class HomeTabScreen() : BaseScreen<HomeTabViewModel>() {
 
@@ -19,7 +19,7 @@ class HomeTabScreen() : BaseScreen<HomeTabViewModel>() {
 
     private val navState by lazy {
         NavStateImpl(viewModelStore).apply {
-            push(PostListScreen())
+            push(StartScreen())
         }
     }
 

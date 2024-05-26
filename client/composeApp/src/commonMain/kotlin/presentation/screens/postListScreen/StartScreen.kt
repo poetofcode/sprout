@@ -41,6 +41,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
+import presentation.model.IdleResource
 import presentation.model.LoadingResource
 import presentation.navigation.BaseScreen
 import presentation.navigation.NavigateEffect
@@ -55,10 +56,10 @@ import sproutclient.composeapp.generated.resources.ic_cell_fav_disabled
 import sproutclient.composeapp.generated.resources.ic_cell_fav_enabled
 
 @OptIn(ExperimentalResourceApi::class)
-class PostListScreen : BaseScreen<PostListViewModel>() {
+class StartScreen : BaseScreen<StartViewModel>() {
 
-    override val viewModel: PostListViewModel
-        get() = viewModelStore.getViewModel<PostListViewModel>(screenId)
+    override val viewModel: StartViewModel
+        get() = viewModelStore.getViewModel<StartViewModel>(screenId)
 
     override val isMenuVisible: Boolean = true
 
@@ -72,19 +73,19 @@ class PostListScreen : BaseScreen<PostListViewModel>() {
         MaterialTheme {
             Column {
                 TopAppBar(
-                    title = { Text(text = "Лента") },
+                    title = { Text(text = "Главная") },
                     navigationIcon = {},
                     actions = {
-                        if (readyState !is LoadingResource) {
-                            IconButton(onClick = {
-                                viewModel.fetchFeed()
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Refresh,
-                                    contentDescription = "Reload",
-                                )
-                            }
-                        }
+//                        if (readyState !is LoadingResource) {
+//                            IconButton(onClick = {
+//                                viewModel.fetchFeed()
+//                            }) {
+//                                Icon(
+//                                    imageVector = Icons.Default.Refresh,
+//                                    contentDescription = "Reload",
+//                                )
+//                            }
+//                        }
                     }
                 )
 
@@ -101,6 +102,18 @@ class PostListScreen : BaseScreen<PostListViewModel>() {
                                 Text(text = "Ошибка загрузки", color = Color.Red)
                                 Spacer(Modifier.size(10.dp))
                                 Text(text = "${readyState.exception}")
+                            }
+                        }
+
+                        is IdleResource -> {
+                            Box(Modifier.fillMaxSize()) {
+                                Text(
+                                    text = "Список пуст",
+                                    color = Color.Gray,
+                                    modifier = Modifier.align(
+                                        Center
+                                    )
+                                )
                             }
                         }
 
@@ -134,7 +147,7 @@ class PostListScreen : BaseScreen<PostListViewModel>() {
             }
 
             ScrollBar(
-                modifier =  Modifier.width(20.dp).fillMaxHeight(),
+                modifier = Modifier.width(20.dp).fillMaxHeight(),
                 orientation = ScrollBarOrientation.VERTICAL,
                 state = ScrollableComponentState.LazyListComponentState(listState)
             )
