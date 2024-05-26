@@ -1,4 +1,4 @@
-package presentation.screens.postListScreen
+package presentation.screens.startScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,13 +21,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
@@ -42,7 +38,6 @@ import org.jetbrains.compose.resources.painterResource
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
-import presentation.model.LoadingResource
 import presentation.navigation.BaseScreen
 import presentation.navigation.NavigateEffect
 import presentation.navigation.SharedMemory

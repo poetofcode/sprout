@@ -5,7 +5,7 @@ import data.repository.RepositoryFactory
 import presentation.base.ViewModelFactory
 import presentation.screens.homeTabScreen.HomeTabViewModel
 import presentation.screens.postDetailsScreen.PostDetailsViewModel
-import presentation.screens.postListScreen.StartViewModel
+import presentation.screens.startScreen.StartViewModel
 
 class HomeTabViewModelFactory() : ViewModelFactory<HomeTabViewModel> {
     override fun createViewModel(): HomeTabViewModel {

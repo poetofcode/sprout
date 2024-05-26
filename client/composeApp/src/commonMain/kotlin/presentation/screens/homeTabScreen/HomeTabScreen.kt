@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.collectLatest
 import presentation.Tabs
 import presentation.navigation.*
-import presentation.screens.postListScreen.StartScreen
+import presentation.screens.startScreen.StartScreen
 
 class HomeTabScreen() : BaseScreen<HomeTabViewModel>() {
 

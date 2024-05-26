@@ -1,4 +1,4 @@
-package presentation.screens.postListScreen
+package presentation.screens.startScreen
 
 import androidx.compose.runtime.mutableStateOf
 import data.repository.FeedRepository
