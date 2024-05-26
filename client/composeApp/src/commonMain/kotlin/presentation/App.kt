@@ -66,7 +66,7 @@ fun App(config: Config) {
             val navState = remember {
                 NavStateImpl(viewModelStore = config.viewModelStore).apply {
                     push(HomeTabScreen())
-                    push(ProfileTabScreen())
+                    push(ProfileTabScreen("http://192.168.0.108:3000/front"))
                 }
             }
 

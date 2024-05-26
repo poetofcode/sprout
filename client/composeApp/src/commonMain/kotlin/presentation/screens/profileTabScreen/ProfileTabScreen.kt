@@ -1,17 +1,49 @@
 package presentation.screens.profileTabScreen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.unit.dp
+import com.multiplatform.webview.web.LoadingState
+import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.rememberWebViewNavigator
+import com.multiplatform.webview.web.rememberWebViewState
+import kotlinx.coroutines.launch
 import presentation.Tabs
 import presentation.base.BaseViewModel
 import presentation.navigation.BaseScreen
+import presentation.navigation.NavigateBackEffect
+import presentation.navigation.SharedMemory
+import specific.BackHandler
 
-
-class ProfileTabScreen : BaseScreen<ProfileTabViewModel>() {
+class ProfileTabScreen(
+    val frontUrl: String,
+) : BaseScreen<ProfileTabViewModel>() {
     override val screenId: String
         get() = Tabs.PROFILE.key
     
@@ -22,8 +54,112 @@ class ProfileTabScreen : BaseScreen<ProfileTabViewModel>() {
 
     @Composable
     override fun Content() {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(text = "TODO: О приложении")
+        val navigator = rememberWebViewNavigator()
+
+        fun onBackClick() : Boolean {
+            if (navigator.canGoBack) {
+                navigator.navigateBack()
+            } else {
+                viewModel.onBackClick()
+            }
+            return true
+        }
+
+        BackHandler { onBackClick() }
+
+        val state = rememberWebViewState(url = frontUrl)
+        DisposableEffect(Unit) {
+            state.webSettings.apply {
+                isJavaScriptEnabled = true
+                zoomLevel = 1.2
+
+                // Mobile
+                customUserAgentString = "Mozilla/5.0 (Linux; Android 14; SM-N960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.80 Mobile Safari/537.36"
+
+                // PC
+                // customUserAgentString = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1) AppleWebKit/625.20 (KHTML, like Gecko) Version/14.3.43 Safari/625.20"
+
+                backgroundColor = Color.White
+
+                androidWebSettings.apply {
+                    isAlgorithmicDarkeningAllowed = true
+                    safeBrowsingEnabled = true
+                    supportZoom = true
+                    domStorageEnabled = true
+                }
+
+                desktopWebSettings.apply {
+                    offScreenRendering = false
+                    // transparent = false
+                }
+            }
+            onDispose { }
+        }
+
+        var textFieldValue by remember(state.lastLoadedUrl) {
+            mutableStateOf(state.lastLoadedUrl)
+        }
+        MaterialTheme {
+            Column {
+                TopAppBar(
+                    title = { Text(text = state.pageTitle ?: state.lastLoadedUrl ?: "Загрузка..") },
+                    navigationIcon = {
+                        IconButton(onClick = { onBackClick() }) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Back",
+                            )
+                        }
+                    },
+                )
+
+                Row {
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (state.errorsForCurrentRequest.isNotEmpty()) {
+                            Image(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Error",
+                                colorFilter = ColorFilter.tint(Color.Red),
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .padding(8.dp),
+                            )
+                        }
+
+                        OutlinedTextField(
+                            value = textFieldValue ?: "",
+                            onValueChange = { textFieldValue = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            maxLines = 1,
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            textFieldValue?.let {
+                                navigator.loadUrl(it)
+                            }
+                        },
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                    ) {
+                        Text("Go")
+                    }
+                }
+
+                val loadingState = state.loadingState
+                if (loadingState is LoadingState.Loading) {
+                    LinearProgressIndicator(
+                        progress = loadingState.progress,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+
+                WebView(
+                    state = state,
+                    modifier = Modifier.fillMaxSize(),
+                    navigator = navigator,
+                )
+            }
         }
     }
 
@@ -31,5 +167,9 @@ class ProfileTabScreen : BaseScreen<ProfileTabViewModel>() {
 
 
 class ProfileTabViewModel : BaseViewModel() {
+
+    fun onBackClick() = viewModelScope.launch {
+        SharedMemory.effectFlow.emit(NavigateBackEffect)
+    }
 
 }
