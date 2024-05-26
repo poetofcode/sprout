@@ -33,12 +33,8 @@ import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
-import kotlinx.coroutines.launch
 import presentation.Tabs
-import presentation.base.BaseViewModel
 import presentation.navigation.BaseScreen
-import presentation.navigation.NavigateBackEffect
-import presentation.navigation.SharedMemory
 import specific.BackHandler
 
 class ProfileTabScreen(
@@ -166,10 +162,3 @@ class ProfileTabScreen(
 }
 
 
-class ProfileTabViewModel : BaseViewModel() {
-
-    fun onBackClick() = viewModelScope.launch {
-        SharedMemory.effectFlow.emit(NavigateBackEffect)
-    }
-
-}
