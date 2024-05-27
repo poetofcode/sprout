@@ -19,7 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,10 +29,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
+import com.multiplatform.webview.jsbridge.IJsMessageHandler
+import com.multiplatform.webview.jsbridge.JsMessage
+import com.multiplatform.webview.jsbridge.WebViewJsBridge
+import com.multiplatform.webview.jsbridge.dataToJsonString
+import com.multiplatform.webview.jsbridge.processParams
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
+import kotlinx.serialization.Serializable
 import presentation.Tabs
 import presentation.navigation.BaseScreen
 import specific.BackHandler
@@ -42,9 +49,9 @@ class ProfileTabScreen(
 ) : BaseScreen<ProfileTabViewModel>() {
     override val screenId: String
         get() = Tabs.PROFILE.key
-    
+
     override val viewModel: ProfileTabViewModel
-        get() = viewModelStore.getViewModel<ProfileTabViewModel>() 
+        get() = viewModelStore.getViewModel<ProfileTabViewModel>()
 
     override val isMenuVisible: Boolean = true
 
@@ -52,7 +59,7 @@ class ProfileTabScreen(
     override fun Content() {
         val navigator = rememberWebViewNavigator()
 
-        fun onBackClick() : Boolean {
+        fun onBackClick(): Boolean {
             if (navigator.canGoBack) {
                 navigator.navigateBack()
             } else {
@@ -64,13 +71,14 @@ class ProfileTabScreen(
         BackHandler { onBackClick() }
 
         val state = rememberWebViewState(url = frontUrl)
-        DisposableEffect(Unit) {
+        LaunchedEffect(Unit) {
             state.webSettings.apply {
                 isJavaScriptEnabled = true
                 zoomLevel = 1.2
 
                 // Mobile
-                customUserAgentString = "Mozilla/5.0 (Linux; Android 14; SM-N960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.80 Mobile Safari/537.36"
+                customUserAgentString =
+                    "Mozilla/5.0 (Linux; Android 14; SM-N960U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.6312.80 Mobile Safari/537.36"
 
                 // PC
                 // customUserAgentString = "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1) AppleWebKit/625.20 (KHTML, like Gecko) Version/14.3.43 Safari/625.20"
@@ -89,7 +97,11 @@ class ProfileTabScreen(
                     // transparent = false
                 }
             }
-            onDispose { }
+        }
+
+        val jsBridge = rememberWebViewJsBridge(name = "jsBridge")
+        LaunchedEffect(Unit) {
+            jsBridge.register(GreetJsMessageHandler())
         }
 
         var textFieldValue by remember(state.lastLoadedUrl) {
@@ -154,6 +166,7 @@ class ProfileTabScreen(
                     state = state,
                     modifier = Modifier.fillMaxSize(),
                     navigator = navigator,
+                    webViewJsBridge = jsBridge,
                 )
             }
         }
@@ -162,3 +175,31 @@ class ProfileTabScreen(
 }
 
 
+@Serializable
+data class GreetModel(
+    val message: String,
+)
+
+class GreetJsMessageHandler : IJsMessageHandler {
+
+    override fun methodName(): String {
+        return "Greet"
+    }
+
+    override fun handle(
+        message: JsMessage,
+        navigator: WebViewNavigator?,
+        callback: (String) -> Unit
+    ) {
+        println("Greet Handler Get Message: $message")
+        val param = processParams<GreetModel>(message)
+        val data = GreetModel("KMM Received ${param.message}")
+        callback(dataToJsonString(data))
+        // callback("{ response: \"Hello\" }")
+    }
+}
+
+@Composable
+fun rememberWebViewJsBridge(navigator: WebViewNavigator? = null, name: String): WebViewJsBridge {
+    return remember { WebViewJsBridge(navigator, name) }
+}
