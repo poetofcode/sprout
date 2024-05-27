@@ -15,10 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.multiplatform.webview.web.rememberWebViewNavigator
 import presentation.Tabs
 import presentation.navigation.BaseScreen
-import specific.BackHandler
 
 
 class ProfileScreen : BaseScreen<ProfileViewModel>() {
@@ -32,19 +30,6 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
 
     @Composable
     override fun Content() {
-        val navigator = rememberWebViewNavigator()
-
-        fun onBackClick(): Boolean {
-            if (navigator.canGoBack) {
-                navigator.navigateBack()
-            } else {
-                viewModel.onBackClick()
-            }
-            return true
-        }
-
-        BackHandler { onBackClick() }
-
         val isAuth = false
 
         MaterialTheme {
