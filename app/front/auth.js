@@ -24,7 +24,11 @@ class AuthMiddleware {
 	            	password: req.body.password
 	            });
 	            const result = response.data.result;
-				res.cookie('token', result.token);
+				res.cookie('token', result.token, {
+					sameSite: 'none', 
+					secure: false,
+					httpOnly: true
+				});
 				res.redirect('/front');
 
 			} catch(err) {
