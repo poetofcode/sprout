@@ -1,4 +1,4 @@
-package presentation.screens.profileTabScreen
+package presentation.screens.authScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -45,14 +45,14 @@ import presentation.Tabs
 import presentation.navigation.BaseScreen
 import specific.BackHandler
 
-class ProfileTabScreen(
+class AuthScreen(
     val frontUrl: String,
-) : BaseScreen<ProfileTabViewModel>() {
+) : BaseScreen<AuthViewModel>() {
     override val screenId: String
         get() = Tabs.PROFILE.key
 
-    override val viewModel: ProfileTabViewModel
-        get() = viewModelStore.getViewModel<ProfileTabViewModel>()
+    override val viewModel: AuthViewModel
+        get() = viewModelStore.getViewModel<AuthViewModel>()
 
     override val isMenuVisible: Boolean = true
 
