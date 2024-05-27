@@ -6,7 +6,6 @@ import presentation.base.BaseViewModel
 import presentation.base.postEffect
 import presentation.navigation.NavigateBackEffect
 import presentation.navigation.NavigateEffect
-import presentation.navigation.NavigatorTag
 import presentation.navigation.SharedMemory
 import presentation.screens.authScreen.AuthScreen
 
@@ -22,7 +21,6 @@ class ProfileViewModel(
         postEffect(
             NavigateEffect(
                 AuthScreen("http://192.168.0.107:3000/front"),
-                tag = NavigatorTag.TAB_ITSELF
             )
         )
     }
