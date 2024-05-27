@@ -32,6 +32,8 @@ abstract class BaseScreen<T : ViewModel> : Screen<T> {
 
     protected open val isMenuVisible: Boolean = false
 
+    protected var isReady = false
+
     @Composable
     protected fun setMainMenuVisibility() {
         val appState = LocalMainAppState.current
@@ -50,9 +52,10 @@ abstract class BaseScreen<T : ViewModel> : Screen<T> {
         }
         setMainMenuVisibility()
 
-        // Collecting effects by each viewModel
-        LaunchedEffect(Unit) {
+        if (!isReady) {
+            // Collecting effects by each viewModel
             (viewModel as? BaseViewModel)?.collectEffects()
+            isReady = true
         }
 
         Content()
@@ -111,8 +114,11 @@ fun Navigator(
     modifier: Modifier = Modifier,
     state: NavState,
 ) {
-    Box(modifier) {
-        val screens = state.screens.value
-        screens.lastOrNull()?.PrepareContent()
+    val navigators = LocalNavigators.current + NavigatorInfo(state)
+    CompositionLocalProvider(LocalNavigators provides navigators) {
+        Box(modifier) {
+            val screens = state.screens.value
+            screens.lastOrNull()?.PrepareContent()
+        }
     }
 }

@@ -1,11 +1,13 @@
 package presentation.base
 
+import androidx.compose.runtime.Composable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import presentation.navigation.Effect
+import presentation.navigation.LocalNavigators
 import presentation.viewModelCoroutineScopeProvider
 
 interface ViewModel {
@@ -31,10 +33,15 @@ class EmptyViewModel : BaseViewModel() {
     }
 }
 
+@Composable
 fun BaseViewModel.collectEffects() {
+    val navigators = LocalNavigators.current
+
     effectFlow.onEach { effect ->
 
         println("BaseViewModel onEffect: $effect ($this)")
+        println("Navigators:")
+        println(navigators)
 
     }.launchIn(viewModelScope)
 
