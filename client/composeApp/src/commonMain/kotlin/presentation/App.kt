@@ -35,6 +35,7 @@ import presentation.Tabs.PROFILE
 import presentation.base.Config
 import presentation.navigation.NavStateImpl
 import presentation.navigation.Navigator
+import presentation.navigation.NavigatorTag
 import presentation.screens.homeTabScreen.HomeTabScreen
 import presentation.screens.profileTabScreen.ProfileTabScreen
 import sproutclient.composeapp.generated.resources.Res
@@ -108,7 +109,8 @@ fun App(config: Config) {
             ) {
                 Navigator(
                     modifier = Modifier.fillMaxWidth(),
-                    state = navState
+                    state = navState,
+                    tag = NavigatorTag.ROOT,
                 )
             }
 

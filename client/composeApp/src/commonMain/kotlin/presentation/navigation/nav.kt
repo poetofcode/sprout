@@ -113,8 +113,9 @@ class NavStateImpl(val viewModelStore: ViewModelStore) : NavState {
 fun Navigator(
     modifier: Modifier = Modifier,
     state: NavState,
+    tag: NavigatorTag = NavigatorTag.NONE,
 ) {
-    val navigators = LocalNavigators.current + NavigatorInfo(state)
+    val navigators = LocalNavigators.current + NavigatorInfo(state, tag)
     CompositionLocalProvider(LocalNavigators provides navigators) {
         Box(modifier) {
             val screens = state.screens.value
