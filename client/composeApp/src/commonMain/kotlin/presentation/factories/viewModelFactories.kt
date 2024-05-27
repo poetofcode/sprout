@@ -4,6 +4,7 @@ import data.repository.FeedRepository
 import data.repository.ProfileRepository
 import data.repository.RepositoryFactory
 import presentation.base.ViewModelFactory
+import presentation.screens.authScreen.AuthViewModel
 import presentation.screens.homeTabScreen.HomeTabViewModel
 import presentation.screens.profileTabScreen.ProfileTabViewModel
 import presentation.screens.startScreen.StartViewModel
@@ -42,12 +43,26 @@ class ProfileTabViewModelFactory(val profileRepository: ProfileRepository)
 }
 
 
+class AuthViewModelFactory(val profileRepository: ProfileRepository)
+    : ViewModelFactory<AuthViewModel> {
+    override fun createViewModel(): AuthViewModel {
+        return AuthViewModel(/* profileRepository */)
+    }
+
+    override val vmTypeName: String
+        get() = AuthViewModel::class.java.typeName
+
+}
+
+
 fun viewModelFactories(
     repositoryFactory: RepositoryFactory
 ): List<ViewModelFactory<*>> {
+    val profileRepository = repositoryFactory.createProfileRepository()
     return listOf<ViewModelFactory<*>>(
         HomeTabViewModelFactory(),
         PostListViewModelFactory(repositoryFactory.createFeedRepository()),
-        ProfileTabViewModelFactory(repositoryFactory.createProfileRepository()),
+        ProfileTabViewModelFactory(profileRepository),
+        AuthViewModelFactory(profileRepository),
     )
 }
