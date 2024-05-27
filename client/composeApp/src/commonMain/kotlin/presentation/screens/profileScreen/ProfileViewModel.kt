@@ -1,4 +1,4 @@
-package presentation.screens.profileTabScreen
+package presentation.screens.profileScreen
 
 import data.repository.ProfileRepository
 import kotlinx.coroutines.launch
@@ -10,7 +10,9 @@ import presentation.navigation.NavigatorTag
 import presentation.navigation.SharedMemory
 import presentation.screens.authScreen.AuthScreen
 
-class ProfileTabViewModel : BaseViewModel() {
+class ProfileViewModel(
+    private val profileRepository: ProfileRepository
+) : BaseViewModel() {
 
     fun onBackClick() = viewModelScope.launch {
         SharedMemory.effectFlow.emit(NavigateBackEffect)

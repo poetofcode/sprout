@@ -6,6 +6,7 @@ import data.repository.RepositoryFactory
 import presentation.base.ViewModelFactory
 import presentation.screens.authScreen.AuthViewModel
 import presentation.screens.homeTabScreen.HomeTabViewModel
+import presentation.screens.profileScreen.ProfileViewModel
 import presentation.screens.profileTabScreen.ProfileTabViewModel
 import presentation.screens.startScreen.StartViewModel
 
@@ -31,10 +32,10 @@ class PostListViewModelFactory(val feedRepository: FeedRepository)
 }
 
 
-class ProfileTabViewModelFactory(val profileRepository: ProfileRepository)
+class ProfileTabViewModelFactory
     : ViewModelFactory<ProfileTabViewModel> {
     override fun createViewModel(): ProfileTabViewModel {
-        return ProfileTabViewModel(profileRepository)
+        return ProfileTabViewModel()
     }
 
     override val vmTypeName: String
@@ -42,6 +43,16 @@ class ProfileTabViewModelFactory(val profileRepository: ProfileRepository)
 
 }
 
+class ProfileViewModelFactory(val profileRepository: ProfileRepository)
+    : ViewModelFactory<ProfileViewModel> {
+    override fun createViewModel(): ProfileViewModel {
+        return ProfileViewModel(profileRepository)
+    }
+
+    override val vmTypeName: String
+        get() = ProfileViewModel::class.java.typeName
+
+}
 
 class AuthViewModelFactory(val profileRepository: ProfileRepository)
     : ViewModelFactory<AuthViewModel> {
@@ -62,7 +73,8 @@ fun viewModelFactories(
     return listOf<ViewModelFactory<*>>(
         HomeTabViewModelFactory(),
         PostListViewModelFactory(repositoryFactory.createFeedRepository()),
-        ProfileTabViewModelFactory(profileRepository),
+        ProfileTabViewModelFactory(),
+        ProfileViewModelFactory(profileRepository),
         AuthViewModelFactory(profileRepository),
     )
 }
