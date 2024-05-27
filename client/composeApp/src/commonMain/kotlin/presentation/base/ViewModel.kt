@@ -42,15 +42,10 @@ fun BaseViewModel.collectEffects() {
 
     effectFlow.onEach { effect ->
 
-        /*
-        println("BaseViewModel onEffect: $effect ($this)")
-        println("Navigators:")
-        println(navigators)
-         */
-
         when (effect) {
             NavigateBackEffect -> {
-                // TODO
+                val navigatorInfo = findNavigatorInfoByTag(navigators, NavigatorTag.CURRENT)
+                navigatorInfo.navState.pop()
             }
 
             is NavigateEffect -> {
