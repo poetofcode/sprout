@@ -104,6 +104,29 @@ class ProfileTabScreen(
             jsBridge.register(GreetJsMessageHandler())
         }
 
+
+        LaunchedEffect(state.loadingState) {
+            if (state.loadingState is LoadingState.Finished) {
+//                state.cookieManager.setCookie(
+//                    "https://github.com",
+//                    Cookie(
+//                        name = "test",
+//                        value = "value",
+//                        domain = "github.com",
+//                        expiresDate = 1896863778
+//                    )
+//                )
+//                Logger.i {
+//                    "cookie: ${state.cookieManager.getCookies("https://github.com")}"
+//                }
+//                state.cookieManager.removeAllCookies()
+
+                println(
+                    "cookie: ${state.cookieManager.getCookies(frontUrl)}"
+                )
+            }
+        }
+
         var textFieldValue by remember(state.lastLoadedUrl) {
             mutableStateOf(state.lastLoadedUrl)
         }
@@ -192,9 +215,9 @@ class GreetJsMessageHandler : IJsMessageHandler {
         navigator: WebViewNavigator?,
         callback: (String) -> Unit
     ) {
-        println("Greet Handler Get Message: $message")
+        // println("Greet Handler Get Message: $message")
         val param = processParams<GreetModel>(message)
-        val data = GreetModel("KMM Received ${param.message}")
+        val data = GreetModel("KMM Received ${/*param.message*/"Любое сообщение"}")
         callback(dataToJsonString(data))
         // callback("{ response: \"Hello\" }")
     }
