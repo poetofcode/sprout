@@ -10,6 +10,11 @@
 		<div class="form-field">
 			<button class="btn" type="submit">Войти</button>
 		</div>
+
+		<br /><br /><br />
+		<div class="form-field">
+			<button class="btn btn-try">Js Bridge Try</button>
+		</div>
 	</form>
 </div>
 
@@ -17,4 +22,16 @@
 	{{#if authError}}
 		showToast('Неверные логин или пароль', true);
 	{{/if}}
+
+	$(".btn-try").on("click", function() {
+		console.log("================");
+		window.kmpJsBridge.callNative("Greet", JSON.stringify({message:"Hello"}),
+		  function (data) {
+		    document.getElementById("subtitle").innerText = data;
+		    console.log("Greet from Native: " + data);
+		  }
+		);
+		console.log("++++++++++++++++");  		
+	});
+
 </script>

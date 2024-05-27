@@ -31,9 +31,9 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
-import com.multiplatform.webview.jsbridge.WebViewJsBridge
 import com.multiplatform.webview.jsbridge.dataToJsonString
 import com.multiplatform.webview.jsbridge.processParams
+import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.WebViewNavigator
@@ -99,7 +99,7 @@ class ProfileTabScreen(
             }
         }
 
-        val jsBridge = rememberWebViewJsBridge(name = "jsBridge")
+        val jsBridge = rememberWebViewJsBridge()
         LaunchedEffect(Unit) {
             jsBridge.register(GreetJsMessageHandler())
         }
@@ -175,6 +175,7 @@ class ProfileTabScreen(
 }
 
 
+
 @Serializable
 data class GreetModel(
     val message: String,
@@ -197,9 +198,4 @@ class GreetJsMessageHandler : IJsMessageHandler {
         callback(dataToJsonString(data))
         // callback("{ response: \"Hello\" }")
     }
-}
-
-@Composable
-fun rememberWebViewJsBridge(navigator: WebViewNavigator? = null, name: String): WebViewJsBridge {
-    return remember { WebViewJsBridge(navigator, name) }
 }
