@@ -4,7 +4,11 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 
 sealed interface Effect
 
-data class NavigateEffect(val screen: BaseScreen<*>) : Effect
+data class NavigateEffect(
+    val screen: BaseScreen<*>,
+    val options: NavOptions = NavOptions.NONE,
+    val tag: NavigatorTag = NavigatorTag.CURRENT,
+) : Effect
 
 data object NavigateBackEffect : Effect
 

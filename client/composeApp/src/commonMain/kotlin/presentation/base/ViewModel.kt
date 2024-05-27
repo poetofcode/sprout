@@ -8,12 +8,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import presentation.navigation.Effect
 import presentation.navigation.LocalNavigators
+import presentation.navigation.NavOptions
+import presentation.navigation.NavigateBackEffect
+import presentation.navigation.NavigateEffect
+import presentation.navigation.NavigatorInfo
+import presentation.navigation.NavigatorTag
+import presentation.navigation.SetBackHandlerEffect
 import presentation.viewModelCoroutineScopeProvider
 
-interface ViewModel {
-
-    
-}
+interface ViewModel
 
 abstract class BaseViewModel : ViewModel {
 
@@ -39,9 +42,34 @@ fun BaseViewModel.collectEffects() {
 
     effectFlow.onEach { effect ->
 
+        /*
         println("BaseViewModel onEffect: $effect ($this)")
         println("Navigators:")
         println(navigators)
+         */
+
+        when (effect) {
+            NavigateBackEffect -> {
+                // TODO
+            }
+
+            is NavigateEffect -> {
+                val navigatorInfo = findNavigatorInfoByTag(navigators, effect.tag)
+                when (effect.options) {
+                    NavOptions.NONE -> navigatorInfo.navState.push(effect.screen)
+                    NavOptions.REPLACE -> navigatorInfo.navState.moveToFront(effect.screen.screenId)
+                    NavOptions.REPLACE_ALL -> {
+                        // TODO
+                        // navigatorInfo.navState.clearScreens()
+                        // navigatorInfo.navState.push(effect.screen)
+                    }
+                }
+            }
+
+            is SetBackHandlerEffect -> {
+
+            }
+        }
 
     }.launchIn(viewModelScope)
 
@@ -51,4 +79,21 @@ fun BaseViewModel.postEffect(effect: Effect) {
     viewModelScope.launch {
         effectFlow.emit(effect)
     }
+}
+
+fun findNavigatorInfoByTag(navigators: List<NavigatorInfo>, tag: NavigatorTag) : NavigatorInfo {
+    val navigatorInfo = if (tag != NavigatorTag.CURRENT) {
+        val navigatorType = navigators.firstOrNull { it.tag == tag }
+        checkNotNull(navigatorType) { logErrorNotFound(tag.name) }
+        navigatorType
+    } else {
+        val lastNavigatorType = navigators.lastOrNull()
+        checkNotNull(lastNavigatorType) { logErrorNotFound(tag.name) }
+        lastNavigatorType
+    }
+    return navigatorInfo
+}
+
+fun logErrorNotFound(arg: String) {
+    println("Navigator with tag '${arg}' in not found'}")
 }
