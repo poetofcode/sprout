@@ -13,9 +13,7 @@ import presentation.Tabs
 import presentation.navigation.BaseScreen
 import specific.BackHandler
 
-class ProfileTabScreen(
-    val frontUrl: String,
-) : BaseScreen<ProfileTabViewModel>() {
+class ProfileTabScreen : BaseScreen<ProfileTabViewModel>() {
     override val screenId: String
         get() = Tabs.PROFILE.key
 

@@ -45,6 +45,10 @@ import presentation.Tabs
 import presentation.navigation.BaseScreen
 import specific.BackHandler
 
+/*
+    "http://192.168.0.107:3000/front"
+ */
+
 class AuthScreen(
     val frontUrl: String,
 ) : BaseScreen<AuthViewModel>() {
