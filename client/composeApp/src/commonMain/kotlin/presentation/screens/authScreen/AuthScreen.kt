@@ -221,9 +221,9 @@ class GreetJsMessageHandler : IJsMessageHandler {
         callback: (String) -> Unit
     ) {
         // println("Greet Handler Get Message: $message")
-        val param = processParams<GreetModel>(message)
-        val data = GreetModel("KMM Received ${/*param.message*/"Любое сообщение"}")
-        callback(dataToJsonString(data))
-        // callback("{ response: \"Hello\" }")
+        // val param = processParams<GreetModel>(message)
+        // val data = GreetModel("KMM Received ${/*param.message*/"Любое сообщение"}")
+        // callback(dataToJsonString(data))
+        callback("{ response: \"Hello\" }")
     }
 }
