@@ -7,6 +7,8 @@ interface RepositoryFactory {
     
     fun createFeedRepository() : FeedRepository
 
+    fun createProfileRepository() : ProfileRepository
+
 }
 
 class RepositoryFactoryImpl(
@@ -15,6 +17,10 @@ class RepositoryFactoryImpl(
 
     override fun createFeedRepository(): FeedRepository {
         return FeedRepositoryImpl(api)
+    }
+
+    override fun createProfileRepository(): ProfileRepository {
+        return ProfileRepositoryImpl()
     }
 
 }
