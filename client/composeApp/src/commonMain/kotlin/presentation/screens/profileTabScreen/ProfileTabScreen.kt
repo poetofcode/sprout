@@ -89,7 +89,7 @@ class ProfileTabScreen : BaseScreen<ProfileTabViewModel>() {
                 Button(
                     modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 30.dp),
                     onClick = {
-
+                        viewModel.onSignInToAccountButtonClick()
                     }
                 ) {
                     Text(text = "Войти в аккаунт")

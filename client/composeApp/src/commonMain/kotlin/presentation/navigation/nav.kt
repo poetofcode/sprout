@@ -5,8 +5,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import presentation.LocalMainAppState
+import presentation.base.BaseViewModel
 import presentation.base.ViewModel
 import presentation.base.ViewModelStore
+import presentation.base.collectEffects
 import specific.BackHandler
 
 
@@ -47,6 +49,12 @@ abstract class BaseScreen<T : ViewModel> : Screen<T> {
             SharedMemory.effectFlow.emit(SetBackHandlerEffect { false })
         }
         setMainMenuVisibility()
+
+        // Collecting effects by each viewModel
+        LaunchedEffect(Unit) {
+            (viewModel as? BaseViewModel)?.collectEffects()
+        }
+
         Content()
     }
 
