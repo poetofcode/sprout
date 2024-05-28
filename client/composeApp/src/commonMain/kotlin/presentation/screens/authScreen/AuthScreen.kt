@@ -58,7 +58,7 @@ class AuthScreen(
     override val viewModel: AuthViewModel
         get() = viewModelStore.getViewModel<AuthViewModel>()
 
-    override val isMenuVisible: Boolean = true
+    override val isMenuVisible: Boolean = false
 
     @Composable
     override fun Content() {
