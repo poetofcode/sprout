@@ -13,7 +13,7 @@ class ProfileViewModel(
     fun onSignInToAccountButtonClick() {
         postEffect(
             NavigateEffect(
-                AuthScreen("http://192.168.0.107:3000/front"),
+                AuthScreen("http://192.168.0.103:3000/front"),
             )
         )
     }

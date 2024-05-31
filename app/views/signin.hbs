@@ -17,19 +17,4 @@
 	{{#if authError}}
 		showToast('Неверные логин или пароль', true);
 	{{/if}}
-
-	function onStart() {
-		window.kmpJsBridge.callNative("Greet", JSON.stringify({message:"Hello"}),
-		  function (data) {
-		    // document.getElementById("subtitle").innerText = data;
-		    console.log("Greet from Native: " + data);
-		  }
-		);
-	}
-
-
-	$(function() {
-		setTimeout(onStart, 100);
-	});
-
 </script>

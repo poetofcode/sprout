@@ -29,7 +29,9 @@ class AuthMiddleware {
 					secure: false,
 					httpOnly: true
 				});
-				res.redirect('/front');
+
+				// res.redirect('/front');
+				return res.render("post_auth.hbs", { token: result.token });
 
 			} catch(err) {
 	            if (err.response.status == 400) {
