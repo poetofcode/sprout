@@ -4,23 +4,24 @@
 </div>
 
 <script type="text/javascript">
-	{{#if token}}
-		// alert(`token: {{token}}`);
-		console.log("Токен получен");
-	{{/if}}
 
-	// function onStart() {
-	// 	window.kmpJsBridge.callNative("Greet", JSON.stringify({message:"Hello"}),
-	// 	  function (data) {
-	// 	    // document.getElementById("subtitle").innerText = data;
-	// 	    console.log("Greet from Native: " + data);
-	// 	  }
-	// 	);
-	// }
+	function onStart() {
+		// TODO hide "text-waiting"
+		// TODO show "link-to-main"
+		const jsBridge = window.kmpJsBridge
+		if (!jsBridge) {
+			console.log("JsBridge not found");
+			return;
+		}
+		jsBridge.callNative("saveToken", JSON.stringify({token:"{{token}}"}),
+		  function (data) {
+		    console.log("Greet from Native: " + data);
+		  }
+		);
+	}
 
-
-	// $(function() {
-	// 	setTimeout(onStart, 100);
-	// });
+	$(function() {
+		setTimeout(onStart, 100);
+	});
 
 </script>

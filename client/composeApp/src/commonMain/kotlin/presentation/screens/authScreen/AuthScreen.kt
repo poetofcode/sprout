@@ -32,8 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.multiplatform.webview.cookie.Cookie
 import com.multiplatform.webview.jsbridge.IJsMessageHandler
 import com.multiplatform.webview.jsbridge.JsMessage
-import com.multiplatform.webview.jsbridge.dataToJsonString
-import com.multiplatform.webview.jsbridge.processParams
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
@@ -41,6 +39,7 @@ import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import presentation.Tabs
 import presentation.navigation.BaseScreen
 import specific.BackHandler
@@ -106,7 +105,9 @@ class AuthScreen(
 
         val jsBridge = rememberWebViewJsBridge()
         LaunchedEffect(Unit) {
-            jsBridge.register(GreetJsMessageHandler())
+            jsBridge.register(JsMessageHandler { tokenInfo ->
+                viewModel.onBackClick()
+            })
         }
 
 
@@ -205,14 +206,22 @@ class AuthScreen(
 
 
 @Serializable
-data class GreetModel(
-    val message: String,
+data class JsTokenInfo(
+    val token: String,
 )
 
-class GreetJsMessageHandler : IJsMessageHandler {
+private val json by lazy {
+    Json {
+        ignoreUnknownKeys = true
+    }
+}
+
+class JsMessageHandler(
+    private val onTokenReceived: (JsTokenInfo) -> Unit
+) : IJsMessageHandler {
 
     override fun methodName(): String {
-        return "Greet"
+        return "saveToken"
     }
 
     override fun handle(
@@ -220,10 +229,15 @@ class GreetJsMessageHandler : IJsMessageHandler {
         navigator: WebViewNavigator?,
         callback: (String) -> Unit
     ) {
-        // println("Greet Handler Get Message: $message")
-        // val param = processParams<GreetModel>(message)
-        // val data = GreetModel("KMM Received ${/*param.message*/"Любое сообщение"}")
-        // callback(dataToJsonString(data))
-        callback("{ response: \"Hello\" }")
+        println("Greet Handler Get Message: $message")
+
+        // TODO catch errors
+        val decoded = json.decodeFromString<JsTokenInfo>(message.params)
+
+        println("Parsed: $decoded")
+
+        callback("{ message: \"Hello\" }")
+
+        onTokenReceived(decoded)
     }
 }
