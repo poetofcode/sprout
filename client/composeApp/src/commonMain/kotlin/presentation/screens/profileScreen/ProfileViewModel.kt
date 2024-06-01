@@ -1,5 +1,6 @@
 package presentation.screens.profileScreen
 
+import data.repository.Profile
 import data.repository.ProfileRepository
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
@@ -23,7 +24,10 @@ class ProfileViewModel(
     override fun obtainSharedEvent(event: SharedEvent) {
         when (event) {
             is OnReceivedTokenSharedEvent -> {
-                println("mylog (ProfileScreen) On received shared event: ${event.token}")
+                profileRepository.saveProfileLocal(Profile(
+                    token = event.token,
+                    email = "",
+                ))
             }
         }
     }
