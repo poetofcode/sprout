@@ -103,7 +103,10 @@ class AuthScreen(
         val jsBridge = rememberWebViewJsBridge()
         LaunchedEffect(Unit) {
             jsBridge.register(JsTokenHandler { tokenInfo ->
-                viewModel.postSharedEvent(OnReceivedTokenSharedEvent(tokenInfo.token))
+                viewModel.postSharedEvent(OnReceivedTokenSharedEvent(
+                    tokenInfo.token,
+                    tokenInfo.email,
+                ))
                 viewModel.onBackClick()
             })
         }

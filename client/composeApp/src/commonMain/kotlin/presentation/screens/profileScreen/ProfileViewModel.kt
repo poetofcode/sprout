@@ -26,7 +26,7 @@ class ProfileViewModel(
             is OnReceivedTokenSharedEvent -> {
                 profileRepository.saveProfileLocal(Profile(
                     token = event.token,
-                    email = "",
+                    email = event.email,
                 ))
             }
         }

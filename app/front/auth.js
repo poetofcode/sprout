@@ -31,7 +31,10 @@ class AuthMiddleware {
 				});
 
 				// res.redirect('/front');
-				return res.render("post_auth.hbs", { token: result.token });
+				return res.render("post_auth.hbs", { 
+					token: result.token, 
+					email: result.user.login 
+				});
 
 			} catch(err) {
 	            if (err.response.status == 400) {

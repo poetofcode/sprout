@@ -9,6 +9,7 @@ import kotlinx.serialization.json.Json
 @Serializable
 data class JsTokenInfo(
     val token: String,
+    val email: String,
 )
 
 private val json by lazy {

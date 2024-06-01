@@ -13,7 +13,10 @@
 			console.log("JsBridge not found");
 			return;
 		}
-		jsBridge.callNative("saveToken", JSON.stringify({token:"{{token}}"}),
+		jsBridge.callNative("saveToken", JSON.stringify({
+			token:"{{token}}",
+			email: "{{email}}"
+		}),
 		  function (data) {
 		    console.log("Greet from Native: " + data);
 		  }
