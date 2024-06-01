@@ -30,16 +30,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import com.multiplatform.webview.cookie.Cookie
-import com.multiplatform.webview.jsbridge.IJsMessageHandler
-import com.multiplatform.webview.jsbridge.JsMessage
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
-import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import presentation.Tabs
 import presentation.navigation.BaseScreen
 import specific.BackHandler
@@ -105,7 +100,7 @@ class AuthScreen(
 
         val jsBridge = rememberWebViewJsBridge()
         LaunchedEffect(Unit) {
-            jsBridge.register(JsMessageHandler { tokenInfo ->
+            jsBridge.register(JsTokenHandler { tokenInfo ->
                 viewModel.onBackClick()
             })
         }
@@ -201,43 +196,4 @@ class AuthScreen(
         }
     }
 
-}
-
-
-
-@Serializable
-data class JsTokenInfo(
-    val token: String,
-)
-
-private val json by lazy {
-    Json {
-        ignoreUnknownKeys = true
-    }
-}
-
-class JsMessageHandler(
-    private val onTokenReceived: (JsTokenInfo) -> Unit
-) : IJsMessageHandler {
-
-    override fun methodName(): String {
-        return "saveToken"
-    }
-
-    override fun handle(
-        message: JsMessage,
-        navigator: WebViewNavigator?,
-        callback: (String) -> Unit
-    ) {
-        println("Greet Handler Get Message: $message")
-
-        // TODO catch errors
-        val decoded = json.decodeFromString<JsTokenInfo>(message.params)
-
-        println("Parsed: $decoded")
-
-        callback("{ message: \"Hello\" }")
-
-        onTokenReceived(decoded)
-    }
 }
