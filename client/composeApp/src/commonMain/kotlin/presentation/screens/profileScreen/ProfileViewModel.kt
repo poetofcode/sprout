@@ -1,9 +1,13 @@
 package presentation.screens.profileScreen
 
+import androidx.compose.runtime.mutableStateOf
 import data.repository.Profile
 import data.repository.ProfileRepository
+import domain.model.PostModel
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
+import presentation.model.IdleResource
+import presentation.model.Resource
 import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.navigation.NavigateEffect
 import presentation.navigation.SharedEvent
@@ -12,6 +16,27 @@ import presentation.screens.authScreen.AuthScreen
 class ProfileViewModel(
     private val profileRepository: ProfileRepository
 ) : BaseViewModel() {
+
+    data class State(
+        val profile: Profile? = null
+    )
+
+    val state = mutableStateOf(State())
+
+    init {
+        fetchProfile()
+    }
+
+    private fun reduce(cb: State.() -> State) {
+        state.value = cb(state.value)
+    }
+
+
+    private fun fetchProfile() {
+        profileRepository.fetchProfileLocal()?.let { profile ->
+            reduce { copy(profile = profile) }
+        }
+    }
 
     fun onSignInToAccountButtonClick() {
         postEffect(
@@ -28,6 +53,7 @@ class ProfileViewModel(
                     token = event.token,
                     email = event.email,
                 ))
+                fetchProfile()
             }
         }
     }
