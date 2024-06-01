@@ -14,6 +14,8 @@ import presentation.navigation.NavigateEffect
 import presentation.navigation.NavigatorInfo
 import presentation.navigation.NavigatorTag
 import presentation.navigation.SetBackHandlerEffect
+import presentation.navigation.SharedEvent
+import presentation.navigation.SharedMemory
 import presentation.viewModelCoroutineScopeProvider
 
 interface ViewModel
@@ -26,6 +28,14 @@ abstract class BaseViewModel : ViewModel {
 
     val viewModelScope: CoroutineScope by lazy {
         viewModelCoroutineScopeProvider.scope
+    }
+
+    protected open fun obtainSharedEvent(event: SharedEvent) {
+        // Override it in derived classes
+    }
+
+    protected fun postSharedEvent(event: SharedEvent) {
+        SharedMemory.eventFlow.tryEmit(event)
     }
 
 }
