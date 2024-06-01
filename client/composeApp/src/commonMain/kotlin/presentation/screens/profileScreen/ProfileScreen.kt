@@ -30,7 +30,8 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
 
     @Composable
     override fun Content() {
-        val isAuth = false
+        val state = viewModel.state.value
+        val isAuth = state.profile != null
 
         MaterialTheme {
             Column {
