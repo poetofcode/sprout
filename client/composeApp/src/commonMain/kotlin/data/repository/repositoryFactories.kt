@@ -1,7 +1,7 @@
 package data.repository
 
-import data.mock.MockFeedRepository
 import data.service.FreshApi
+import data.utils.ContentBasedPersistentStorage
 
 interface RepositoryFactory {
     
@@ -12,7 +12,8 @@ interface RepositoryFactory {
 }
 
 class RepositoryFactoryImpl(
-    val api: FreshApi
+    val api: FreshApi,
+    val storage: ContentBasedPersistentStorage,
 ) : RepositoryFactory {
 
     override fun createFeedRepository(): FeedRepository {
@@ -20,7 +21,7 @@ class RepositoryFactoryImpl(
     }
 
     override fun createProfileRepository(): ProfileRepository {
-        return ProfileRepositoryImpl()
+        return ProfileRepositoryImpl(storage)
     }
 
 }

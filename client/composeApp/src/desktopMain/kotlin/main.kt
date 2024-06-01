@@ -33,7 +33,13 @@ fun main() = application {
     val networkingFactory: NetworkingFactory = NetworkingFactoryImpl()
 
     val repositoryFactory = RepositoryFactoryImpl(
-        api = networkingFactory.createApi()
+        api = networkingFactory.createApi(),
+        storage = ContentBasedPersistentStorage(
+            FileContentProvider(
+                fileName = "appcache.json",
+                relativePath = "appcache",
+            )
+        )
     )
 
     val vmStoreImpl = ViewModelStore(
@@ -57,7 +63,8 @@ fun main() = application {
     val windowState = rememberWindowState(
         size = DpSize(
             windowWidth?.dp ?: DEFAULT_WINDOW_WIDTH.dp,
-            windowHeight?.dp ?: DEFAULT_WINDOW_HEIGHT.dp),
+            windowHeight?.dp ?: DEFAULT_WINDOW_HEIGHT.dp
+        ),
         position = WindowPosition(
             positionX?.dp ?: DEFAULT_POSITION_X.dp,
             positionY?.dp ?: DEFAULT_POSITION_Y.dp

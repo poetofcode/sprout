@@ -138,7 +138,7 @@ class ContentBasedPersistentStorage(
 }
 
 
-inline operator fun <reified T : Any> PersistentStorage.getValue(nothing: Nothing?, property: KProperty<*>): T? {
+inline operator fun <reified T : Any> PersistentStorage.getValue(nothing: Any?, property: KProperty<*>): T? {
     val properyName = property.name
     val res = fetch(properyName)
     return when (T::class) {
@@ -150,7 +150,7 @@ inline operator fun <reified T : Any> PersistentStorage.getValue(nothing: Nothin
     }
 }
 
-inline operator fun <reified T : Any> PersistentStorage.setValue(nothing: Nothing?, property: KProperty<*>, value: T?) {
+inline operator fun <reified T : Any> PersistentStorage.setValue(nothing: Any?, property: KProperty<*>, value: T?) {
     val propertyName = property.name
     value?.let {
         this.save(propertyName, value)

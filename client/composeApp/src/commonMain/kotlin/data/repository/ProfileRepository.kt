@@ -1,5 +1,9 @@
 package data.repository
 
+import data.utils.ContentBasedPersistentStorage
+import data.utils.getValue
+import data.utils.setValue
+
 
 data class Profile(
     val token: String,
@@ -14,13 +18,17 @@ interface ProfileRepository {
 
 }
 
-class ProfileRepositoryImpl : ProfileRepository {
+class ProfileRepositoryImpl(
+    private val storage: ContentBasedPersistentStorage,
+) : ProfileRepository {
+
+    private var profileProperty: Profile? by storage
+
     override fun fetchProfileLocal(): Profile? {
-        // TODO
-        return null
+        return profileProperty
     }
 
     override fun saveProfileLocal(profile: Profile) {
-        // TODO
+        profileProperty = profile
     }
 }
