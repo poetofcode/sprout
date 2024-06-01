@@ -1,7 +1,11 @@
 package presentation.navigation
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import presentation.LocalMainAppState
@@ -9,7 +13,6 @@ import presentation.base.BaseViewModel
 import presentation.base.ViewModel
 import presentation.base.ViewModelStore
 import presentation.base.collectEffects
-import specific.BackHandler
 
 
 typealias AnyScreen = BaseScreen<*>
@@ -54,7 +57,11 @@ abstract class BaseScreen<T : ViewModel> : Screen<T> {
 
         if (!isReady) {
             // Collecting effects by each viewModel
-            (viewModel as? BaseViewModel)?.collectEffects()
+            (viewModel as? BaseViewModel)?.run {
+                onViewReady()
+                collectEffects()
+            }
+
             isReady = true
         }
 

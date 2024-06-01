@@ -4,7 +4,6 @@ import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
 import presentation.navigation.NavigateBackEffect
-import presentation.navigation.SharedMemory
 
 class AuthViewModel : BaseViewModel() {
 

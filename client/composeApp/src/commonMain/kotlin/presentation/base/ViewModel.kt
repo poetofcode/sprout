@@ -30,12 +30,15 @@ abstract class BaseViewModel : ViewModel {
         viewModelCoroutineScopeProvider.scope
     }
 
-    protected open fun obtainSharedEvent(event: SharedEvent) {
-        // Override it in derived classes
+    @Composable
+    fun onViewReady() {
+        SharedMemory.eventFlow
+            .onEach { obtainSharedEvent(it) }
+            .launchIn(viewModelScope)
     }
 
-    protected fun postSharedEvent(event: SharedEvent) {
-        SharedMemory.eventFlow.tryEmit(event)
+    protected open fun obtainSharedEvent(event: SharedEvent) {
+        // Override it in derived classes
     }
 
 }
@@ -84,6 +87,10 @@ fun BaseViewModel.postEffect(effect: Effect) {
     viewModelScope.launch {
         effectFlow.emit(effect)
     }
+}
+
+fun BaseViewModel.postSharedEvent(event: SharedEvent) {
+    SharedMemory.eventFlow.tryEmit(event)
 }
 
 fun findNavigatorInfoByTag(navigators: List<NavigatorInfo>, tag: NavigatorTag) : NavigatorInfo {

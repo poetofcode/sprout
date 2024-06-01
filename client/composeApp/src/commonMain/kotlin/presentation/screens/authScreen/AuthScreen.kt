@@ -36,6 +36,8 @@ import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
 import presentation.Tabs
+import presentation.base.postSharedEvent
+import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.navigation.BaseScreen
 import specific.BackHandler
 
@@ -101,10 +103,10 @@ class AuthScreen(
         val jsBridge = rememberWebViewJsBridge()
         LaunchedEffect(Unit) {
             jsBridge.register(JsTokenHandler { tokenInfo ->
+                viewModel.postSharedEvent(OnReceivedTokenSharedEvent(tokenInfo.token))
                 viewModel.onBackClick()
             })
         }
-
 
         LaunchedEffect(state.loadingState) {
             if (state.loadingState is LoadingState.Finished) {
