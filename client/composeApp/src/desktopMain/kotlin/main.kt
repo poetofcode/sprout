@@ -1,13 +1,25 @@
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowPosition
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import data.repository.RepositoryFactoryImpl
 import data.service.NetworkingFactory
 import data.service.NetworkingFactoryImpl
 import data.utils.ContentBasedPersistentStorage
 import data.utils.FileContentProvider
+import data.utils.ProfileStorageImpl
 import data.utils.getValue
 import data.utils.setValue
 import dev.datlag.kcef.KCEF
@@ -34,9 +46,9 @@ fun main() = application {
 
     val repositoryFactory = RepositoryFactoryImpl(
         api = networkingFactory.createApi(),
-        storage = ContentBasedPersistentStorage(
+        profileStorage = ProfileStorageImpl(
             FileContentProvider(
-                fileName = "appcache.json",
+                fileName = "sessioncache.json",
                 relativePath = "appcache",
             )
         )

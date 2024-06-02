@@ -2,6 +2,7 @@ package data.repository
 
 import data.service.FreshApi
 import data.utils.ContentBasedPersistentStorage
+import data.utils.ProfileStorage
 
 interface RepositoryFactory {
     
@@ -13,7 +14,7 @@ interface RepositoryFactory {
 
 class RepositoryFactoryImpl(
     val api: FreshApi,
-    val storage: ContentBasedPersistentStorage,
+    val profileStorage: ProfileStorage,
 ) : RepositoryFactory {
 
     override fun createFeedRepository(): FeedRepository {
@@ -21,7 +22,7 @@ class RepositoryFactoryImpl(
     }
 
     override fun createProfileRepository(): ProfileRepository {
-        return ProfileRepositoryImpl(storage)
+        return ProfileRepositoryImpl(profileStorage)
     }
 
 }
