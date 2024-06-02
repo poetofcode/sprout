@@ -1,5 +1,6 @@
 package presentation.screens.profileScreen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,8 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import presentation.Tabs
@@ -79,7 +78,8 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
                 Button(
-                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 30.dp),
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                        .padding(vertical = 30.dp),
                     onClick = {
                         viewModel.onSignInToAccountButtonClick()
                     }
@@ -103,7 +103,9 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                         text = state.profile?.email.orEmpty(),
                         color = Color.Black,
                         textDecoration = TextDecoration.Underline,
-                        modifier = Modifier.padding(start = 6.dp),
+                        modifier = Modifier.padding(start = 6.dp).clickable {
+                            viewModel.onUserEmailClick()
+                        },
                     )
                 }
             }

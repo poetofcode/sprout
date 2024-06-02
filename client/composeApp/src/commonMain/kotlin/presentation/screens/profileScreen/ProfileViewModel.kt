@@ -43,6 +43,14 @@ class ProfileViewModel(
         )
     }
 
+    fun onUserEmailClick() {
+        postEffect(
+            NavigateEffect(
+                AuthScreen("http://192.168.0.108:3000/front", useToken = true),
+            )
+        )
+    }
+
     override fun obtainSharedEvent(event: SharedEvent) {
         when (event) {
             is OnReceivedTokenSharedEvent -> {

@@ -46,7 +46,8 @@ import specific.BackHandler
  */
 
 class AuthScreen(
-    val frontUrl: String,
+    private val frontUrl: String,
+    private val useToken: Boolean = false,
 ) : BaseScreen<AuthViewModel>() {
     override val screenId: String
         get() = Tabs.PROFILE.key
