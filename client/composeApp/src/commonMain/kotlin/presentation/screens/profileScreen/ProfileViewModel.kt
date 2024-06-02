@@ -1,13 +1,10 @@
 package presentation.screens.profileScreen
 
 import androidx.compose.runtime.mutableStateOf
-import data.repository.Profile
+import domain.model.Profile
 import data.repository.ProfileRepository
-import domain.model.PostModel
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
-import presentation.model.IdleResource
-import presentation.model.Resource
 import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.navigation.NavigateEffect
 import presentation.navigation.SharedEvent
@@ -49,10 +46,12 @@ class ProfileViewModel(
     override fun obtainSharedEvent(event: SharedEvent) {
         when (event) {
             is OnReceivedTokenSharedEvent -> {
-                profileRepository.saveProfileLocal(Profile(
-                    token = event.token,
-                    email = event.email,
-                ))
+                profileRepository.saveProfileLocal(
+                    Profile(
+                        token = event.token,
+                        email = event.email,
+                    )
+                )
                 fetchProfile()
             }
         }

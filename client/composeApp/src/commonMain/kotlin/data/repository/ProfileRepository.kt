@@ -1,16 +1,10 @@
 package data.repository
 
+import domain.model.Profile
 import data.utils.ContentBasedPersistentStorage
 import data.utils.getValue
 import data.utils.setValue
-import kotlinx.serialization.Serializable
 
-
-@Serializable
-data class Profile(
-    val token: String,
-    val email: String,
-)
 
 interface ProfileRepository {
 
