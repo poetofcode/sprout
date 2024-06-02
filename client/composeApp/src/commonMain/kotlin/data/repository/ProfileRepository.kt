@@ -3,8 +3,10 @@ package data.repository
 import data.utils.ContentBasedPersistentStorage
 import data.utils.getValue
 import data.utils.setValue
+import kotlinx.serialization.Serializable
 
 
+@Serializable
 data class Profile(
     val token: String,
     val email: String,
@@ -22,13 +24,22 @@ class ProfileRepositoryImpl(
     private val storage: ContentBasedPersistentStorage,
 ) : ProfileRepository {
 
-    private var profileProperty: Profile? by storage
+    private var profile: Profile? by storage
+
+    init {
+        profile = Profile(
+            email = "temp",
+            token = "123",
+        )
+    }
 
     override fun fetchProfileLocal(): Profile? {
-        return profileProperty
+        return profile.apply {
+            println("mylog Profile property: ${profile}")
+        }
     }
 
     override fun saveProfileLocal(profile: Profile) {
-        profileProperty = profile
+        this.profile = profile
     }
 }

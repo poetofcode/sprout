@@ -11,10 +11,23 @@ import kotlinx.serialization.json.*
 import java.io.File
 import kotlin.reflect.KProperty
 
+/*
+    Detecting the present annotations within the given object passed into a constructor
+    https://stackoverflow.com/questions/4365095/detecting-the-present-annotations-within-the-given-object-passed-into-a-construc
+
+    Serializer for class '...' is not found. Mark the class as @Serializable or provide the serializer explicitly
+    https://stackoverflow.com/questions/71988144/serializer-for-class-is-not-found-mark-the-class-as-serializable-or-prov
+ */
+
+private val json by lazy {
+    Json {
+        ignoreUnknownKeys = true
+    }
+}
 
 @Serializable
 data class PreferencesInfo(
-    val preferences: Map<String, @kotlinx.serialization.Serializable(with = AnySerializer::class) Any>? = null
+    val preferences: Map<String, @Serializable(with = AnySerializer::class) Any>? = null
 )
 
 object AnySerializer : KSerializer<Any> {
@@ -105,18 +118,12 @@ interface PersistentStorage {
 }
 
 class ContentBasedPersistentStorage(
-    private val contentPorvider: ContentProvider
+    private val contentProvider: ContentProvider
 ) : PersistentStorage {
-
-    private val json by lazy {
-        Json {
-            ignoreUnknownKeys = true
-        }
-    }
 
     private val map: MutableMap<String, Any> by lazy {
         val content = try {
-            contentPorvider.provideContent()
+            contentProvider.provideContent()
         } catch (e: Throwable) {
             "{}"
         }
@@ -129,7 +136,7 @@ class ContentBasedPersistentStorage(
         map[key] = param
 
         val str = json.encodeToString(PreferencesInfo(map))
-        contentPorvider.saveContent(str)
+        contentProvider.saveContent(str)
     }
 
     override fun fetch(key: String): Any? {
