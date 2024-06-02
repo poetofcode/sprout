@@ -7,7 +7,12 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonDecoder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonEncoder
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import java.io.File
 import kotlin.reflect.KProperty
 
@@ -19,11 +24,7 @@ import kotlin.reflect.KProperty
     https://stackoverflow.com/questions/71988144/serializer-for-class-is-not-found-mark-the-class-as-serializable-or-prov
  */
 
-private val json by lazy {
-    Json {
-        ignoreUnknownKeys = true
-    }
-}
+private val json = JsonProvider.json
 
 @Serializable
 data class PreferencesInfo(
