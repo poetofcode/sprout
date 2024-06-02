@@ -2,6 +2,7 @@ package presentation.screens.profileScreen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import presentation.Tabs
 import presentation.navigation.BaseScreen
@@ -28,9 +32,10 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
 
     override val isMenuVisible: Boolean = true
 
+    private val state by lazy { viewModel.state.value }
+
     @Composable
     override fun Content() {
-        val state = viewModel.state.value
         val isAuth = state.profile != null
 
         MaterialTheme {
@@ -89,11 +94,18 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
     fun SignedProfile() {
         Box(Modifier.fillMaxSize()) {
             Column(Modifier.wrapContentSize().align(Alignment.Center)) {
-                Text(
-                    text = "Вы уже авторизованы",
-                    color = Color.Gray,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                    Text(
+                        text = "Вы авторизованы",
+                        color = Color.Gray,
+                    )
+                    Text(
+                        text = state.profile?.email.orEmpty(),
+                        color = Color.Black,
+                        textDecoration = TextDecoration.Underline,
+                        modifier = Modifier.padding(start = 6.dp),
+                    )
+                }
             }
         }
     }
