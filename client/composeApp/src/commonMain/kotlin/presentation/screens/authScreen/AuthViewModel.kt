@@ -12,13 +12,11 @@ import presentation.navigation.NavigateBackEffect
 
 class AuthViewModel(
     private val profileRepository: ProfileRepository,
-) : BaseViewModel() {
+) : BaseViewModel<AuthViewModel.State>() {
 
     data class State(
         val profile: Profile? = null
     )
-
-    val state = mutableStateOf(State())
 
     fun onBackClick() = viewModelScope.launch {
         // SharedMemory.effectFlow.emit(NavigateBackEffect)
@@ -28,6 +26,8 @@ class AuthViewModel(
     fun fetchProfile() {
         profileRepository.fetchProfileLocal()
     }
+
+    override fun onInitState(): State = State()
 
 }
 

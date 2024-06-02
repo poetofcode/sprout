@@ -12,22 +12,15 @@ import presentation.screens.authScreen.AuthScreen
 
 class ProfileViewModel(
     private val profileRepository: ProfileRepository
-) : BaseViewModel() {
+) : BaseViewModel<ProfileViewModel.State>() {
 
     data class State(
         val profile: Profile? = null
     )
 
-    val state = mutableStateOf(State())
-
     init {
         fetchProfile()
     }
-
-    private fun reduce(cb: State.() -> State) {
-        state.value = cb(state.value)
-    }
-
 
     private fun fetchProfile() {
         profileRepository.fetchProfileLocal()?.let { profile ->
@@ -50,6 +43,8 @@ class ProfileViewModel(
             )
         )
     }
+
+    override fun onInitState() : State = State()
 
     override fun obtainSharedEvent(event: SharedEvent) {
         when (event) {

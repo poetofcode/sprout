@@ -10,6 +10,9 @@ import kotlinx.coroutines.runBlocking
 import presentation.base.BaseViewModel
 import presentation.model.*
 
-class HomeTabViewModel : BaseViewModel() {
+class HomeTabViewModel : BaseViewModel<Unit>() {
+    override fun onInitState() {
+
+    }
 
 }

@@ -54,10 +54,10 @@ class ProfileViewModelFactory(val profileRepository: ProfileRepository)
 
 }
 
-class AuthViewModelFactory(val profileRepository: ProfileRepository)
+class AuthViewModelFactory(private val profileRepository: ProfileRepository)
     : ViewModelFactory<AuthViewModel> {
     override fun createViewModel(): AuthViewModel {
-        return AuthViewModel(/* profileRepository */)
+        return AuthViewModel(profileRepository)
     }
 
     override val vmTypeName: String

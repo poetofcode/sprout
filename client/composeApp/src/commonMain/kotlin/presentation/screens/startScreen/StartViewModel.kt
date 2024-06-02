@@ -13,14 +13,12 @@ import presentation.model.Resource
 
 class StartViewModel(
     val feedRepository: FeedRepository,
-) : BaseViewModel() {
+) : BaseViewModel<StartViewModel.State>() {
 
     data class State(
         val posts: List<PostModel> = emptyList(),
         val readyState: Resource<Unit> = IdleResource,
     )
-
-    val state = mutableStateOf(State())
 
     init {
         // fetchFeed()
@@ -58,5 +56,7 @@ class StartViewModel(
         }
 
     }
+
+    override fun onInitState(): State = State()
 
 }

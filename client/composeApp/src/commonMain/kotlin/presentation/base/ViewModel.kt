@@ -1,6 +1,8 @@
 package presentation.base
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
@@ -18,9 +20,10 @@ import presentation.navigation.SharedEvent
 import presentation.navigation.SharedMemory
 import presentation.viewModelCoroutineScopeProvider
 
-interface ViewModel
+interface ViewModel<S>
 
-abstract class BaseViewModel : ViewModel {
+
+abstract class BaseViewModel<S> : ViewModel<S> {
 
     val effectFlow: MutableSharedFlow<Effect> = MutableSharedFlow(
         extraBufferCapacity = 1
@@ -29,6 +32,16 @@ abstract class BaseViewModel : ViewModel {
     val viewModelScope: CoroutineScope by lazy {
         viewModelCoroutineScopeProvider.scope
     }
+
+    val state by lazy {
+        mutableStateOf(onInitState())
+    }
+
+    fun reduce(cb: S.() -> S) {
+        state.value = cb(state.value)
+    }
+
+    abstract fun onInitState() : S
 
     @Composable
     fun onViewReady() {
@@ -43,14 +56,16 @@ abstract class BaseViewModel : ViewModel {
 
 }
 
-class EmptyViewModel : BaseViewModel() {
+class EmptyViewModel : BaseViewModel<Unit>() {
     companion object {
         val INSTANCE = EmptyViewModel()
     }
+
+    override fun onInitState() = Unit
 }
 
 @Composable
-fun BaseViewModel.collectEffects() {
+fun BaseViewModel<*>.collectEffects() {
     val navigators = LocalNavigators.current
 
     effectFlow.onEach { effect ->
@@ -83,13 +98,13 @@ fun BaseViewModel.collectEffects() {
 
 }
 
-fun BaseViewModel.postEffect(effect: Effect) {
+fun BaseViewModel<*>.postEffect(effect: Effect) {
     viewModelScope.launch {
         effectFlow.emit(effect)
     }
 }
 
-fun BaseViewModel.postSharedEvent(event: SharedEvent) {
+fun BaseViewModel<*>.postSharedEvent(event: SharedEvent) {
     SharedMemory.eventFlow.tryEmit(event)
 }
 

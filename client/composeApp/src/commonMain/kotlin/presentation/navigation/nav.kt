@@ -17,7 +17,7 @@ import presentation.base.collectEffects
 
 typealias AnyScreen = BaseScreen<*>
 
-interface Screen<T : ViewModel> {
+interface Screen<T : ViewModel<*>> {
     val screenId: String
 
     val viewModel: T
@@ -26,7 +26,7 @@ interface Screen<T : ViewModel> {
     fun Content()
 }
 
-abstract class BaseScreen<T : ViewModel> : Screen<T> {
+abstract class BaseScreen<T : ViewModel<*>> : Screen<T> {
 
     protected lateinit var viewModelStore: ViewModelStore
 
@@ -57,7 +57,7 @@ abstract class BaseScreen<T : ViewModel> : Screen<T> {
 
         if (!isReady) {
             // Collecting effects by each viewModel
-            (viewModel as? BaseViewModel)?.run {
+            (viewModel as? BaseViewModel<*>)?.run {
                 onViewReady()
                 collectEffects()
             }
