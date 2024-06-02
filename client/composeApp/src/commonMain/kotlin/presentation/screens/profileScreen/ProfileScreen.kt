@@ -31,7 +31,7 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
 
     override val isMenuVisible: Boolean = true
 
-    private val state by lazy { viewModel.state.value }
+    val state by lazy { viewModel.state.value }
 
     @Composable
     override fun Content() {

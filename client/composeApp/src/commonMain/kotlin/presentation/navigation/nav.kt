@@ -26,7 +26,7 @@ interface Screen<T : ViewModel<*>> {
     fun Content()
 }
 
-abstract class BaseScreen<T : ViewModel<*>> : Screen<T> {
+abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
 
     protected lateinit var viewModelStore: ViewModelStore
 
