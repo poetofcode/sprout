@@ -103,22 +103,26 @@ class AuthScreen(
 
         val jsBridge = rememberWebViewJsBridge()
         LaunchedEffect(Unit) {
-            jsBridge.register(JsTokenHandler { tokenInfo ->
+            jsBridge.register(JsSaveTokenHandler { tokenInfo ->
                 viewModel.postSharedEvent(OnReceivedTokenSharedEvent(
                     tokenInfo.token,
                     tokenInfo.email,
                 ))
                 viewModel.onBackClick()
             })
+            viewModel.state.value.profile?.token?.let { token ->
+                jsBridge.register(JsGetTokenHandler(token))
+            }
         }
 
+        /*
         LaunchedEffect(state.loadingState) {
             if (state.loadingState is LoadingState.Finished) {
                 state.cookieManager.setCookie(
                     frontUrl,
                     Cookie(
                         name = "token",
-                        value = "1234567890",
+                        value = ,
                         domain = frontUrl,
                         expiresDate = 1896863778
                     )
@@ -133,6 +137,8 @@ class AuthScreen(
                 )
             }
         }
+
+         */
 
         var textFieldValue by remember(state.lastLoadedUrl) {
             mutableStateOf(state.lastLoadedUrl)

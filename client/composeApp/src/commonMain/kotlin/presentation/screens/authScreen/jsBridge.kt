@@ -18,7 +18,7 @@ private val json by lazy {
     }
 }
 
-class JsTokenHandler(
+class JsSaveTokenHandler(
     private val onTokenReceived: (JsTokenInfo) -> Unit
 ) : IJsMessageHandler {
 
@@ -38,3 +38,21 @@ class JsTokenHandler(
         onTokenReceived(decoded)
     }
 }
+
+class JsGetTokenHandler(
+    private val token: String
+) : IJsMessageHandler {
+
+    override fun methodName(): String {
+        return "getToken"
+    }
+
+    override fun handle(
+        message: JsMessage,
+        navigator: WebViewNavigator?,
+        callback: (String) -> Unit
+    ) {
+        callback("{ \"token\": \"$token\" }")
+    }
+}
+
