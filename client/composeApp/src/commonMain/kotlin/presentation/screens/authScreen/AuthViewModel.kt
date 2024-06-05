@@ -47,5 +47,9 @@ class AuthViewModel(
         reduce { copy(password = value) }
     }
 
+    fun onSubmitClick() {
+
+    }
+
 }
 

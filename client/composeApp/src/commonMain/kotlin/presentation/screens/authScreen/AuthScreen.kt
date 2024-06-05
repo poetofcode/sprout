@@ -90,7 +90,7 @@ class AuthScreen : BaseScreen<AuthViewModel>() {
 
                         Button(
                             onClick = {
-
+                                viewModel.onSubmitClick()
                             },
                             modifier = Modifier.padding(top = 16.dp).align(Alignment.CenterHorizontally),
                         ) {
