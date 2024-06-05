@@ -1,5 +1,7 @@
 package presentation.screens.authScreen
 
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextDecoration
 import data.repository.ProfileRepository
 import domain.model.Profile
 import kotlinx.coroutines.launch
@@ -17,7 +19,9 @@ class AuthViewModel(
     }
 
     data class State(
-        val profile: Profile? = null
+        val profile: Profile? = null,
+        val email: TextFieldValue = TextFieldValue(),
+        val password: TextFieldValue = TextFieldValue(),
     )
 
     fun onBackClick() = viewModelScope.launch {

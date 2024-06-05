@@ -4,8 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -28,7 +30,7 @@ import presentation.Tabs
 import presentation.navigation.BaseScreen
 import specific.BackHandler
 
-class AuthScreen: BaseScreen<AuthViewModel>() {
+class AuthScreen : BaseScreen<AuthViewModel>() {
     override val screenId: String
         get() = Tabs.PROFILE.key
 
@@ -36,6 +38,8 @@ class AuthScreen: BaseScreen<AuthViewModel>() {
         get() = viewModelStore.getViewModel<AuthViewModel>()
 
     override val isMenuVisible: Boolean = false
+
+    val state by lazy { viewModel.state.value }
 
     @Composable
     override fun Content() {
@@ -55,26 +59,26 @@ class AuthScreen: BaseScreen<AuthViewModel>() {
                     },
                 )
 
-                Row {
-//                    Box(modifier = Modifier.weight(1f)) {
-//                        OutlinedTextField(
-//                            value = textFieldValue ?: "",
-//                            onValueChange = { textFieldValue = it },
-//                            modifier = Modifier.fillMaxWidth(),
-//                            maxLines = 1,
-//                        )
-//                    }
-//
-//                    Button(
-//                        onClick = {
-//                            textFieldValue?.let {
-//                                // navigator.loadUrl(it)
-//                            }
-//                        },
-//                        modifier = Modifier.align(Alignment.CenterVertically),
-//                    ) {
-//                        Text("Go")
-//                    }
+                Box(modifier = Modifier.fillMaxSize()) {
+
+                    Column(modifier = Modifier.wrapContentSize().align(Alignment.Center)) {
+                        OutlinedTextField(
+                            value = state.email,
+                            onValueChange = { /* textFieldValue = it  */ },
+                            modifier = Modifier.fillMaxWidth(),
+                            maxLines = 1,
+                        )
+
+                        Button(
+                            onClick = {
+                            },
+                            modifier = Modifier, //.align(Alignment.CenterVertically),
+                        ) {
+                            Text("Войти")
+                        }
+
+                    }
+
                 }
             }
         }
