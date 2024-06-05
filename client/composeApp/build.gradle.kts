@@ -40,7 +40,7 @@ kotlin {
             implementation(libs.ktor.client.json)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.client.auth)
-            implementation("io.github.kevinnzou:compose-webview-multiplatform:1.8.8")
+            implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.2")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

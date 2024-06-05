@@ -95,7 +95,9 @@ class FileContentProvider(
         val cachePath = File("./", relativePath)
         cachePath.mkdirs()
         val stream = File("$cachePath/$fileName").bufferedReader()
-        return stream.use { it.readText() }
+        return try { stream.use { it.readText() } } catch (e: Throwable) {
+            String()
+        }
     }
 
     override fun saveContent(content: String) {

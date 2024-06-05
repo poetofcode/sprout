@@ -5,8 +5,8 @@ function initRoutes(router, context) {
 	router.use(async function (req, res, next) {
 		const token = req.cookies.token;
 
-		console.log("Cookies:");
-		console.log(req.cookies);
+		console.log("Headers:");
+		console.log(req.headers);
 
 		if (!token && req.path === '/login') {
 			return next();

@@ -27,13 +27,13 @@ class ProfileStorageImpl(
     }
 
     override fun load(): Profile? {
-        try {
+        return try {
             val fileContent = contentProvider.provideContent()
             val profile = json.decodeFromString<Profile>(fileContent)
-            return profile
+            profile
         } catch (e: Throwable) {
-            e.printStackTrace()
-            return null
+            // e.printStackTrace()
+            null
         }
     }
 

@@ -20,10 +20,12 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,13 +35,17 @@ import com.multiplatform.webview.cookie.Cookie
 import com.multiplatform.webview.jsbridge.rememberWebViewJsBridge
 import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.WebViewState
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
+import io.ktor.http.headers
+import kotlinx.coroutines.flow.filter
 import presentation.Tabs
 import presentation.base.postSharedEvent
 import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.navigation.BaseScreen
 import specific.BackHandler
+import java.util.TimeZone
 
 /*
     "http://192.168.0.107:3000/front"
@@ -72,7 +78,17 @@ class AuthScreen(
 
         BackHandler { onBackClick() }
 
-        val state = rememberWebViewState(url = frontUrl)
+        val state = rememberWebViewState(
+            url = frontUrl,
+            additionalHttpHeaders = mapOf(
+                "Authorization" to "12345"
+            )
+        )
+
+        var cookieBeforeSize = remember { mutableStateOf(0) }
+        var cookieAfterAddedSize = remember { mutableStateOf(0) }
+        cookieSample("192.168.0.108", state, cookieBeforeSize, cookieAfterAddedSize)
+
         LaunchedEffect(Unit) {
             state.webSettings.apply {
                 isJavaScriptEnabled = true
@@ -104,10 +120,12 @@ class AuthScreen(
         val jsBridge = rememberWebViewJsBridge()
         LaunchedEffect(Unit) {
             jsBridge.register(JsSaveTokenHandler { tokenInfo ->
-                viewModel.postSharedEvent(OnReceivedTokenSharedEvent(
-                    tokenInfo.token,
-                    tokenInfo.email,
-                ))
+                viewModel.postSharedEvent(
+                    OnReceivedTokenSharedEvent(
+                        tokenInfo.token,
+                        tokenInfo.email,
+                    )
+                )
                 viewModel.onBackClick()
             })
             viewModel.state.value.profile?.token?.let { token ->
@@ -143,6 +161,7 @@ class AuthScreen(
         var textFieldValue by remember(state.lastLoadedUrl) {
             mutableStateOf(state.lastLoadedUrl)
         }
+
         MaterialTheme {
             Column {
                 TopAppBar(
@@ -181,7 +200,7 @@ class AuthScreen(
                     Button(
                         onClick = {
                             textFieldValue?.let {
-                                navigator.loadUrl(it)
+                                // navigator.loadUrl(it)
                             }
                         },
                         modifier = Modifier.align(Alignment.CenterVertically),
@@ -208,4 +227,71 @@ class AuthScreen(
         }
     }
 
+}
+
+@Composable
+internal fun cookieSample(
+    domain: String,
+    state: WebViewState,
+    cookieBefore: MutableState<Int>,
+    cookieAfter: MutableState<Int>
+) {
+    LaunchedEffect(state) {
+        snapshotFlow { state.loadingState }
+            .filter { it is LoadingState.Finished }
+            .collect {
+                // val tokenManagerImpl = TokenManagerImpl()
+                // val domain = "https://abc.com"
+                // val shortDomain = "abc.com"
+//                val parts =
+//                    tokenManagerImpl.cookieLoggedIn?.split("=") // Sépare la chaîne sur le signe égal
+
+                // val systemTimeZone = TimeZone.currentSystemDefault()
+                // Obtenir la date actuelle dans la zone horaire du système
+                // val today: LocalDate = Clock.System.todayIn(systemTimeZone)
+                // val localDate = today.plus(DatePeriod(days = 30))
+                //val localDateTime =
+                //    LocalDateTime(localDate.year, localDate.monthNumber, localDate.dayOfMonth, 0, 0)
+                // Convertir LocalDateTime en Instant
+                // val instant = localDateTime.toInstant(TimeZone.UTC)
+                println(
+                    "cookie before is: ${state.cookieManager.getCookies(domain).size}"
+                )
+                cookieBefore.value = state.cookieManager.getCookies(domain).size
+//                parts?.let {
+//                    if (parts.size >= 2) { // Assurez-vous qu'il y a au moins 2 parties
+//                        val name = parts[0] // La partie avant le signe égal
+//                        val value = parts[1] // La partie après le signe égal
+
+                state.cookieManager.setCookie(
+                    domain,
+                    Cookie(
+                        name = "token",
+                        value = "12345",
+//                        domain = domain,
+                        path = "/"
+                    ),
+                )
+
+//                    }
+
+
+            }
+
+        state.cookieManager.setCookie(
+            domain,
+            Cookie(
+                name = "token",
+                value = "12345",
+//                domain = domain,
+                path = "/"
+            ),
+        )
+
+        println(
+            "cookie add size: ${state.cookieManager.getCookies(domain).size}"
+        )
+        cookieAfter.value = state.cookieManager.getCookies(domain).size
+
+    }
 }
