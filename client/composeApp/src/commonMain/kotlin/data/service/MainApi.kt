@@ -16,6 +16,11 @@ class MainApi(
 //        httpClient.get("/site/fresh/feed".buildEndpoint(baseUrl))
 //    }
 
+    suspend fun createSession(requestBody: CreateSessionRequestBody) : ResultResponse<CreateSessionResponse> = parseRequestResult<CreateSessionResponse> {
+        httpClient.post("/api/v1/sessions".buildEndpoint(baseUrl)) {
+            setBody(Unit)
+        }
+    }
 
     private suspend inline fun <reified T : Any> parseRequestResult(doRequest: () -> HttpResponse): ResultResponse<T> {
         var response: HttpResponse? = null
