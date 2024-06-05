@@ -74,6 +74,7 @@ class AuthScreen : BaseScreen<AuthViewModel>() {
                                 viewModel.onEmailChanged(it)
                             },
                             modifier = Modifier.fillMaxWidth(),
+                            label = { Text("E-mail") },
                             maxLines = 1,
                         )
 
@@ -83,6 +84,7 @@ class AuthScreen : BaseScreen<AuthViewModel>() {
                                 viewModel.onPasswordChanged(it)
                             },
                             modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                            label = { Text("Пароль") },
                             maxLines = 1,
                         )
 
