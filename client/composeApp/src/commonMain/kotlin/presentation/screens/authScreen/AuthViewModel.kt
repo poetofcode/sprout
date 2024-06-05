@@ -39,5 +39,9 @@ class AuthViewModel(
 
     override fun onInitState(): State = State()
 
+    fun onEmailChanged(value: TextFieldValue) {
+        reduce { copy(email = value) }
+    }
+
 }
 

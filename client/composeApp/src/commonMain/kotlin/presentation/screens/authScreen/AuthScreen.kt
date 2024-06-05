@@ -39,7 +39,7 @@ class AuthScreen : BaseScreen<AuthViewModel>() {
 
     override val isMenuVisible: Boolean = false
 
-    val state by lazy { viewModel.state.value }
+    val state get() = viewModel.state.value
 
     @Composable
     override fun Content() {
@@ -60,17 +60,19 @@ class AuthScreen : BaseScreen<AuthViewModel>() {
                 )
 
                 Box(modifier = Modifier.fillMaxSize()) {
-
                     Column(modifier = Modifier.wrapContentSize().align(Alignment.Center)) {
                         OutlinedTextField(
-                            value = state.email,
-                            onValueChange = { /* textFieldValue = it  */ },
+                            value = viewModel.state.value.email,
+                            onValueChange = {
+                                viewModel.onEmailChanged(it)
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             maxLines = 1,
                         )
 
                         Button(
                             onClick = {
+
                             },
                             modifier = Modifier, //.align(Alignment.CenterVertically),
                         ) {
