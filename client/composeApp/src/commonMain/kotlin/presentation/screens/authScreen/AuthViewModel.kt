@@ -7,6 +7,8 @@ import domain.model.Profile
 import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
+import presentation.base.postSharedEvent
+import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.navigation.NavigateBackEffect
 
 
@@ -48,7 +50,19 @@ class AuthViewModel(
     }
 
     fun onSubmitClick() {
-
+        viewModelScope.launch {
+            try {
+                val profile = profileRepository.createSession(
+                    email = state.value.email.text,
+                    password = state.value.password.text,
+                )
+                postSharedEvent(OnReceivedTokenSharedEvent(profile.token, profile.email))
+                onBackClick()
+            } catch (e: Throwable) {
+                // state.value = state.value.copy(readyState = ExceptionResource(e))
+                e.printStackTrace()
+            }
+        }
     }
 
 }

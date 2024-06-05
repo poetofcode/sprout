@@ -6,6 +6,8 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 
 class MainApi(
     val httpClient: HttpClient,
@@ -18,7 +20,8 @@ class MainApi(
 
     suspend fun createSession(requestBody: CreateSessionRequestBody) : ResultResponse<CreateSessionResponse> = parseRequestResult<CreateSessionResponse> {
         httpClient.post("/api/v1/sessions".buildEndpoint(baseUrl)) {
-            setBody(Unit)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
     }
 
