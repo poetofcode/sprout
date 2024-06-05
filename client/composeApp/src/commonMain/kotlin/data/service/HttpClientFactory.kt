@@ -19,15 +19,14 @@ import kotlinx.serialization.json.Json
 
 class HttpClientFactory(
     val baseUrl: String,
-    val apiKey: String,
 ) {
     
     fun createClient() : HttpClient {
         val bearerTokenStorage = mutableListOf<BearerTokens>()
-        
-        fun calculateToken(path: String, remoteToken: String, salt: String) : String {
-            return (path.toSha1() + remoteToken.toSha1() + salt.toSha1()).toSha1()
-        }
+
+//        fun calculateToken(path: String, remoteToken: String, salt: String) : String {
+//            return (path.toSha1() + remoteToken.toSha1() + salt.toSha1()).toSha1()
+//        }
 
         bearerTokenStorage.add(BearerTokens("", ""))
 
@@ -55,23 +54,23 @@ class HttpClientFactory(
                         bearerTokenStorage.last()
                     }
 
-                    refreshTokens { // this: RefreshTokensParams
-                        try {
-                            val tokenResponse: DataResponse<TokenResponse> = client.post("/site/token".buildEndpoint(baseUrl)).body()
-                            val remoteToken : String = tokenResponse.result.token!!
-
-                            val newToken : String = run {
-                                val path = response.request.url.encodedPath
-                                val t = calculateToken(path, remoteToken, apiKey)
-                                t
-                            }
-                            bearerTokenStorage.add(BearerTokens(newToken, remoteToken))
-                        } catch (e: Throwable) {
-                            e.printStackTrace()
-                        }
-
-                        bearerTokenStorage.last()
-                    }
+//                    refreshTokens { // this: RefreshTokensParams
+//                        try {
+//                            val tokenResponse: DataResponse<TokenResponse> = client.post("/site/token".buildEndpoint(baseUrl)).body()
+//                            val remoteToken : String = tokenResponse.result.token!!
+//
+//                            val newToken : String = run {
+//                                val path = response.request.url.encodedPath
+//                                val t = calculateToken(path, remoteToken, apiKey)
+//                                t
+//                            }
+//                            bearerTokenStorage.add(BearerTokens(newToken, remoteToken))
+//                        } catch (e: Throwable) {
+//                            e.printStackTrace()
+//                        }
+//
+//                        bearerTokenStorage.last()
+//                    }
                 }
             }
         }

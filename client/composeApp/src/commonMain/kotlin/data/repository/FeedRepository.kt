@@ -1,6 +1,6 @@
 package data.repository
 
-import data.service.FreshApi
+import data.service.MainApi
 import domain.model.PostModel
 
 interface FeedRepository {
@@ -9,7 +9,8 @@ interface FeedRepository {
 
 }
 
-class FeedRepositoryImpl(val api: FreshApi) : FeedRepository {
+/*
+class FeedRepositoryImpl(val api: MainApi) : FeedRepository {
 
     override suspend fun fetchFeed(): List<PostModel> {
         return api.fetchFeed()
@@ -27,3 +28,5 @@ class FeedRepositoryImpl(val api: FreshApi) : FeedRepository {
     }
 
 }
+
+ */

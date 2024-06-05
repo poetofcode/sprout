@@ -6,7 +6,7 @@ interface NetworkingFactory {
 
     fun createHttpClient() : HttpClient
 
-    fun createApi() : FreshApi
+    fun createApi() : MainApi
 
 }
 
@@ -15,12 +15,11 @@ class NetworkingFactoryImpl : NetworkingFactory {
     override fun createHttpClient(): HttpClient {
         return HttpClientFactory(
             baseUrl = BASE_URL,
-            apiKey = API_KEY
         ).createClient()
     }
 
-    override fun createApi(): FreshApi {
-        return FreshApi(
+    override fun createApi(): MainApi {
+        return MainApi(
             httpClient = createHttpClient(),
             baseUrl = BASE_URL
         )
@@ -28,8 +27,7 @@ class NetworkingFactoryImpl : NetworkingFactory {
 
     private companion object {
         // TODO вынести в buildConfig
-        const val BASE_URL = "http://91.215.153.157:8080"
-        const val API_KEY = "secret-api-key"
+        const val BASE_URL = "http://192.168.0.108:3000"
     }
 
 }

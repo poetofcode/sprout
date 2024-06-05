@@ -7,14 +7,14 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 
-class FreshApi(
+class MainApi(
     val httpClient: HttpClient,
     val baseUrl: String
 ) {
 
-    suspend fun fetchFeed(): ResultResponse<FeedResponse> = parseRequestResult<FeedResponse> {
-        httpClient.get("/site/fresh/feed".buildEndpoint(baseUrl))
-    }
+//    suspend fun fetchFeed(): ResultResponse<FeedResponse> = parseRequestResult<FeedResponse> {
+//        httpClient.get("/site/fresh/feed".buildEndpoint(baseUrl))
+//    }
 
 
     private suspend inline fun <reified T : Any> parseRequestResult(doRequest: () -> HttpResponse): ResultResponse<T> {

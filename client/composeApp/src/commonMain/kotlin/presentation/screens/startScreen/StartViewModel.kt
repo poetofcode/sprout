@@ -12,7 +12,7 @@ import presentation.model.LoadingResource
 import presentation.model.Resource
 
 class StartViewModel(
-    val feedRepository: FeedRepository,
+    /* val feedRepository: FeedRepository, */
 ) : BaseViewModel<StartViewModel.State>() {
 
     data class State(
@@ -24,6 +24,7 @@ class StartViewModel(
         // fetchFeed()
     }
 
+    /*
     fun fetchFeed() {
         viewModelScope.launch {
             try {
@@ -38,6 +39,8 @@ class StartViewModel(
             }
         }
     }
+
+     */
 
     fun updatePostFavorite(id: String, isFavorite: Boolean) {
         var updatedPost: PostModel? = null
