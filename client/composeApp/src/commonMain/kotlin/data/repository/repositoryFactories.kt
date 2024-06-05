@@ -4,10 +4,10 @@ import data.service.MainApi
 import data.utils.ProfileStorage
 
 interface RepositoryFactory {
-    
+
 //    fun createFeedRepository() : FeedRepository
 
-    fun createProfileRepository() : ProfileRepository
+    fun createProfileRepository(): ProfileRepository
 
 }
 
@@ -21,7 +21,10 @@ class RepositoryFactoryImpl(
 //    }
 
     override fun createProfileRepository(): ProfileRepository {
-        return ProfileRepositoryImpl(profileStorage)
+        return ProfileRepositoryImpl(
+            api = api,
+            storage = profileStorage
+        )
     }
 
 }
