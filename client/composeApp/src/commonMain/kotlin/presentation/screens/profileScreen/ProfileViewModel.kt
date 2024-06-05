@@ -31,15 +31,7 @@ class ProfileViewModel(
     fun onSignInToAccountButtonClick() {
         postEffect(
             NavigateEffect(
-                AuthScreen("http://192.168.0.108:3000/front/login"),
-            )
-        )
-    }
-
-    fun onUserEmailClick() {
-        postEffect(
-            NavigateEffect(
-                AuthScreen("http://192.168.0.108:3000/front", useToken = true),
+                AuthScreen(),
             )
         )
     }

@@ -103,9 +103,7 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                         text = state.profile?.email.orEmpty(),
                         color = Color.Black,
                         textDecoration = TextDecoration.Underline,
-                        modifier = Modifier.padding(start = 6.dp).clickable {
-                            viewModel.onUserEmailClick()
-                        },
+                        modifier = Modifier.padding(start = 6.dp),
                     )
                 }
             }
