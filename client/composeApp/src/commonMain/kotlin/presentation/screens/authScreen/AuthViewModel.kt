@@ -43,5 +43,9 @@ class AuthViewModel(
         reduce { copy(email = value) }
     }
 
+    fun onPasswordChanged(value: TextFieldValue) {
+        reduce { copy(password = value) }
+    }
+
 }
 

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
@@ -60,7 +62,12 @@ class AuthScreen : BaseScreen<AuthViewModel>() {
                 )
 
                 Box(modifier = Modifier.fillMaxSize()) {
-                    Column(modifier = Modifier.wrapContentSize().align(Alignment.Center)) {
+                    Column(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .widthIn(0.dp, 300.dp)
+                            .align(Alignment.Center)
+                    ) {
                         OutlinedTextField(
                             value = viewModel.state.value.email,
                             onValueChange = {
@@ -70,11 +77,20 @@ class AuthScreen : BaseScreen<AuthViewModel>() {
                             maxLines = 1,
                         )
 
+                        OutlinedTextField(
+                            value = viewModel.state.value.password,
+                            onValueChange = {
+                                viewModel.onPasswordChanged(it)
+                            },
+                            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                            maxLines = 1,
+                        )
+
                         Button(
                             onClick = {
 
                             },
-                            modifier = Modifier, //.align(Alignment.CenterVertically),
+                            modifier = Modifier.padding(top = 16.dp).align(Alignment.CenterHorizontally),
                         ) {
                             Text("Войти")
                         }
