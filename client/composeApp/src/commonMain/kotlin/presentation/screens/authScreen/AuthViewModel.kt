@@ -8,6 +8,11 @@ import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
 import presentation.base.postSharedEvent
+import presentation.model.CompleteResource
+import presentation.model.ExceptionResource
+import presentation.model.IdleResource
+import presentation.model.LoadingResource
+import presentation.model.Resource
 import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.navigation.NavigateBackEffect
 
@@ -24,6 +29,7 @@ class AuthViewModel(
         val profile: Profile? = null,
         val email: TextFieldValue = TextFieldValue(),
         val password: TextFieldValue = TextFieldValue(),
+        val readyState: Resource<Unit> = IdleResource,
     )
 
     fun onBackClick() = viewModelScope.launch {
@@ -52,14 +58,16 @@ class AuthViewModel(
     fun onSubmitClick() {
         viewModelScope.launch {
             try {
+                reduce { copy(readyState = LoadingResource) }
                 val profile = profileRepository.createSession(
                     email = state.value.email.text,
                     password = state.value.password.text,
                 )
+                reduce { copy(readyState = CompleteResource(Unit)) }
                 postSharedEvent(OnReceivedTokenSharedEvent(profile.token, profile.email))
                 onBackClick()
             } catch (e: Throwable) {
-                // state.value = state.value.copy(readyState = ExceptionResource(e))
+                reduce { copy(readyState = ExceptionResource(e)) }
                 e.printStackTrace()
             }
         }
