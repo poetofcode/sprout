@@ -1,5 +1,6 @@
 package presentation.navigation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -85,7 +86,10 @@ abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
     @Composable
     fun Snack(modifier: Modifier = Modifier) {
         val state = snackState.value
-        if (state.isVisible) {
+
+        AnimatedVisibility(
+            state.isVisible
+        ) {
             Box(
                 modifier = modifier
                     .padding(20.dp)
