@@ -104,8 +104,6 @@ abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
 
     fun showSnack(state: SnackState) {
         snackState.value = state
-
-        println("mylog Show snack: ${state}")
     }
 
 }

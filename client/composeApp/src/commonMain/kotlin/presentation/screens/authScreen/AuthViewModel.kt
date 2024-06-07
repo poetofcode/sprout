@@ -75,7 +75,6 @@ class AuthViewModel(
     }
 
     fun onSubmitError(exception: Throwable) {
-        println("mylog onSubmitError: ${exception}")
         postSideEffect(ShowSnackErrorEffect(exception.message ?: "Unknown error"))
     }
 
