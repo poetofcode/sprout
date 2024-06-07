@@ -15,6 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -23,6 +27,7 @@ import presentation.base.BaseViewModel
 import presentation.base.ViewModel
 import presentation.base.ViewModelStore
 import presentation.base.collectEffects
+import java.util.concurrent.Delayed
 
 
 interface Screen<T : ViewModel<*>> {
@@ -47,6 +52,7 @@ abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
     protected var isReady = false
 
     private val snackState = mutableStateOf<SnackState>(SnackState())
+    private var snackHidingJob: Job? = null
 
     @Composable
     protected fun setMainMenuVisibility() {
@@ -107,8 +113,21 @@ abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
         }
     }
 
-    fun showSnack(state: SnackState) {
+    fun showSnack(state: SnackState, scope: CoroutineScope? = null) {
         snackState.value = state
+        scope?.apply {
+            if (!state.delayed) {
+                snackHidingJob?.cancel()
+                return@apply
+            }
+            snackHidingJob?.cancel()
+            snackHidingJob = launch {
+                delay(3000)
+                snackState.value = snackState.value.copy(
+                    isVisible = false
+                )
+            }
+        }
     }
 
 }
@@ -121,10 +140,12 @@ fun BaseScreen<*>.collectSideEffects() {
         when (effect) {
             is ShowSnackErrorEffect -> {
                 showSnack(
-                    SnackState(
+                    state = SnackState(
                         text = effect.text,
                         isVisible = true,
-                    )
+                        delayed = true
+                    ),
+                    scope = scope
                 )
             }
         }
@@ -137,5 +158,6 @@ fun BaseScreen<*>.collectSideEffects() {
 
 data class SnackState(
     val text: String = "",
-    val isVisible: Boolean = false
+    val isVisible: Boolean = false,
+    val delayed: Boolean = false,
 )
