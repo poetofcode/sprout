@@ -88,10 +88,11 @@ abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
         val state = snackState.value
 
         AnimatedVisibility(
-            state.isVisible
+            modifier = modifier,
+            visible = state.isVisible
         ) {
             Box(
-                modifier = modifier
+                modifier = Modifier
                     .padding(20.dp)
                     .fillMaxWidth()
                     .height(50.dp)
