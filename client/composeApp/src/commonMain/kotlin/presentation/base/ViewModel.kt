@@ -94,7 +94,9 @@ fun BaseViewModel<*>.collectEffects() {
 
             }
 
-            is ShowSnackErrorEffect -> TODO()
+            is ShowSnackErrorEffect -> {
+                
+            }
         }
 
     }.launchIn(viewModelScope)

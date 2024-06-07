@@ -25,7 +25,8 @@ class MainActivity : ComponentActivity() {
     val networkingFactory: NetworkingFactory = NetworkingFactoryImpl()
 
     val repositoryFactory = RepositoryFactoryImpl(
-        api = networkingFactory.createApi()
+        api = networkingFactory.createApi(),
+        profileStorage = TODO()
     )
 
     private var backHandleCallback: (() -> Boolean)? = null

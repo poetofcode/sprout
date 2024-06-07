@@ -46,6 +46,7 @@ class AuthScreen : BaseScreen<AuthViewModel>() {
         BackHandler { viewModel.onBackClick(); true }
 
         MaterialTheme {
+
             Column {
                 TopAppBar(
                     title = { Text(text = "Вход в аккаунт") },
