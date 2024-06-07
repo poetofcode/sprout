@@ -15,6 +15,7 @@ import presentation.model.LoadingResource
 import presentation.model.Resource
 import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.navigation.NavigateBackEffect
+import presentation.navigation.ShowSnackErrorEffect
 
 
 class AuthViewModel(
@@ -71,6 +72,10 @@ class AuthViewModel(
                 e.printStackTrace()
             }
         }
+    }
+
+    fun onSubmitError(exception: Throwable) {
+        postEffect(ShowSnackErrorEffect(exception.message ?: "Unknown error"))
     }
 
 }

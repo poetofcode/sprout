@@ -13,6 +13,10 @@ data class NavigateEffect(
 
 data object NavigateBackEffect : Effect
 
+data class ShowSnackErrorEffect(
+    val text: String,
+) : Effect
+
 data class SetBackHandlerEffect(
     val cb: () -> Boolean
 ) : Effect

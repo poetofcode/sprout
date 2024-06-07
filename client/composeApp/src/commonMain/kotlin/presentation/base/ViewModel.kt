@@ -18,6 +18,7 @@ import presentation.navigation.NavigatorTag
 import presentation.navigation.SetBackHandlerEffect
 import presentation.navigation.SharedEvent
 import presentation.navigation.SharedMemory
+import presentation.navigation.ShowSnackErrorEffect
 import presentation.viewModelCoroutineScopeProvider
 
 interface ViewModel<S>
@@ -92,6 +93,8 @@ fun BaseViewModel<*>.collectEffects() {
             is SetBackHandlerEffect -> {
 
             }
+
+            is ShowSnackErrorEffect -> TODO()
         }
 
     }.launchIn(viewModelScope)
