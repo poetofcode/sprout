@@ -1,12 +1,21 @@
 package presentation.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import presentation.LocalMainAppState
 import presentation.base.BaseViewModel
@@ -65,9 +74,28 @@ abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
             isReady = true
         }
 
-        Content()
+        Box(modifier = Modifier.fillMaxSize()) {
+            Content()
+            Snack(modifier = Modifier.align(Alignment.BottomCenter))
+        }
     }
 
+    @Composable
+    fun Snack(modifier: Modifier = Modifier) {
+        Box(
+            modifier = modifier
+                .padding(20.dp)
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(Color.Red)
+        ) {
+            Text(
+                text = "Ошибка в приложении", color = Color.White, modifier = Modifier.align(
+                    Alignment.Center
+                )
+            )
+        }
+    }
 
 }
 
