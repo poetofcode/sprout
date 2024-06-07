@@ -1,7 +1,6 @@
 package presentation.base
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +17,7 @@ import presentation.navigation.NavigatorTag
 import presentation.navigation.SetBackHandlerEffect
 import presentation.navigation.SharedEvent
 import presentation.navigation.SharedMemory
-import presentation.navigation.ShowSnackErrorEffect
+import presentation.navigation.SideEffect
 import presentation.viewModelCoroutineScopeProvider
 
 interface ViewModel<S>
@@ -28,6 +27,10 @@ abstract class BaseViewModel<S> : ViewModel<S> {
 
     val effectFlow: MutableSharedFlow<Effect> = MutableSharedFlow(
         extraBufferCapacity = 1
+    )
+
+    val sideEffectFlow = MutableSharedFlow<SideEffect>(
+        extraBufferCapacity = 1,
     )
 
     val viewModelScope: CoroutineScope by lazy {
@@ -42,7 +45,7 @@ abstract class BaseViewModel<S> : ViewModel<S> {
         state.value = cb(state.value)
     }
 
-    abstract fun onInitState() : S
+    abstract fun onInitState(): S
 
     @Composable
     fun onViewReady() {
@@ -93,10 +96,6 @@ fun BaseViewModel<*>.collectEffects() {
             is SetBackHandlerEffect -> {
 
             }
-
-            is ShowSnackErrorEffect -> {
-                
-            }
         }
 
     }.launchIn(viewModelScope)
@@ -108,12 +107,17 @@ fun BaseViewModel<*>.postEffect(effect: Effect) {
         effectFlow.emit(effect)
     }
 }
+fun BaseViewModel<*>.postSideEffect(effect: SideEffect) {
+    viewModelScope.launch {
+        sideEffectFlow.emit(effect)
+    }
+}
 
 fun BaseViewModel<*>.postSharedEvent(event: SharedEvent) {
     SharedMemory.eventFlow.tryEmit(event)
 }
 
-fun findNavigatorInfoByTag(navigators: List<NavigatorInfo>, tag: NavigatorTag) : NavigatorInfo {
+fun findNavigatorInfoByTag(navigators: List<NavigatorInfo>, tag: NavigatorTag): NavigatorInfo {
     val navigatorInfo = if (tag != NavigatorTag.CURRENT) {
         val navigatorType = navigators.firstOrNull { it.tag == tag }
         checkNotNull(navigatorType) { logErrorNotFound(tag.name) }

@@ -1,13 +1,13 @@
 package presentation.screens.authScreen
 
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextDecoration
 import data.repository.ProfileRepository
 import domain.model.Profile
 import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
 import presentation.base.postSharedEvent
+import presentation.base.postSideEffect
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
@@ -75,7 +75,8 @@ class AuthViewModel(
     }
 
     fun onSubmitError(exception: Throwable) {
-        postEffect(ShowSnackErrorEffect(exception.message ?: "Unknown error"))
+        println("mylog onSubmitError: ${exception}")
+        postSideEffect(ShowSnackErrorEffect(exception.message ?: "Unknown error"))
     }
 
 }

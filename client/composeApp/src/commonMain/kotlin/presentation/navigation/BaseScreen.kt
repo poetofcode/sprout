@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import presentation.LocalMainAppState
 import presentation.base.BaseViewModel
@@ -42,6 +45,8 @@ abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
 
     protected var isReady = false
 
+    private val snackState = mutableStateOf<SnackState>(SnackState())
+
     @Composable
     protected fun setMainMenuVisibility() {
         val appState = LocalMainAppState.current
@@ -65,6 +70,7 @@ abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
             (viewModel as? BaseViewModel<*>)?.run {
                 onViewReady()
                 collectEffects()
+                collectSideEffects()
             }
 
             isReady = true
@@ -78,19 +84,55 @@ abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
 
     @Composable
     fun Snack(modifier: Modifier = Modifier) {
-        Box(
-            modifier = modifier
-                .padding(20.dp)
-                .fillMaxWidth()
-                .height(50.dp)
-                .background(Color.Red)
-        ) {
-            Text(
-                text = "Ошибка в приложении", color = Color.White, modifier = Modifier.align(
-                    Alignment.Center
+        val state = snackState.value
+        if (state.isVisible) {
+            Box(
+                modifier = modifier
+                    .padding(20.dp)
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(Color.Red)
+            ) {
+                Text(
+                    text = state.text, color = Color.White, modifier = Modifier.align(
+                        Alignment.Center
+                    )
                 )
-            )
+            }
         }
     }
 
+    fun showSnack(state: SnackState) {
+        snackState.value = state
+
+        println("mylog Show snack: ${state}")
+    }
+
 }
+
+@Composable
+fun BaseScreen<*>.collectSideEffects() {
+    val scope = rememberCoroutineScope()
+
+    viewModel.sideEffectFlow.onEach { effect ->
+        when (effect) {
+            is ShowSnackErrorEffect -> {
+                showSnack(
+                    SnackState(
+                        text = effect.text,
+                        isVisible = true,
+                    )
+                )
+            }
+        }
+    }.launchIn(scope)
+}
+
+// TODO предусмотреть абстрактный (или пустой открытый) метод для
+//  обработки кастомный side-эффектов
+
+
+data class SnackState(
+    val text: String = "",
+    val isVisible: Boolean = false
+)
