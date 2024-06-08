@@ -1,5 +1,6 @@
 package presentation.navigation
 
+import androidx.compose.runtime.Composable
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
@@ -29,6 +30,11 @@ data class ShowSnackErrorEffect(
     val text: String,
 ) : SideEffect
 
+data class ShowModalBottomSheetEffect(
+    val content: @Composable () -> Unit
+) : SideEffect
+
+object HideBottomSheetEffect : SideEffect
 
 /* SHARED EVENTS */
 

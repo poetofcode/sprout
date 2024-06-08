@@ -7,19 +7,24 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +32,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.skydoves.flexible.bottomsheet.material.FlexibleBottomSheet
+import com.skydoves.flexible.core.FlexibleSheetSize
+import com.skydoves.flexible.core.FlexibleSheetValue
+import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -50,7 +60,17 @@ const val HORIZONTAL_PANEL_SIZE = 60
 const val HORIZONTAL_ICON_SIZE = 60
 
 data class MainAppState(
-    val isMenuVisible: MutableState<Boolean> = mutableStateOf(false)
+    val isMenuVisible: MutableState<Boolean> = mutableStateOf(false),
+    val bottomSheetState: MutableState<BottomSheetState> = mutableStateOf(BottomSheetState())
+) {
+    fun reduceBottomSheetState(cb: BottomSheetState.() -> BottomSheetState) {
+        bottomSheetState.value = cb(bottomSheetState.value)
+    }
+}
+
+data class BottomSheetState(
+    val isVisible: Boolean = false,
+    val content: @Composable () -> Unit = {},
 )
 
 val LocalMainAppState = staticCompositionLocalOf<MainAppState> {
@@ -113,6 +133,8 @@ fun App(config: Config) {
                     tag = NavigatorTag.ROOT,
                 )
             }
+
+            ModalBottomSheet()
 
             LaunchedEffect(selectedTab.value) {
                 navState.moveToFront(selectedTab.value.key)
@@ -182,6 +204,50 @@ fun AppLayout(
 
             Box(Modifier.weight(1f)) {
                 content()
+            }
+        }
+    }
+}
+
+@Composable
+fun ModalBottomSheet() {
+    val localMainAppState = LocalMainAppState.current
+    val scope = rememberCoroutineScope()
+    val sheetState = rememberFlexibleBottomSheetState(
+        flexibleSheetSize = FlexibleSheetSize(fullyExpanded = 0.9f),
+        isModal = true,
+        skipSlightlyExpanded = false,
+    )
+
+    println("mylog BottomSheet isVisible: ${localMainAppState.bottomSheetState.value.isVisible}")
+
+    if (localMainAppState.bottomSheetState.value.isVisible) {
+        FlexibleBottomSheet(
+            modifier = Modifier.padding(), //Modifier.fillMaxWidth().padding(end = 50.dp),
+            sheetState = sheetState,
+            containerColor = Color.White,
+            scrimColor = Color.Black.copy(alpha = 0.3f),
+            onDismissRequest = {
+                localMainAppState.bottomSheetState.value =
+                    localMainAppState.bottomSheetState.value.copy(
+                        isVisible = false
+                    )
+            },
+            windowInsets = WindowInsets(0, 0, 0, 0)
+        ) {
+            Button(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                onClick = {
+                    scope.launch {
+                        when (sheetState.swipeableState.currentValue) {
+                            FlexibleSheetValue.SlightlyExpanded -> sheetState.intermediatelyExpand()
+                            FlexibleSheetValue.IntermediatelyExpanded -> sheetState.fullyExpand()
+                            else -> sheetState.hide()
+                        }
+                    }
+                },
+            ) {
+                Text(text = "Expand Or Hide")
             }
         }
     }

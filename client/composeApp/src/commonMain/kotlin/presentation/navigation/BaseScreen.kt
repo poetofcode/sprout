@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,7 +26,7 @@ import presentation.base.BaseViewModel
 import presentation.base.ViewModel
 import presentation.base.ViewModelStore
 import presentation.base.collectEffects
-import java.util.concurrent.Delayed
+import presentation.base.postSideEffect
 
 
 interface Screen<T : ViewModel<*>> {
@@ -134,7 +133,8 @@ abstract class BaseScreen<T : BaseViewModel<*>> : Screen<T> {
 
 @Composable
 fun BaseScreen<*>.collectSideEffects() {
-    val scope = rememberCoroutineScope()
+    val localMainAppState = LocalMainAppState.current
+    val scope = viewModel.viewModelScope
 
     viewModel.sideEffectFlow.onEach { effect ->
         when (effect) {
@@ -148,6 +148,18 @@ fun BaseScreen<*>.collectSideEffects() {
                     scope = scope
                 )
             }
+
+            is ShowModalBottomSheetEffect -> {
+                localMainAppState.reduceBottomSheetState { copy(
+                    isVisible = true,
+                ) }
+            }
+
+            HideBottomSheetEffect -> {
+                localMainAppState.reduceBottomSheetState { copy(
+                    isVisible = false
+                ) }
+            }
         }
     }.launchIn(scope)
 }
@@ -155,6 +167,9 @@ fun BaseScreen<*>.collectSideEffects() {
 // TODO предусмотреть абстрактный (или пустой открытый) метод для
 //  обработки кастомный side-эффектов
 
+fun BaseScreen<*>.postSideEffect(effect: SideEffect) {
+    viewModel.postSideEffect(effect)
+}
 
 data class SnackState(
     val text: String = "",

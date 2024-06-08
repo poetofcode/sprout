@@ -1,8 +1,7 @@
 package presentation.screens.profileScreen
 
-import androidx.compose.runtime.mutableStateOf
-import domain.model.Profile
 import data.repository.ProfileRepository
+import domain.model.Profile
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
 import presentation.model.shared.OnReceivedTokenSharedEvent
@@ -51,5 +50,6 @@ class ProfileViewModel(
             }
         }
     }
+
 
 }

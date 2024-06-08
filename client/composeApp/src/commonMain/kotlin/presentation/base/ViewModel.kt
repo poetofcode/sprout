@@ -109,7 +109,7 @@ fun BaseViewModel<*>.postEffect(effect: Effect) {
 }
 fun BaseViewModel<*>.postSideEffect(effect: SideEffect) {
     viewModelScope.launch {
-        sideEffectFlow.emit(effect)
+        sideEffectFlow.tryEmit(effect)
     }
 }
 
