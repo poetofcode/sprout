@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
@@ -16,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import presentation.Tabs
@@ -102,11 +104,32 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                     Text(
                         text = state.profile?.email.orEmpty(),
                         color = Color.Black,
-                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 6.dp),
                     )
                 }
+
+                ClickableItem(
+                    modifier = Modifier.fillMaxWidth().padding(10.dp),
+                    text = "Выйти из аккаунта"
+                ) {
+
+                }
             }
+        }
+    }
+
+    @Composable
+    fun ClickableItem(modifier: Modifier = Modifier, text: String, onClick: () -> Unit) {
+        Box(modifier.clickable {
+            onClick()
+        }.fillMaxWidth().padding(10.dp)) {
+            Text(
+                text = text,
+                color = Color.Black,
+                textDecoration = TextDecoration.Underline,
+                modifier = Modifier.align(Alignment.Center),
+            )
         }
     }
 
