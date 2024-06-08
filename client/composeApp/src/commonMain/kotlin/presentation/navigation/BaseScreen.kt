@@ -150,16 +150,20 @@ fun BaseScreen<*>.collectSideEffects() {
             }
 
             is ShowModalBottomSheetEffect -> {
-                localMainAppState.reduceBottomSheetState { copy(
-                    isVisible = true,
-                    content = effect.content
-                ) }
+                localMainAppState.reduceBottomSheetState {
+                    copy(
+                        isVisible = true,
+                        content = effect.content
+                    )
+                }
             }
 
             HideBottomSheetEffect -> {
-                localMainAppState.reduceBottomSheetState { copy(
-                    isVisible = false
-                ) }
+                localMainAppState.reduceBottomSheetState {
+                    copy(
+                        isVisible = false
+                    )
+                }
             }
         }
     }.launchIn(scope)

@@ -51,5 +51,9 @@ class ProfileViewModel(
         }
     }
 
+    fun onConfirmQuit() {
+
+    }
+
 
 }

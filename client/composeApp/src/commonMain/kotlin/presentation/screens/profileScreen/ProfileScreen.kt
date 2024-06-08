@@ -1,6 +1,7 @@
 package presentation.screens.profileScreen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
@@ -20,6 +22,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import presentation.Tabs
 import presentation.navigation.BaseScreen
+import presentation.navigation.HideBottomSheetEffect
 import presentation.navigation.ShowModalBottomSheetEffect
 import presentation.navigation.postSideEffect
 
@@ -113,11 +116,38 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                     modifier = Modifier.fillMaxWidth().padding(10.dp),
                     text = "Выйти из аккаунта"
                 ) {
-                    postSideEffect(ShowModalBottomSheetEffect(
-                        content = {
-                            Text("TODO: Контент подтверждения выхода")
-                        }
-                    ))
+                    postSideEffect(ShowModalBottomSheetEffect {
+                        ConfirmContent()
+                    })
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun ConfirmContent() {
+        Column(
+            Modifier.fillMaxWidth().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("Вы действительно хотите выйти из аккаунта?")
+            Row(Modifier.padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                OutlinedButton(
+                    modifier = Modifier,
+                    onClick = {
+                        postSideEffect(HideBottomSheetEffect)
+                    }
+                ) {
+                    Text(text = "Отмена")
+                }
+                Button(
+                    modifier = Modifier,
+                    onClick = {
+                        viewModel.onConfirmQuit()
+                    }
+                ) {
+                    Text(text = "Да")
                 }
             }
         }
