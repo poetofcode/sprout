@@ -152,6 +152,7 @@ fun BaseScreen<*>.collectSideEffects() {
             is ShowModalBottomSheetEffect -> {
                 localMainAppState.reduceBottomSheetState { copy(
                     isVisible = true,
+                    content = effect.content
                 ) }
             }
 

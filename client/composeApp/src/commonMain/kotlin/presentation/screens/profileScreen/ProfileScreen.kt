@@ -1,14 +1,11 @@
 package presentation.screens.profileScreen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
@@ -117,16 +114,10 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                     text = "Выйти из аккаунта"
                 ) {
                     postSideEffect(ShowModalBottomSheetEffect(
-                        content = {}
+                        content = {
+                            Text("TODO: Контент подтверждения выхода")
+                        }
                     ))
-                }
-            }
-
-            Box(Modifier.fillMaxWidth().height(200.dp).background(Color.Blue)) {
-                Row {
-                    Text(text = "123")
-                    Spacer(Modifier.weight(1f))
-                    Text(text = "456")
                 }
             }
         }

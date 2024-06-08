@@ -214,16 +214,14 @@ fun ModalBottomSheet() {
     val localMainAppState = LocalMainAppState.current
     val scope = rememberCoroutineScope()
     val sheetState = rememberFlexibleBottomSheetState(
-        flexibleSheetSize = FlexibleSheetSize(fullyExpanded = 0.9f),
+        flexibleSheetSize = FlexibleSheetSize(fullyExpanded = 0.5f),
         isModal = true,
-        skipSlightlyExpanded = false,
+        skipSlightlyExpanded = true,
     )
-
-    println("mylog BottomSheet isVisible: ${localMainAppState.bottomSheetState.value.isVisible}")
 
     if (localMainAppState.bottomSheetState.value.isVisible) {
         FlexibleBottomSheet(
-            modifier = Modifier.padding(), //Modifier.fillMaxWidth().padding(end = 50.dp),
+            modifier = Modifier,
             sheetState = sheetState,
             containerColor = Color.White,
             scrimColor = Color.Black.copy(alpha = 0.3f),
@@ -235,20 +233,7 @@ fun ModalBottomSheet() {
             },
             windowInsets = WindowInsets(0, 0, 0, 0)
         ) {
-            Button(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                onClick = {
-                    scope.launch {
-                        when (sheetState.swipeableState.currentValue) {
-                            FlexibleSheetValue.SlightlyExpanded -> sheetState.intermediatelyExpand()
-                            FlexibleSheetValue.IntermediatelyExpanded -> sheetState.fullyExpand()
-                            else -> sheetState.hide()
-                        }
-                    }
-                },
-            ) {
-                Text(text = "Expand Or Hide")
-            }
+            localMainAppState.bottomSheetState.value.content()
         }
     }
 }
