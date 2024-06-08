@@ -5,8 +5,10 @@ import domain.model.Profile
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
 import presentation.base.postSharedEvent
+import presentation.base.postSideEffect
 import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.model.shared.OnQuitProfileSharedEvent
+import presentation.navigation.HideBottomSheetEffect
 import presentation.navigation.NavigateEffect
 import presentation.navigation.SharedEvent
 import presentation.screens.authScreen.AuthScreen
@@ -52,7 +54,7 @@ class ProfileViewModel(
 
             OnQuitProfileSharedEvent -> {
                 fetchProfile()
-                println("mylog Fetch profile ${111}")
+                postSideEffect(HideBottomSheetEffect)
             }
         }
     }
