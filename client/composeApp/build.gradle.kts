@@ -42,6 +42,7 @@ kotlin {
             implementation(libs.ktor.client.auth)
             implementation("io.github.kevinnzou:compose-webview-multiplatform:1.9.2")
             // implementation("io.github.rizmaulana:compose-stacked-snackbar:1.0.4")
+            implementation("com.github.skydoves:flexible-bottomsheet-material:0.1.3")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
