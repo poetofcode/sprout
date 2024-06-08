@@ -2,10 +2,14 @@ package presentation.screens.profileScreen
 
 import data.repository.ProfileRepository
 import domain.model.Profile
+import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
 import presentation.base.postSharedEvent
 import presentation.base.postSideEffect
+import presentation.model.CompleteResource
+import presentation.model.ExceptionResource
+import presentation.model.LoadingResource
 import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.model.shared.OnQuitProfileSharedEvent
 import presentation.navigation.HideBottomSheetEffect
@@ -60,7 +64,13 @@ class ProfileViewModel(
     }
 
     fun onConfirmQuit() {
-        profileRepository.clearProfileLocal()
+        viewModelScope.launch {
+            try {
+                profileRepository.deleteSession()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
         postSharedEvent(OnQuitProfileSharedEvent)
     }
 

@@ -25,6 +25,10 @@ class MainApi(
         }
     }
 
+    suspend fun deleteSession(token: String) {
+        httpClient.delete("/api/v1/sessions/$token".buildEndpoint(baseUrl))
+    }
+
     private suspend inline fun <reified T : Any> parseRequestResult(doRequest: () -> HttpResponse): ResultResponse<T> {
         var response: HttpResponse? = null
         val parsed: ResultResponse<T> = try {

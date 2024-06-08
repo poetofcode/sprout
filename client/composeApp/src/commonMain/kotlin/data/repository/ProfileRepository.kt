@@ -17,10 +17,12 @@ interface ProfileRepository {
 
     suspend fun createSession(email: String, password: String): Profile
 
+    suspend fun deleteSession()
+
 }
 
 class ProfileRepositoryImpl(
-    private val api:  MainApi,
+    private val api: MainApi,
     private val storage: ProfileStorage,
 ) : ProfileRepository {
 
@@ -46,6 +48,14 @@ class ProfileRepositoryImpl(
                     email = response.user.login,
                 )
             }
+    }
+
+    override suspend fun deleteSession() {
+        storage.load()?.let {
+            val token = it.copy().token
+            storage.clear()
+            api.deleteSession(token)
+        }
     }
 
 }
