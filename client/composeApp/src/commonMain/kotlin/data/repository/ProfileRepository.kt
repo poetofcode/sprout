@@ -13,6 +13,8 @@ interface ProfileRepository {
 
     fun saveProfileLocal(profile: Profile)
 
+    fun clearProfileLocal()
+
     suspend fun createSession(email: String, password: String): Profile
 
 }
@@ -28,6 +30,10 @@ class ProfileRepositoryImpl(
 
     override fun saveProfileLocal(profile: Profile) {
         storage.save(profile)
+    }
+
+    override fun clearProfileLocal() {
+        storage.clear()
     }
 
 

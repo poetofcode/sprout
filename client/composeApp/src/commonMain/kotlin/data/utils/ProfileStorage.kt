@@ -9,6 +9,8 @@ interface ProfileStorage {
 
     fun load() : Profile?
 
+    fun clear()
+
 }
 
 class ProfileStorageImpl(
@@ -34,6 +36,15 @@ class ProfileStorageImpl(
         } catch (e: Throwable) {
             // e.printStackTrace()
             null
+        }
+    }
+
+    override fun clear() {
+        try {
+            val profileContent = "{}"
+            contentProvider.saveContent(profileContent)
+        } catch (e: Throwable) {
+            e.printStackTrace()
         }
     }
 

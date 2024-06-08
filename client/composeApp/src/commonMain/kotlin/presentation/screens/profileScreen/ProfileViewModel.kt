@@ -4,7 +4,9 @@ import data.repository.ProfileRepository
 import domain.model.Profile
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
+import presentation.base.postSharedEvent
 import presentation.model.shared.OnReceivedTokenSharedEvent
+import presentation.model.shared.OnQuitProfileSharedEvent
 import presentation.navigation.NavigateEffect
 import presentation.navigation.SharedEvent
 import presentation.screens.authScreen.AuthScreen
@@ -22,9 +24,8 @@ class ProfileViewModel(
     }
 
     private fun fetchProfile() {
-        profileRepository.fetchProfileLocal()?.let { profile ->
-            reduce { copy(profile = profile) }
-        }
+        val profile = profileRepository.fetchProfileLocal()
+        reduce { copy(profile = profile) }
     }
 
     fun onSignInToAccountButtonClick() {
@@ -48,11 +49,17 @@ class ProfileViewModel(
                 )
                 fetchProfile()
             }
+
+            OnQuitProfileSharedEvent -> {
+                fetchProfile()
+                println("mylog Fetch profile ${111}")
+            }
         }
     }
 
     fun onConfirmQuit() {
-
+        profileRepository.clearProfileLocal()
+        postSharedEvent(OnQuitProfileSharedEvent)
     }
 
 

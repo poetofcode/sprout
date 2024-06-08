@@ -6,3 +6,5 @@ data class OnReceivedTokenSharedEvent(
     val token: String,
     val email: String,
 ) : SharedEvent
+
+object OnQuitProfileSharedEvent : SharedEvent
