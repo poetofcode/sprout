@@ -42,16 +42,17 @@ const val DEFAULT_POSITION_Y = 300
 
 fun main() = application {
     // val repositoryFactory = MockRepositoryFactory()
-    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl()
+    val profileStorage = ProfileStorageImpl(
+        FileContentProvider(
+            fileName = "sessioncache.json",
+            relativePath = "appcache",
+        )
+    )
+    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl(profileStorage)
 
     val repositoryFactory = RepositoryFactoryImpl(
         api = networkingFactory.createApi(),
-        profileStorage = ProfileStorageImpl(
-            FileContentProvider(
-                fileName = "sessioncache.json",
-                relativePath = "appcache",
-            )
-        )
+        profileStorage = profileStorage,
     )
 
     val vmStoreImpl = ViewModelStore(

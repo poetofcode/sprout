@@ -1,7 +1,6 @@
 package data.repository
 
 import data.entity.CreateSessionRequestBody
-import data.entity.TokenResponse
 import data.service.MainApi
 import data.utils.ProfileStorage
 import domain.model.Profile
@@ -52,9 +51,8 @@ class ProfileRepositoryImpl(
 
     override suspend fun deleteSession() {
         storage.load()?.let {
-            val token = it.copy().token
+            api.deleteSession(it.copy().token)
             storage.clear()
-            api.deleteSession(token)
         }
     }
 

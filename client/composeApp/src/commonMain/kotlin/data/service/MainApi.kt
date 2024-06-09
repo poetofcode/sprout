@@ -1,17 +1,28 @@
 package data.service
 
-import data.entity.*
-import data.utils.buildEndpoint
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
+import data.entity.CreateSessionRequestBody
+import data.entity.CreateSessionResponse
+import data.entity.DataResponse
+import data.entity.ExceptionResponse
+import data.entity.FailureResponse
+import data.entity.ResultResponse
+import data.utils.ProfileStorage
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.delete
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.http.path
 
 class MainApi(
-    val httpClient: HttpClient,
-    val baseUrl: String
+    private val httpClient: HttpClient,
+    private val baseUrl: String,
+    private val profileStorage: ProfileStorage,
 ) {
 
 //    suspend fun fetchFeed(): ResultResponse<FeedResponse> = parseRequestResult<FeedResponse> {
@@ -19,14 +30,20 @@ class MainApi(
 //    }
 
     suspend fun createSession(requestBody: CreateSessionRequestBody) : ResultResponse<CreateSessionResponse> = parseRequestResult<CreateSessionResponse> {
-        httpClient.post("/api/v1/sessions".buildEndpoint(baseUrl)) {
-            contentType(ContentType.Application.Json)
-            setBody(requestBody)
+        httpClient.post {
+            nonAuthBlock {
+                url { path("/api/v1/sessions") }
+                setBody(requestBody)
+            }
         }
     }
 
     suspend fun deleteSession(token: String) {
-        httpClient.delete("/api/v1/sessions/$token".buildEndpoint(baseUrl))
+        httpClient.delete {
+            authBlock {
+                url { path("/api/v1/sessions/$token") }
+            }
+        }
     }
 
     private suspend inline fun <reified T : Any> parseRequestResult(doRequest: () -> HttpResponse): ResultResponse<T> {
@@ -44,6 +61,20 @@ class MainApi(
         body<FailureResponse<T>>()
     } catch (e: Throwable) {
         null
+    }
+
+    private fun HttpRequestBuilder.nonAuthBlock(block: HttpRequestBuilder.() -> Unit) {
+        contentType(ContentType.Application.Json)
+        block()
+    }
+
+    private fun HttpRequestBuilder.authBlock(block: HttpRequestBuilder.() -> Unit) {
+        nonAuthBlock {
+            profileStorage.load()?.let {
+                bearerAuth(it.token)
+            }
+        }
+        block()
     }
 
 }

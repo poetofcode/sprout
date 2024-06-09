@@ -1,5 +1,6 @@
 package data.service
 
+import data.utils.ProfileStorage
 import io.ktor.client.*
 
 interface NetworkingFactory {
@@ -10,7 +11,9 @@ interface NetworkingFactory {
 
 }
 
-class NetworkingFactoryImpl : NetworkingFactory {
+class NetworkingFactoryImpl(
+    private val profileStorage: ProfileStorage,
+) : NetworkingFactory {
     
     override fun createHttpClient(): HttpClient {
         return HttpClientFactory(
@@ -21,13 +24,14 @@ class NetworkingFactoryImpl : NetworkingFactory {
     override fun createApi(): MainApi {
         return MainApi(
             httpClient = createHttpClient(),
-            baseUrl = BASE_URL
+            baseUrl = BASE_URL,
+            profileStorage = profileStorage,
         )
     }
 
     private companion object {
         // TODO вынести в buildConfig
-        const val BASE_URL = "http://192.168.0.102:3000"
+        const val BASE_URL = "http://192.168.0.108:3000"
     }
 
 }

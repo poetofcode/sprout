@@ -2,16 +2,14 @@ package presentation.screens.profileScreen
 
 import data.repository.ProfileRepository
 import domain.model.Profile
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
 import presentation.base.postSharedEvent
 import presentation.base.postSideEffect
-import presentation.model.CompleteResource
-import presentation.model.ExceptionResource
-import presentation.model.LoadingResource
-import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.model.shared.OnQuitProfileSharedEvent
+import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.navigation.HideBottomSheetEffect
 import presentation.navigation.NavigateEffect
 import presentation.navigation.SharedEvent
@@ -70,8 +68,9 @@ class ProfileViewModel(
             } catch (e: Throwable) {
                 e.printStackTrace()
             }
+            joinAll()
+            postSharedEvent(OnQuitProfileSharedEvent)
         }
-        postSharedEvent(OnQuitProfileSharedEvent)
     }
 
 
