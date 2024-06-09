@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import data.repository.RepositoryFactoryImpl
 import data.service.NetworkingFactory
 import data.service.NetworkingFactoryImpl
+import data.utils.ProfileStorageImpl
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -18,15 +19,23 @@ import presentation.base.ViewModelStore
 import presentation.factories.*
 import presentation.navigation.SetBackHandlerEffect
 import presentation.navigation.SharedMemory
+import specific.AndroidContentProvider
 
 
 class MainActivity : ComponentActivity() {
     // val repositoryFactory = MockRepositoryFactory()
-    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl()
+    val profileStorage = ProfileStorageImpl(
+        AndroidContentProvider(
+            fileName = "sessioncache.json",
+            context = this,
+        )
+    )
+
+    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl(profileStorage)
 
     val repositoryFactory = RepositoryFactoryImpl(
         api = networkingFactory.createApi(),
-        profileStorage = TODO()
+        profileStorage = profileStorage
     )
 
     private var backHandleCallback: (() -> Boolean)? = null
