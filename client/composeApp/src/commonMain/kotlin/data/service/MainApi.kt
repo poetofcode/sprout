@@ -28,14 +28,15 @@ class MainApi(
 //        httpClient.get("/site/fresh/feed".buildEndpoint(baseUrl))
 //    }
 
-    suspend fun createSession(requestBody: CreateSessionRequestBody) : ResultResponse<CreateSessionResponse> = parseRequestResult<CreateSessionResponse> {
-        httpClient.post {
-            nonAuthBlock {
-                url { path("/api/v1/sessions") }
-                setBody(requestBody)
+    suspend fun createSession(requestBody: CreateSessionRequestBody): ResultResponse<CreateSessionResponse> =
+        parseRequestResult<CreateSessionResponse> {
+            httpClient.post {
+                nonAuthBlock {
+                    url { path("/api/v1/sessions") }
+                    setBody(requestBody)
+                }
             }
         }
-    }
 
     suspend fun deleteSession(token: String) {
         httpClient.delete {
@@ -56,11 +57,12 @@ class MainApi(
         return parsed
     }
 
-    private suspend inline fun <reified T : Any> HttpResponse.tryParseFailure(): FailureResponse<T>? = try {
-        body<FailureResponse<T>>()
-    } catch (e: Throwable) {
-        null
-    }
+    private suspend inline fun <reified T : Any> HttpResponse.tryParseFailure(): FailureResponse<T>? =
+        try {
+            body<FailureResponse<T>>()
+        } catch (e: Throwable) {
+            null
+        }
 
     private fun HttpRequestBuilder.nonAuthBlock(block: HttpRequestBuilder.() -> Unit) {
         contentType(ContentType.Application.Json)
