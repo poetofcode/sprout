@@ -1,7 +1,7 @@
 package data.service
 
 import data.utils.ProfileStorage
-import io.ktor.client.*
+import io.ktor.client.HttpClient
 
 interface NetworkingFactory {
 
@@ -24,7 +24,6 @@ class NetworkingFactoryImpl(
     override fun createApi(): MainApi {
         return MainApi(
             httpClient = createHttpClient(),
-            baseUrl = BASE_URL,
             profileStorage = profileStorage,
         )
     }

@@ -21,7 +21,6 @@ import io.ktor.http.path
 
 class MainApi(
     private val httpClient: HttpClient,
-    private val baseUrl: String,
     private val profileStorage: ProfileStorage,
 ) {
 
