@@ -9,7 +9,7 @@ class JokesRepository {
 		this.jokesCollection = this.db.collection('jokes');
 	}
 
-    async fetchJokes(login) {
+    async fetchJokes() {
         const jokes = await this.jokesCollection.find({}).sort({ _id: -1 }).limit(20).toArray();
         return jokes;
     }
