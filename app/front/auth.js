@@ -24,8 +24,17 @@ class AuthMiddleware {
 	            	password: req.body.password
 	            });
 	            const result = response.data.result;
-				res.cookie('token', result.token);
-				res.redirect('/front');
+				res.cookie('token', result.token, {
+					sameSite: 'none', 
+					secure: false,
+					httpOnly: true
+				});
+
+				// res.redirect('/front');
+				return res.render("post_auth.hbs", { 
+					token: result.token, 
+					email: result.user.login 
+				});
 
 			} catch(err) {
 	            if (err.response.status == 400) {
