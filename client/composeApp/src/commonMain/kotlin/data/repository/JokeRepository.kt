@@ -14,7 +14,7 @@ class JokeRepositoryImpl(val api: MainApi) : JokeRepository {
     override suspend fun fetchJokes(): List<JokeModel> {
         return api.fetchJokes()
             .resultOrError()
-            .result
+            .items
             .orEmpty()
             .map { item ->
                 JokeModel(

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class JokesResponse(
-    var result: List<Joke>? = null,
+    var items: List<Joke>? = null,
 ) {
 
     @Serializable
