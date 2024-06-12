@@ -1,6 +1,5 @@
 package presentation.screens.startScreen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,25 +25,19 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import domain.model.JokeModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
 import presentation.navigation.BaseScreen
-import specific.AsyncImage
 import specific.ScrollBar
 import specific.ScrollBarOrientation
 import specific.ScrollableComponentState
-import sproutclient.composeapp.generated.resources.Res
-import sproutclient.composeapp.generated.resources.ic_cell_fav_disabled
-import sproutclient.composeapp.generated.resources.ic_cell_fav_enabled
 
 @OptIn(ExperimentalResourceApi::class)
 class StartScreen : BaseScreen<StartViewModel>() {
@@ -83,7 +75,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
 
                 Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
                     when (readyState) {
-                        is CompleteResource -> Posts(posts)
+                        is CompleteResource -> Jokes(jokes)
 
                         is ExceptionResource -> {
                             Column(
@@ -122,7 +114,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
     }
 
     @Composable
-    private fun Posts(posts: List<JokeModel>) {
+    private fun Jokes(jokes: List<JokeModel>) {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
@@ -133,8 +125,8 @@ class StartScreen : BaseScreen<StartViewModel>() {
                 modifier = Modifier.fillMaxHeight().padding().weight(1f),
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                items(posts) { post ->
-                    Post(post = post)
+                items(jokes) { joke ->
+                    Joke(joke = joke)
                 }
             }
 
@@ -147,7 +139,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
     }
 
     @Composable
-    private fun Post(post: JokeModel) {
+    private fun Joke(joke: JokeModel) {
         // val context = LocalContext.current
         Column(
             modifier = Modifier
@@ -163,37 +155,8 @@ class StartScreen : BaseScreen<StartViewModel>() {
                 )
                 .padding(8.dp)
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Center
-            ) {
-                post.image?.let { imageUrl ->
-                    AsyncImage(
-                        modifier = Modifier.height(250.dp),
-                        url = imageUrl,
-                        loadingView = {},
-                        errorView = {}
-                    )
-                }
-
-                val favIcon = if (post.isFavorite) {
-                    Res.drawable.ic_cell_fav_enabled
-                } else {
-                    Res.drawable.ic_cell_fav_disabled
-                }
-
-                Image(
-                    modifier = Modifier.align(alignment = TopEnd)
-                        .clickable {
-                            viewModel.updatePostFavorite(post.link, !post.isFavorite)
-                        },
-                    painter = painterResource(favIcon),
-                    contentDescription = null
-                )
-            }
-
             Spacer(modifier = Modifier.size(8.dp))
-            Text(text = post.text.orEmpty(), fontSize = 16.sp)
+            Text(text = joke.text.orEmpty(), fontSize = 16.sp)
         }
     }
 

@@ -1,57 +1,42 @@
 package presentation.screens.startScreen
 
+import data.repository.JokeRepository
 import domain.model.JokeModel
+import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
+import presentation.model.CompleteResource
+import presentation.model.ExceptionResource
 import presentation.model.IdleResource
+import presentation.model.LoadingResource
 import presentation.model.Resource
 
 class StartViewModel(
-    /* val feedRepository: FeedRepository, */
+    val jokeRepository: JokeRepository,
 ) : BaseViewModel<StartViewModel.State>() {
 
     data class State(
-        val posts: List<JokeModel> = emptyList(),
+        val jokes: List<JokeModel> = emptyList(),
         val readyState: Resource<Unit> = IdleResource,
     )
 
     init {
-        // fetchFeed()
+        fetchJokes()
     }
 
-    /*
-    fun fetchFeed() {
+    fun fetchJokes() {
         viewModelScope.launch {
             try {
-                state.value = state.value.copy(readyState = LoadingResource)
-                state.value = state.value.copy(
-                    posts = feedRepository.fetchFeed(),
+                reduce { copy(readyState = LoadingResource) }
+                val jokes = jokeRepository.fetchJokes()
+                reduce { copy(
+                    jokes = jokes,
                     readyState = CompleteResource(Unit)
-                )
+                ) }
             } catch (e: Throwable) {
                 state.value = state.value.copy(readyState = ExceptionResource(e))
                 e.printStackTrace()
             }
         }
-    }
-
-     */
-
-    fun updatePostFavorite(id: String, isFavorite: Boolean) {
-        var updatedPost: JokeModel? = null
-        val posts = state.value.posts.map {
-            if (it.id == id) {
-                updatedPost = it.copy(isFavorite = isFavorite)
-                updatedPost!!
-            }
-            else it
-        }
-
-        state.value = state.value.copy(posts = posts)
-
-        updatedPost?.let {
-
-        }
-
     }
 
     override fun onInitState(): State = State()
