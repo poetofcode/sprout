@@ -29,7 +29,7 @@ class MainApi(
     suspend fun fetchJokes() = parseRequestResult<JokesResponse> {
         httpClient.get {
             nonAuthBlock {
-                url { "/site/fresh/feed" }
+                url { path("/api/v1/jokes") }
             }
         }
     }
