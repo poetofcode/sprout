@@ -1,14 +1,8 @@
 package presentation.screens.startScreen
 
-import androidx.compose.runtime.mutableStateOf
-import data.repository.FeedRepository
-import domain.model.PostModel
-import kotlinx.coroutines.launch
+import domain.model.JokeModel
 import presentation.base.BaseViewModel
-import presentation.model.CompleteResource
-import presentation.model.ExceptionResource
 import presentation.model.IdleResource
-import presentation.model.LoadingResource
 import presentation.model.Resource
 
 class StartViewModel(
@@ -16,7 +10,7 @@ class StartViewModel(
 ) : BaseViewModel<StartViewModel.State>() {
 
     data class State(
-        val posts: List<PostModel> = emptyList(),
+        val posts: List<JokeModel> = emptyList(),
         val readyState: Resource<Unit> = IdleResource,
     )
 
@@ -43,7 +37,7 @@ class StartViewModel(
      */
 
     fun updatePostFavorite(id: String, isFavorite: Boolean) {
-        var updatedPost: PostModel? = null
+        var updatedPost: JokeModel? = null
         val posts = state.value.posts.map {
             if (it.id == id) {
                 updatedPost = it.copy(isFavorite = isFavorite)

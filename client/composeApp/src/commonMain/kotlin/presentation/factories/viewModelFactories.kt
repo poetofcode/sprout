@@ -1,6 +1,6 @@
 package presentation.factories
 
-import data.repository.FeedRepository
+import data.repository.JokeRepository
 import data.repository.ProfileRepository
 import data.repository.RepositoryFactory
 import presentation.base.ViewModelFactory
@@ -20,7 +20,7 @@ class HomeTabViewModelFactory() : ViewModelFactory<HomeTabViewModel> {
 
 }
 
-class StartViewModelFactory(val feedRepository: FeedRepository? = null)
+class StartViewModelFactory(val jokeRepository: JokeRepository? = null)
     : ViewModelFactory<StartViewModel> {
     override fun createViewModel(): StartViewModel {
         return StartViewModel(/* feedRepository = feedRepository */)

@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import domain.model.PostModel
+import domain.model.JokeModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import presentation.model.CompleteResource
@@ -122,7 +122,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
     }
 
     @Composable
-    private fun Posts(posts: List<PostModel>) {
+    private fun Posts(posts: List<JokeModel>) {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
@@ -147,7 +147,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
     }
 
     @Composable
-    private fun Post(post: PostModel) {
+    private fun Post(post: JokeModel) {
         // val context = LocalContext.current
         Column(
             modifier = Modifier
@@ -193,7 +193,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
             }
 
             Spacer(modifier = Modifier.size(8.dp))
-            Text(text = post.title.orEmpty(), fontSize = 16.sp)
+            Text(text = post.text.orEmpty(), fontSize = 16.sp)
         }
     }
 

@@ -5,6 +5,7 @@ import data.entity.CreateSessionResponse
 import data.entity.DataResponse
 import data.entity.ExceptionResponse
 import data.entity.FailureResponse
+import data.entity.JokesResponse
 import data.entity.ResultResponse
 import data.utils.ProfileStorage
 import io.ktor.client.HttpClient
@@ -12,6 +13,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
@@ -24,9 +26,13 @@ class MainApi(
     private val profileStorage: ProfileStorage,
 ) {
 
-//    suspend fun fetchFeed(): ResultResponse<FeedResponse> = parseRequestResult<FeedResponse> {
-//        httpClient.get("/site/fresh/feed".buildEndpoint(baseUrl))
-//    }
+    suspend fun fetchJokes() = parseRequestResult<JokesResponse> {
+        httpClient.get {
+            nonAuthBlock {
+                url { "/site/fresh/feed" }
+            }
+        }
+    }
 
     suspend fun createSession(requestBody: CreateSessionRequestBody): ResultResponse<CreateSessionResponse> =
         parseRequestResult<CreateSessionResponse> {
