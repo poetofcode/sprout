@@ -11,7 +11,9 @@ class JokesMiddleware {
 		return async (req, res, next) => {
             try {
             	const jokes = await this.repositories.jokes.fetchJokes();
-            	res.send(utils.wrapResult(jokes));
+            	res.send(utils.wrapResult({
+                    items: jokes
+                }));
         	} catch (err) {
         		next(err);
         	}
