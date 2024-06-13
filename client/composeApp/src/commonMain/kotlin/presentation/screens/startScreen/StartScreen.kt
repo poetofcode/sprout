@@ -81,7 +81,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
                 )
 
                 Box(Modifier.fillMaxSize().weight(1f)) {
-                    MainContent(Modifier)
+                    MainContent(Modifier.padding(bottom = 50.dp))
                     Box(
                         Modifier
                             .fillMaxWidth()
