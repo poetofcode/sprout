@@ -12,10 +12,7 @@ class JokesRepository {
 
     async fetchJokes() {
         const jokes = await this.jokesCollection.find({}).sort({ _id: -1 }).limit(20).toArray();
-        return jokes.map((j) => {
-            j.text = iconv.decode(j.text, 'utf-8').toString();
-            return j;
-        })        
+        return jokes
     }
 
 }

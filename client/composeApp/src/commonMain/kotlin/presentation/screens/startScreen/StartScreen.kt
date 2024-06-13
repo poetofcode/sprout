@@ -19,9 +19,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
@@ -34,6 +38,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
+import presentation.model.LoadingResource
 import presentation.navigation.BaseScreen
 import specific.ScrollBar
 import specific.ScrollBarOrientation
@@ -60,16 +65,16 @@ class StartScreen : BaseScreen<StartViewModel>() {
                     title = { Text(text = "Главная") },
                     navigationIcon = {},
                     actions = {
-//                        if (readyState !is LoadingResource) {
-//                            IconButton(onClick = {
-//                                viewModel.fetchFeed()
-//                            }) {
-//                                Icon(
-//                                    imageVector = Icons.Default.Refresh,
-//                                    contentDescription = "Reload",
-//                                )
-//                            }
-//                        }
+                        if (readyState !is LoadingResource) {
+                            IconButton(onClick = {
+                                viewModel.fetchJokes()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Reload",
+                                )
+                            }
+                        }
                     }
                 )
 

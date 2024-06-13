@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { XMLParser } = require('fast-xml-parser');
 const createMailer = require('../utils/mailer.js').createMailer;
-
+var iconv = require('iconv-lite');
 
 const parser = new XMLParser();
 
@@ -39,10 +39,13 @@ async function launch(context) {
 const jokeWorker = async (context) => { 
     const response = await axios({
         method: 'get',
-        url: `http://rzhunemogu.ru/Rand.aspx`
+        url: `http://rzhunemogu.ru/Rand.aspx`,
+        responseType: 'arraybuffer',
+        responseEncoding: 'binary'
     });
 
-    let parsed = parser.parse(response.data);
+    const responseData = iconv.decode(response.data.toString('binary'), 'windows1251').toString();
+    let parsed = parser.parse(responseData);
     const joke = parsed.root.content;
     const jokeCollection = context.getDb().collection('jokes');
 
