@@ -89,11 +89,18 @@ class StartScreen : BaseScreen<StartViewModel>() {
                             .background(Color.Cyan)
                             .align(BottomCenter)
                     ) {
-                        Switch(
-                            modifier = Modifier.align(Alignment.CenterEnd).padding(horizontal = 20.dp),
-                            checked = true,
-                            onCheckedChange = { }
-                        )
+                        Row(
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                                .padding(horizontal = 20.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(text = "Подписка", fontSize = 18.sp)
+                            Switch(
+                                checked = true,
+                                onCheckedChange = { }
+                            )
+                        }
                     }
                 }
             }
