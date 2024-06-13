@@ -54,11 +54,10 @@ class StartScreen : BaseScreen<StartViewModel>() {
 
     private val listState = LazyListState()
 
+    val state get() = viewModel.state.value
 
     @Composable
     override fun Content() = with(viewModel.state.value) {
-
-
         MaterialTheme {
             Column {
                 TopAppBar(
@@ -78,42 +77,46 @@ class StartScreen : BaseScreen<StartViewModel>() {
                     }
                 )
 
-                Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                    when (readyState) {
-                        is CompleteResource -> Jokes(jokes)
+                MainContent(Modifier.weight(1f))
+            }
+        }
+    }
 
-                        is ExceptionResource -> {
-                            Column(
-                                Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(text = "Ошибка загрузки", color = Color.Red)
-                                Spacer(Modifier.size(10.dp))
-                                Text(text = "${readyState.exception}")
-                            }
-                        }
+    @Composable
+    fun MainContent(modifier: Modifier) {
+        Box(modifier = modifier.fillMaxWidth()) {
+            when (val readyState = state.readyState) {
+                is CompleteResource -> Jokes(state.jokes)
 
-                        is IdleResource -> {
-                            Box(Modifier.fillMaxSize()) {
-                                Text(
-                                    text = "Список пуст",
-                                    color = Color.Gray,
-                                    modifier = Modifier.align(
-                                        Center
-                                    )
-                                )
-                            }
-                        }
-
-                        else -> {
-                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator()
-                            }
-                        }
+                is ExceptionResource -> {
+                    Column(
+                        Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "Ошибка загрузки", color = Color.Red)
+                        Spacer(Modifier.size(10.dp))
+                        Text(text = "${readyState.exception}")
                     }
                 }
 
+                is IdleResource -> {
+                    Box(Modifier.fillMaxSize()) {
+                        Text(
+                            text = "Список пуст",
+                            color = Color.Gray,
+                            modifier = Modifier.align(
+                                Center
+                            )
+                        )
+                    }
+                }
+
+                else -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
             }
         }
     }
