@@ -36,10 +36,12 @@ class StartViewModel(
             try {
                 reduce { copy(readyState = LoadingResource) }
                 val jokes = jokeRepository.fetchJokes()
-                reduce { copy(
-                    jokes = jokes,
-                    readyState = CompleteResource(Unit)
-                ) }
+                reduce {
+                    copy(
+                        jokes = jokes,
+                        readyState = CompleteResource(Unit)
+                    )
+                }
             } catch (e: Throwable) {
                 state.value = state.value.copy(readyState = ExceptionResource(e))
                 e.printStackTrace()
@@ -47,13 +49,12 @@ class StartViewModel(
         }
     }
 
-    private fun fetchProfile() {
-        reduce {
-            copy(
-                profile = profileRepository.fetchProfileLocal()
-            )
-        }
+    private fun fetchProfile() = reduce {
+        copy(
+            profile = profileRepository.fetchProfileLocal()
+        )
     }
+
 
     override fun onInitState(): State = State()
 
