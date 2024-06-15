@@ -113,7 +113,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
                 ) {
                     Text(text = "Подписка", fontSize = 18.sp)
                     Switch(
-                        checked = true,
+                        checked = it.result,
                         onCheckedChange = { }
                     )
                 }
@@ -122,15 +122,15 @@ class StartScreen : BaseScreen<StartViewModel>() {
     }
 
     @Composable
-    fun WrapPostResource(
+    fun <T> WrapPostResource(
         modifier: Modifier = Modifier,
-        resource: Resource<*>,
+        resource: Resource<T>,
         onReload: () -> Unit,
-        content: @Composable () -> Unit,
+        content: @Composable (result: CompleteResource<T>) -> Unit,
     ) {
         Box(modifier) {
             when (resource) {
-                is CompleteResource -> content()
+                is CompleteResource -> content(resource)
                 is ExceptionResource -> {
                     Button(
                         onClick = { onReload() },
