@@ -11,6 +11,9 @@ import presentation.model.ExceptionResource
 import presentation.model.IdleResource
 import presentation.model.LoadingResource
 import presentation.model.Resource
+import presentation.model.shared.OnQuitProfileSharedEvent
+import presentation.model.shared.OnReceivedTokenSharedEvent
+import presentation.navigation.SharedEvent
 
 class StartViewModel(
     val jokeRepository: JokeRepository,
@@ -25,11 +28,7 @@ class StartViewModel(
 
     init {
         fetchJokes()
-        reduce {
-            copy(
-                profile = profileRepository.fetchProfileLocal()
-            )
-        }
+        fetchProfile()
     }
 
     fun fetchJokes() {
@@ -48,6 +47,22 @@ class StartViewModel(
         }
     }
 
+    fun fetchProfile() {
+        reduce {
+            copy(
+                profile = profileRepository.fetchProfileLocal()
+            )
+        }
+    }
+
     override fun onInitState(): State = State()
+
+    override fun obtainSharedEvent(event: SharedEvent) {
+        when (event) {
+            is OnReceivedTokenSharedEvent, is OnQuitProfileSharedEvent -> {
+                fetchProfile()
+            }
+        }
+    }
 
 }
