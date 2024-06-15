@@ -28,11 +28,15 @@ class StartViewModel(
     )
 
     init {
+        onReload()
+    }
+
+    fun onReload() {
         fetchJokes()
         fetchProfile()
     }
 
-    fun fetchJokes() {
+    private fun fetchJokes() {
         viewModelScope.launch {
             try {
                 reduce { copy(readyState = LoadingResource) }

@@ -69,7 +69,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
                     actions = {
                         if (readyState !is LoadingResource) {
                             IconButton(onClick = {
-                                viewModel.fetchJokes()
+                                viewModel.onReload()
                             }) {
                                 Icon(
                                     imageVector = Icons.Default.Refresh,
