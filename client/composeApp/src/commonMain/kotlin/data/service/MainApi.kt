@@ -7,6 +7,7 @@ import data.entity.ExceptionResponse
 import data.entity.FailureResponse
 import data.entity.JokesResponse
 import data.entity.ResultResponse
+import data.entity.SubscriptionResponse
 import data.utils.ProfileStorage
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -20,6 +21,8 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.path
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 class MainApi(
     private val httpClient: HttpClient,
@@ -48,6 +51,30 @@ class MainApi(
         httpClient.delete {
             authBlock {
                 url { path("/api/v1/sessions/$token") }
+            }
+        }
+    }
+
+    suspend fun createSubscription() {
+        httpClient.post {
+            authBlock {
+                url { path("/api/v1/subscriptions") }
+            }
+        }
+    }
+
+    suspend fun deleteSubscription() {
+        httpClient.delete {
+            authBlock {
+                url { path("/api/v1/subscriptions") }
+            }
+        }
+    }
+
+    suspend fun getSubscription() = parseRequestResult<SubscriptionResponse> {
+        httpClient.post {
+            authBlock {
+                url { path("/api/v1/subscriptions/me") }
             }
         }
     }
