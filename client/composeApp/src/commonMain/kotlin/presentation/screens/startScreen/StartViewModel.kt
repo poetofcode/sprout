@@ -47,7 +47,7 @@ class StartViewModel(
         }
     }
 
-    fun fetchProfile() {
+    private fun fetchProfile() {
         reduce {
             copy(
                 profile = profileRepository.fetchProfileLocal()
