@@ -110,7 +110,9 @@ class StartScreen : BaseScreen<StartViewModel>() {
                     Text(text = "Подписка", fontSize = 18.sp)
                     Switch(
                         checked = it.result,
-                        onCheckedChange = { }
+                        onCheckedChange = {
+                            viewModel.onSubscriptionChanged(enableSubscription = it)
+                        }
                     )
                 }
             }

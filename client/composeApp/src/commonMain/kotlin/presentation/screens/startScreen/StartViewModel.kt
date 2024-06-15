@@ -81,4 +81,19 @@ class StartViewModel(
         }
     }
 
+    fun onSubscriptionChanged(enableSubscription: Boolean) = viewModelScope.launch {
+        try {
+            reduce { copy(subscriptionState = LoadingResource) }
+            if (enableSubscription) {
+                profileRepository.createSubscription()
+            } else {
+                profileRepository.deleteSubscription()
+            }
+            reduce { copy(subscriptionState = CompleteResource(enableSubscription)) }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            reduce { copy(subscriptionState = ExceptionResource(e)) }
+        }
+    }
+
 }
