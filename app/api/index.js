@@ -27,6 +27,7 @@ async function initRoutes(router, context) {
 
 	router.post('/subscriptions', middlewares.subscriptions.subscribe());
 	router.delete('/subscriptions', middlewares.subscriptions.unsubscribe());
+	router.get('/subscriptions/me', middlewares.subscriptions.getSubscription());
 
 	router.get('/jokes', middlewares.jokes.fetchJokes());
 

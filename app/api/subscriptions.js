@@ -7,11 +7,20 @@ class SubscriptionMiddleware {
         this.repositories = context.repositories;
 	}
 
+    getSubscription() {
+        return async (req, res, next) => {
+            const ids = this.repositories.subscriptions.getSubscriptions();
+            const session = res.locals.session;
+            const isSubscribed = ids.includes(session.user._id.toString());
+            res.send(utils.wrapResult({ isSubscribed: isSubscribed }));
+        }
+    }
+
     subscribe() { 
         return async (req, res, next) => {
             const user = res.locals.session.user;
             this.repositories.subscriptions.enableSubscription(user, true);
-            res.send(utils.wrapResult('Ok'));
+            res.send(utils.wrapResult({ status: 'Ok' }));
         }
     }
 
@@ -19,7 +28,7 @@ class SubscriptionMiddleware {
         return async (req, res, next) => {
             const user = res.locals.session.user;
             this.repositories.subscriptions.enableSubscription(user, false);
-            res.send(utils.wrapResult('Ok'));
+            res.send(utils.wrapResult({ status: 'Ok' }));
         }
     }
 }
