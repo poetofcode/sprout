@@ -60,7 +60,7 @@ class StartViewModel(
         )
     }
 
-    private fun fetchSubscription() = viewModelScope.launch {
+    fun fetchSubscription() = viewModelScope.launch {
         try {
             reduce { copy(subscriptionState = LoadingResource) }
             val isSubscribed = profileRepository.isSubscribed()

@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -29,6 +30,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
@@ -41,7 +43,10 @@ import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
 import presentation.model.LoadingResource
+import presentation.model.Resource
 import presentation.navigation.BaseScreen
+import presentation.navigation.ShowSnackErrorEffect
+import presentation.navigation.postSideEffect
 import specific.ScrollBar
 import specific.ScrollBarOrientation
 import specific.ScrollableComponentState
@@ -99,21 +104,53 @@ class StartScreen : BaseScreen<StartViewModel>() {
                 .height(50.dp)
                 .background(Color.Cyan)
         ) {
-            Row(
-                modifier = Modifier.align(Alignment.CenterEnd)
-                    .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(text = "Подписка", fontSize = 18.sp)
-                Switch(
-                    checked = true,
-                    onCheckedChange = { }
-                )
+            WrapPostResource(resource = state.subscriptionState, onReload = { viewModel.fetchSubscription() }) {
+                Row(
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(text = "Подписка", fontSize = 18.sp)
+                    Switch(
+                        checked = true,
+                        onCheckedChange = { }
+                    )
+                }
             }
         }
     }
 
+    @Composable
+    fun WrapPostResource(
+        modifier: Modifier = Modifier,
+        resource: Resource<*>,
+        onReload: () -> Unit,
+        content: @Composable () -> Unit,
+    ) {
+        Box(modifier) {
+            when (resource) {
+                is CompleteResource -> content()
+                is ExceptionResource -> {
+                    Button(
+                        onClick = { onReload() },
+                    ) {
+                        Text(text = "Ещё раз")
+                    }
+                    LaunchedEffect(Unit) {
+                        postSideEffect(ShowSnackErrorEffect(
+                            resource.exception.message ?: "Unknown error"
+                        ))
+                    }
+                }
+                IdleResource -> Unit
+                LoadingResource -> {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+    }
+    
     @Composable
     fun MainContent(modifier: Modifier) {
         Box(modifier = modifier.fillMaxWidth()) {
