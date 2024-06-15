@@ -24,6 +24,7 @@ class StartViewModel(
         val jokes: List<JokeModel> = emptyList(),
         val readyState: Resource<Unit> = IdleResource,
         val profile: Profile? = null,
+        val subscriptionState: Resource<Boolean> = IdleResource,
     )
 
     init {
@@ -51,10 +52,24 @@ class StartViewModel(
 
     private fun fetchProfile() = reduce {
         copy(
-            profile = profileRepository.fetchProfileLocal()
+            profile = profileRepository.fetchProfileLocal().apply {
+                this?.let {
+                    fetchSubscription()
+                }
+            }
         )
     }
 
+    private fun fetchSubscription() = viewModelScope.launch {
+        try {
+            reduce { copy(subscriptionState = LoadingResource) }
+            val isSubscribed = profileRepository.isSubscribed()
+            reduce { copy(subscriptionState = CompleteResource(isSubscribed)) }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            reduce { copy(subscriptionState = ExceptionResource(e)) }
+        }
+    }
 
     override fun onInitState(): State = State()
 

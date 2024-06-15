@@ -72,7 +72,7 @@ class MainApi(
     }
 
     suspend fun getSubscription() = parseRequestResult<SubscriptionResponse> {
-        httpClient.post {
+        httpClient.get {
             authBlock {
                 url { path("/api/v1/subscriptions/me") }
             }
