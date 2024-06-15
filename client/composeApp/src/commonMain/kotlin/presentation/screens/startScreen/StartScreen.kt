@@ -133,6 +133,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
                 is CompleteResource -> content(resource)
                 is ExceptionResource -> {
                     Button(
+                        modifier = Modifier.align(Alignment.Center),
                         onClick = { onReload() },
                     ) {
                         Text(text = "Ещё раз")

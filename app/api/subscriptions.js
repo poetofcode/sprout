@@ -12,7 +12,7 @@ class SubscriptionMiddleware {
             const ids = this.repositories.subscriptions.getSubscriptions();
             const session = res.locals.session;
             const isSubscribed = ids.includes(session.user._id.toString());
-            res.send(utils.wrapResult({ isSubscribed: isSubscribed }));
+            res.send(utils.wrapResult({ isSubscribed_: isSubscribed }));
         }
     }
 
