@@ -20,10 +20,16 @@ class HomeTabViewModelFactory() : ViewModelFactory<HomeTabViewModel> {
 
 }
 
-class StartViewModelFactory(val jokeRepository: JokeRepository)
+class StartViewModelFactory(
+    val jokeRepository: JokeRepository,
+    val profileRepository: ProfileRepository,
+)
     : ViewModelFactory<StartViewModel> {
     override fun createViewModel(): StartViewModel {
-        return StartViewModel(jokeRepository = jokeRepository)
+        return StartViewModel(
+            jokeRepository = jokeRepository,
+            profileRepository = profileRepository,
+        )
     }
 
     override val vmTypeName: String
@@ -72,7 +78,10 @@ fun viewModelFactories(
     val profileRepository = repositoryFactory.createProfileRepository()
     return listOf<ViewModelFactory<*>>(
         HomeTabViewModelFactory(),
-        StartViewModelFactory(repositoryFactory.createJokeRepository()),
+        StartViewModelFactory(
+            repositoryFactory.createJokeRepository(),
+            profileRepository
+        ),
         ProfileTabViewModelFactory(),
         ProfileViewModelFactory(profileRepository),
         AuthViewModelFactory(profileRepository),

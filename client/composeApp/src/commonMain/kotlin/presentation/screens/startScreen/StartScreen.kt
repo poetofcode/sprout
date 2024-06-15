@@ -30,7 +30,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -81,28 +80,36 @@ class StartScreen : BaseScreen<StartViewModel>() {
                 )
 
                 Box(Modifier.fillMaxSize().weight(1f)) {
-                    MainContent(Modifier.padding(bottom = 50.dp))
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .background(Color.Cyan)
-                            .align(BottomCenter)
-                    ) {
-                        Row(
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                                .padding(horizontal = 20.dp),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(text = "Подписка", fontSize = 18.sp)
-                            Switch(
-                                checked = true,
-                                onCheckedChange = { }
-                            )
-                        }
+                    if (state.profile != null) {
+                        MainContent(Modifier.padding(bottom = 50.dp))
+                        SubscriptionBar(Modifier.align(Alignment.BottomCenter))
+                    } else {
+                        MainContent(Modifier)
                     }
                 }
+            }
+        }
+    }
+
+    @Composable
+    fun SubscriptionBar(modifier: Modifier) {
+        Box(
+            modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(Color.Cyan)
+        ) {
+            Row(
+                modifier = Modifier.align(Alignment.CenterEnd)
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(text = "Подписка", fontSize = 18.sp)
+                Switch(
+                    checked = true,
+                    onCheckedChange = { }
+                )
             }
         }
     }
