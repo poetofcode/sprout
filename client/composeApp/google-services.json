@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "39229181963",
+    "project_id": "sprout-ed8eb",
+    "storage_bucket": "sprout-ed8eb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39229181963:android:b7d2ec4930e45b13d3770e",
+        "android_client_info": {
+          "package_name": "com.poetofcode.sproutclient"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPvmtCoz0aEdehqVr6RtkLZb51Hxoy5ow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

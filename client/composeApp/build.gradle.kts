@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.kotlinSerialization)
+    id("com.google.gms.google-services") version "4.4.2" apply false
 }
 
 kotlin {
@@ -70,6 +71,7 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+    apply(plugin = "com.google.gms.google-services")
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -86,6 +88,9 @@ android {
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
+        implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+        implementation("com.google.firebase:firebase-messaging")
+        implementation("com.google.firebase:firebase-analytics")
     }
 }
 
