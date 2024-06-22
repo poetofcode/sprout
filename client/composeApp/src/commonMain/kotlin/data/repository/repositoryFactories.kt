@@ -5,7 +5,7 @@ import data.utils.ProfileStorage
 
 interface RepositoryFactory {
 
-//    fun createFeedRepository() : FeedRepository
+    fun createJokeRepository() : JokeRepository
 
     fun createProfileRepository(): ProfileRepository
 
@@ -16,9 +16,9 @@ class RepositoryFactoryImpl(
     val profileStorage: ProfileStorage,
 ) : RepositoryFactory {
 
-//    override fun createFeedRepository(): FeedRepository {
-//        return FeedRepositoryImpl(api)
-//    }
+    override fun createJokeRepository(): JokeRepository {
+        return JokeRepositoryImpl(api)
+    }
 
     override fun createProfileRepository(): ProfileRepository {
         return ProfileRepositoryImpl(

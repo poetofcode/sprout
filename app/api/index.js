@@ -27,6 +27,9 @@ async function initRoutes(router, context) {
 
 	router.post('/subscriptions', middlewares.subscriptions.subscribe());
 	router.delete('/subscriptions', middlewares.subscriptions.unsubscribe());
+	router.get('/subscriptions/me', middlewares.subscriptions.getSubscription());
+
+	router.get('/jokes', middlewares.jokes.fetchJokes());
 
 	router.use(handleErrors);
 }
@@ -41,7 +44,9 @@ function handleTokenValidation(sessionMiddleware, sessionRepository) {
 		const isSessionByTokenGet = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'GET';
 		const isSessionByTokenDelete = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'DELETE';
 		const isUserCreate = req.path.startsWith('/users') && req.method === 'POST';
-		if (isSessionsPost || isSessionByTokenGet || isSessionByTokenDelete || isUserCreate) {
+		const isJokesGet = req.path.startsWith('/jokes');
+
+		if (isSessionsPost || isSessionByTokenGet || isSessionByTokenDelete || isUserCreate || isJokesGet) {
 			return next();
 		}
 

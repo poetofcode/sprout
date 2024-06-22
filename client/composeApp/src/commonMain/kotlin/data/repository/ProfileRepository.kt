@@ -18,6 +18,12 @@ interface ProfileRepository {
 
     suspend fun deleteSession()
 
+    suspend fun createSubscription()
+
+    suspend fun deleteSubscription()
+
+    suspend fun isSubscribed() : Boolean
+
 }
 
 class ProfileRepositoryImpl(
@@ -54,6 +60,20 @@ class ProfileRepositoryImpl(
             api.deleteSession(it.copy().token)
             storage.clear()
         }
+    }
+
+    override suspend fun createSubscription() {
+        api.createSubscription()
+    }
+
+    override suspend fun deleteSubscription() {
+        api.deleteSubscription()
+    }
+
+    override suspend fun isSubscribed(): Boolean {
+        return api.getSubscription()
+            .resultOrError()
+            .isSubscribed
     }
 
 }

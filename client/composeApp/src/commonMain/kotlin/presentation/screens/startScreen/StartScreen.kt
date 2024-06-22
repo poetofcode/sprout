@@ -1,6 +1,5 @@
 package presentation.screens.startScreen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,31 +20,32 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.TopEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import domain.model.PostModel
+import domain.model.JokeModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
+import presentation.composables.WrapPostResource
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
+import presentation.model.LoadingResource
 import presentation.navigation.BaseScreen
-import specific.AsyncImage
 import specific.ScrollBar
 import specific.ScrollBarOrientation
 import specific.ScrollableComponentState
-import sproutclient.composeapp.generated.resources.Res
-import sproutclient.composeapp.generated.resources.ic_cell_fav_disabled
-import sproutclient.composeapp.generated.resources.ic_cell_fav_enabled
 
 @OptIn(ExperimentalResourceApi::class)
 class StartScreen : BaseScreen<StartViewModel>() {
@@ -57,72 +57,109 @@ class StartScreen : BaseScreen<StartViewModel>() {
 
     private val listState = LazyListState()
 
+    val state get() = viewModel.state.value
 
     @Composable
     override fun Content() = with(viewModel.state.value) {
-
-
         MaterialTheme {
             Column {
                 TopAppBar(
                     title = { Text(text = "Главная") },
                     navigationIcon = {},
                     actions = {
-//                        if (readyState !is LoadingResource) {
-//                            IconButton(onClick = {
-//                                viewModel.fetchFeed()
-//                            }) {
-//                                Icon(
-//                                    imageVector = Icons.Default.Refresh,
-//                                    contentDescription = "Reload",
-//                                )
-//                            }
-//                        }
-                    }
-                )
-
-                Box(modifier = Modifier.fillMaxWidth().weight(1f)) {
-                    when (readyState) {
-                        is CompleteResource -> Posts(posts)
-
-                        is ExceptionResource -> {
-                            Column(
-                                Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(text = "Ошибка загрузки", color = Color.Red)
-                                Spacer(Modifier.size(10.dp))
-                                Text(text = "${readyState.exception}")
-                            }
-                        }
-
-                        is IdleResource -> {
-                            Box(Modifier.fillMaxSize()) {
-                                Text(
-                                    text = "Список пуст",
-                                    color = Color.Gray,
-                                    modifier = Modifier.align(
-                                        Center
-                                    )
+                        if (readyState !is LoadingResource) {
+                            IconButton(onClick = {
+                                viewModel.onReload()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Reload",
                                 )
                             }
                         }
+                    }
+                )
 
-                        else -> {
-                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator()
-                            }
-                        }
+                Box(Modifier.fillMaxSize().weight(1f)) {
+                    if (state.profile != null) {
+                        MainContent(Modifier.padding(bottom = 50.dp))
+                        SubscriptionBar(Modifier.align(Alignment.BottomCenter))
+                    } else {
+                        MainContent(Modifier)
                     }
                 }
-
             }
         }
     }
 
     @Composable
-    private fun Posts(posts: List<PostModel>) {
+    fun SubscriptionBar(modifier: Modifier) {
+        Box(
+            modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(Color.Cyan)
+        ) {
+            WrapPostResource(resource = state.subscriptionState, onReload = { viewModel.fetchSubscription() }) {
+                Row(
+                    modifier = Modifier.align(Alignment.CenterEnd)
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(text = "Подписка", fontSize = 18.sp)
+                    Switch(
+                        checked = it.result,
+                        onCheckedChange = {
+                            viewModel.onSubscriptionChanged(enableSubscription = it)
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun MainContent(modifier: Modifier) {
+        Box(modifier = modifier.fillMaxWidth()) {
+            when (val readyState = state.readyState) {
+                is CompleteResource -> Jokes(state.jokes)
+
+                is ExceptionResource -> {
+                    Column(
+                        Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "Ошибка загрузки", color = Color.Red)
+                        Spacer(Modifier.size(10.dp))
+                        Text(text = "${readyState.exception}")
+                    }
+                }
+
+                is IdleResource -> {
+                    Box(Modifier.fillMaxSize()) {
+                        Text(
+                            text = "Список пуст",
+                            color = Color.Gray,
+                            modifier = Modifier.align(
+                                Center
+                            )
+                        )
+                    }
+                }
+
+                else -> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun Jokes(jokes: List<JokeModel>) {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
@@ -133,8 +170,8 @@ class StartScreen : BaseScreen<StartViewModel>() {
                 modifier = Modifier.fillMaxHeight().padding().weight(1f),
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                items(posts) { post ->
-                    Post(post = post)
+                items(jokes) { joke ->
+                    Joke(joke = joke)
                 }
             }
 
@@ -147,7 +184,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
     }
 
     @Composable
-    private fun Post(post: PostModel) {
+    private fun Joke(joke: JokeModel) {
         // val context = LocalContext.current
         Column(
             modifier = Modifier
@@ -163,37 +200,8 @@ class StartScreen : BaseScreen<StartViewModel>() {
                 )
                 .padding(8.dp)
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Center
-            ) {
-                post.image?.let { imageUrl ->
-                    AsyncImage(
-                        modifier = Modifier.height(250.dp),
-                        url = imageUrl,
-                        loadingView = {},
-                        errorView = {}
-                    )
-                }
-
-                val favIcon = if (post.isFavorite) {
-                    Res.drawable.ic_cell_fav_enabled
-                } else {
-                    Res.drawable.ic_cell_fav_disabled
-                }
-
-                Image(
-                    modifier = Modifier.align(alignment = TopEnd)
-                        .clickable {
-                            viewModel.updatePostFavorite(post.link, !post.isFavorite)
-                        },
-                    painter = painterResource(favIcon),
-                    contentDescription = null
-                )
-            }
-
             Spacer(modifier = Modifier.size(8.dp))
-            Text(text = post.title.orEmpty(), fontSize = 16.sp)
+            Text(text = joke.text.orEmpty(), fontSize = 16.sp)
         }
     }
 

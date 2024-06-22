@@ -1,6 +1,6 @@
 package presentation.factories
 
-import data.repository.FeedRepository
+import data.repository.JokeRepository
 import data.repository.ProfileRepository
 import data.repository.RepositoryFactory
 import presentation.base.ViewModelFactory
@@ -20,10 +20,16 @@ class HomeTabViewModelFactory() : ViewModelFactory<HomeTabViewModel> {
 
 }
 
-class StartViewModelFactory(val feedRepository: FeedRepository? = null)
+class StartViewModelFactory(
+    val jokeRepository: JokeRepository,
+    val profileRepository: ProfileRepository,
+)
     : ViewModelFactory<StartViewModel> {
     override fun createViewModel(): StartViewModel {
-        return StartViewModel(/* feedRepository = feedRepository */)
+        return StartViewModel(
+            jokeRepository = jokeRepository,
+            profileRepository = profileRepository,
+        )
     }
 
     override val vmTypeName: String
@@ -72,7 +78,10 @@ fun viewModelFactories(
     val profileRepository = repositoryFactory.createProfileRepository()
     return listOf<ViewModelFactory<*>>(
         HomeTabViewModelFactory(),
-        StartViewModelFactory(/* repositoryFactory.createFeedRepository() */),
+        StartViewModelFactory(
+            repositoryFactory.createJokeRepository(),
+            profileRepository
+        ),
         ProfileTabViewModelFactory(),
         ProfileViewModelFactory(profileRepository),
         AuthViewModelFactory(profileRepository),
