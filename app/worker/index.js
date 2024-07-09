@@ -56,6 +56,21 @@ const jokeWorker = async (context) => {
 }
 
 
+const notificationWorker = async (context) => {
+    console.log("Работает notificationWorker");
+    console.log(context);
+
+    await context.repositories.notifications.createNotification(
+        {
+            title: "Test title",
+            text: "Test text",
+            image: "",
+        },
+        "111",
+        "123456789012345678901234"
+    )
+}
+
 const debugWorker = async (context) => {
     console.log('Вывод debugWorker\'а:');
     // console.log(context.repositories.subscriptions.getSubscriptions());
@@ -90,6 +105,7 @@ const debugWorker = async (context) => {
 const workers = [
     // jokeWorker,
     debugWorker,
+    notificationWorker
 ]
 
 
