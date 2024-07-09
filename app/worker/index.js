@@ -58,17 +58,23 @@ const jokeWorker = async (context) => {
 
 const notificationWorker = async (context) => {
     console.log("Работает notificationWorker");
-    console.log(context);
+    // console.log(context);
 
-    await context.repositories.notifications.createNotification(
-        {
-            title: "Test title",
-            text: "Test text",
-            image: "",
-        },
-        "111",
-        "123456789012345678901234"
-    )
+    const userIds = context.repositories.subscriptions.getSubscriptions();
+    const lastJoke = await getLastJoke(context.getDb());
+
+    const notificationPromises = userIds.map((userId) => {
+        return context.repositories.notifications.createNotification(
+            {
+                title: "Новый анекдот",
+                text: lastJoke.text,
+                image: "",
+            },
+            lastJoke._id,
+            userId._id
+        )
+    });
+    await Promise.all(notificationPromises);
 }
 
 const debugWorker = async (context) => {
@@ -84,8 +90,7 @@ const debugWorker = async (context) => {
     //  в этом mailer'е реализовать отсылку по емейлу
 
 
-    const jokeCollection = context.getDb().collection('jokes');
-    const lastJoke = await jokeCollection.findOne({}, { sort: { _id: -1 } });
+    const lastJoke = await getLastJoke(context.getDb());
     // console.log(`Last joke:`);
     // console.log(lastJoke);
 
@@ -99,6 +104,13 @@ const debugWorker = async (context) => {
     
     const sendPromises = userIds.map((userId) => sendOneMail(userId, lastJoke));
     await Promise.all(sendPromises);
+}
+
+
+async function getLastJoke(db) {
+    const jokeCollection = db.collection('jokes');
+    const lastJoke = await jokeCollection.findOne({}, { sort: { _id: -1 } });
+    return lastJoke;
 }
 
 
