@@ -31,6 +31,9 @@ async function initRoutes(router, context) {
 
 	router.get('/jokes', middlewares.jokes.fetchJokes());
 
+	router.get('/notifications', middlewares.notifications.fetchNotifications());
+	router.get('/notifications/:id', middlewares.notifications.fetchNotificationById());
+
 	router.use(handleErrors);
 }
 

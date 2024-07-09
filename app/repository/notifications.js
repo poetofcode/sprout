@@ -1,6 +1,9 @@
 const ObjectId = require("mongodb").ObjectId;
 const crypto = require('crypto');
 
+const defaultLimit = 20;
+const defaultSkip = 0;
+
 class NotificationRepository {
 
 
@@ -34,7 +37,15 @@ class NotificationRepository {
 	}
 
 	async getNotifications(limit, skip) {
-
+		const l = limit || defaultLimit;
+		const s = skip || defaultSkip;
+        const arr = await this.notificationCollection
+        	.find({})
+        	.sort({ _id: -1 })
+        	.limit(l)
+        	.skip(s)
+        	.toArray();
+        return arr;
 	}
 
 	async getNotificationById(notificationId) {
