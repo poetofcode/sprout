@@ -49,7 +49,13 @@ class NotificationRepository {
 	}
 
 	async getNotificationById(notificationId) {
-
+        const found = await this.notificationCollection.findOne(
+        	{ _id: new ObjectId(notificationId) }
+    	);
+        if (!found) {
+            throw new Error('Not found notification');
+        }
+        return found;
 	}
 
 }
