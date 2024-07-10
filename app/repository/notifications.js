@@ -13,7 +13,6 @@ class NotificationRepository {
 	}
 
 	async createNotification(notification, linkId, userId) {
-		// TODO учесть ситуцию при которой не вставляется запись с существующим linkID
 		const entityOnCreate = {
 			userId: new ObjectId(userId),
 			createdAt: new Date(),
