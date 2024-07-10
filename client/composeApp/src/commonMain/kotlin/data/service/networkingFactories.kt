@@ -30,7 +30,7 @@ class NetworkingFactoryImpl(
 
     private companion object {
         // TODO вынести в buildConfig
-        const val BASE_URL = "http://192.168.230.96:3000"
+        const val BASE_URL = "http://192.168.0.104:3000"
     }
 
 }

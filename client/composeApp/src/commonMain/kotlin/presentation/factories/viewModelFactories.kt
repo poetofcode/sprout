@@ -6,6 +6,7 @@ import data.repository.RepositoryFactory
 import presentation.base.ViewModelFactory
 import presentation.screens.authScreen.AuthViewModel
 import presentation.screens.homeTabScreen.HomeTabViewModel
+import presentation.screens.notificationsScreen.NotificationsViewModel
 import presentation.screens.profileScreen.ProfileViewModel
 import presentation.screens.profileTabScreen.ProfileTabViewModel
 import presentation.screens.startScreen.StartViewModel
@@ -71,6 +72,17 @@ class AuthViewModelFactory(private val profileRepository: ProfileRepository)
 
 }
 
+class NotificationsViewModelFactory(private val profileRepository: ProfileRepository)
+    : ViewModelFactory<NotificationsViewModel> {
+    override fun createViewModel(): NotificationsViewModel {
+        return NotificationsViewModel(profileRepository)
+    }
+
+    override val vmTypeName: String
+        get() = NotificationsViewModel::class.java.typeName
+
+}
+
 
 fun viewModelFactories(
     repositoryFactory: RepositoryFactory
@@ -85,5 +97,6 @@ fun viewModelFactories(
         ProfileTabViewModelFactory(),
         ProfileViewModelFactory(profileRepository),
         AuthViewModelFactory(profileRepository),
+        NotificationsViewModelFactory(profileRepository),
     )
 }

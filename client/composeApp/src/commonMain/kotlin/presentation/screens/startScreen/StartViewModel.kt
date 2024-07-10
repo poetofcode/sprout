@@ -6,6 +6,8 @@ import domain.model.JokeModel
 import domain.model.Profile
 import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
+import presentation.base.postEffect
+import presentation.base.postSideEffect
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
@@ -13,7 +15,10 @@ import presentation.model.LoadingResource
 import presentation.model.Resource
 import presentation.model.shared.OnQuitProfileSharedEvent
 import presentation.model.shared.OnReceivedTokenSharedEvent
+import presentation.navigation.NavigateEffect
+import presentation.navigation.NavigatorTag
 import presentation.navigation.SharedEvent
+import presentation.screens.notificationsScreen.NotificationsScreen
 
 class StartViewModel(
     val jokeRepository: JokeRepository,
@@ -98,6 +103,10 @@ class StartViewModel(
             e.printStackTrace()
             reduce { copy(subscriptionState = ExceptionResource(e)) }
         }
+    }
+
+    fun navigateToNotificationsScreen() {
+        postEffect(NavigateEffect(screen = NotificationsScreen(), tag = NavigatorTag.ROOT))
     }
 
 }
