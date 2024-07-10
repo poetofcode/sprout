@@ -34,6 +34,23 @@ class UserMiddleware {
 		}
 	}
 
+
+    markNotificationsAsSeen() {
+        return async (req, res, next) => {
+            try {
+                const currentUserId = res.locals.session.user._id.toString();
+                const res = await this.repositories.users.updateUserSettings(
+                    currentUserId,
+                    {
+                        notificationsSeen: new Date()
+                    }
+                );
+                res.send(utils.wrapResult('ok'));
+            } catch (err) {
+                next(err);
+            }            
+        }
+    }
 }
 
 exports.create = (context) => new UserMiddleware(context);

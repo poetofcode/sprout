@@ -24,6 +24,7 @@ async function initRoutes(router, context) {
 	router.delete('/sessions/:token', sessionMiddleware.deleteSessionByToken());
 
 	router.post('/users', middlewares.users.createUser());
+	router.post('/users/me/notifications/seen/', middlewares.users.markNotificationsAsSeen());
 
 	router.post('/subscriptions', middlewares.subscriptions.subscribe());
 	router.delete('/subscriptions', middlewares.subscriptions.unsubscribe());
