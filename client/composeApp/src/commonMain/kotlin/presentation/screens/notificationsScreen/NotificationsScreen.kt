@@ -41,6 +41,7 @@ import presentation.model.ExceptionResource
 import presentation.model.IdleResource
 import presentation.model.LoadingResource
 import presentation.navigation.BaseScreen
+import specific.BackHandler
 import specific.ScrollBar
 import specific.ScrollBarOrientation
 import specific.ScrollableComponentState
@@ -59,6 +60,11 @@ class NotificationsScreen : BaseScreen<NotificationsViewModel>() {
 
     @Composable
     override fun Content() = with(viewModel.state.value) {
+        BackHandler {
+            viewModel.onBackClick()
+            true
+        }
+
         MaterialTheme {
             Column {
                 TopAppBar(
