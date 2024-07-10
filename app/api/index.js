@@ -47,7 +47,7 @@ function handleTokenValidation(sessionMiddleware, sessionRepository) {
 		const isSessionsPost = req.path === '/sessions' && req.method === 'POST';
 		const isSessionByTokenGet = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'GET';
 		const isSessionByTokenDelete = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'DELETE';
-		const isUserCreate = req.path.startsWith('/users') && req.method === 'POST';
+		const isUserCreate = req.path.startsWith('/users') && req.method === 'POST' && !req.path.startsWith('/users/');
 		const isJokesGet = req.path.startsWith('/jokes');
 
 		if (isSessionsPost || isSessionByTokenGet || isSessionByTokenDelete || isUserCreate || isJokesGet) {
