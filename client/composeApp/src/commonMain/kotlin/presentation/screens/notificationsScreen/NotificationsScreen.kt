@@ -25,6 +25,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -61,8 +62,17 @@ class NotificationsScreen : BaseScreen<NotificationsViewModel>() {
         MaterialTheme {
             Column {
                 TopAppBar(
-                    title = { Text(text = "Главная") },
-                    navigationIcon = {},
+                    title = { Text(text = "Уведомления") },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            viewModel.onBackClick()
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                            )
+                        }
+                    },
                     actions = {
                         if (readyState !is LoadingResource) {
                             IconButton(onClick = {

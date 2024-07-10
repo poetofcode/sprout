@@ -75,8 +75,8 @@ fun BaseViewModel<*>.collectEffects() {
     effectFlow.onEach { effect ->
 
         when (effect) {
-            NavigateBackEffect -> {
-                val navigatorInfo = findNavigatorInfoByTag(navigators, NavigatorTag.CURRENT)
+            is NavigateBackEffect -> {
+                val navigatorInfo = findNavigatorInfoByTag(navigators, effect.tag)
                 navigatorInfo.navState.pop()
             }
 

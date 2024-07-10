@@ -4,11 +4,14 @@ import data.repository.ProfileRepository
 import domain.model.Notification
 import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
+import presentation.base.postEffect
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
 import presentation.model.LoadingResource
 import presentation.model.Resource
+import presentation.navigation.NavigateBackEffect
+import presentation.navigation.NavigatorTag
 
 class NotificationsViewModel(
     val profileRepository: ProfileRepository,
@@ -46,6 +49,10 @@ class NotificationsViewModel(
     }
 
     override fun onInitState(): State = State()
+
+    fun onBackClick() {
+        postEffect(NavigateBackEffect(tag = NavigatorTag.ROOT))
+    }
 
 }
 

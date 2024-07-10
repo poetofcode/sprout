@@ -34,7 +34,7 @@ class AuthViewModel(
     )
 
     fun onBackClick() = viewModelScope.launch {
-        postEffect(NavigateBackEffect)
+        postEffect(NavigateBackEffect())
     }
 
     fun fetchProfile() {
