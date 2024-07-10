@@ -25,6 +25,20 @@ class ProfileViewModel(
 
     init {
         fetchProfile()
+
+        fetchNotifis()
+    }
+
+    fun fetchNotifis() {
+        viewModelScope.launch {
+            try {
+                val notifis = profileRepository.fetchNotifications()
+                println("mylog ${notifis}")
+
+            } catch(t: Throwable) {
+                t.printStackTrace()
+            }
+        }
     }
 
     private fun fetchProfile() {

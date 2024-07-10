@@ -3,6 +3,7 @@ package data.repository
 import data.entity.CreateSessionRequestBody
 import data.service.MainApi
 import data.utils.ProfileStorage
+import domain.model.Notification
 import domain.model.Profile
 
 
@@ -23,6 +24,8 @@ interface ProfileRepository {
     suspend fun deleteSubscription()
 
     suspend fun isSubscribed() : Boolean
+
+    suspend fun fetchNotifications() : List<Notification>
 
 }
 
@@ -74,6 +77,23 @@ class ProfileRepositoryImpl(
         return api.getSubscription()
             .resultOrError()
             .isSubscribed
+    }
+
+    override suspend fun fetchNotifications(): List<Notification> {
+        return api.getNotifications()
+            .resultOrError()
+            .items
+            .map { dto ->
+                Notification(
+                    id = dto.id,
+                    createdAt = dto.createdAt,
+                    title = dto.title,
+                    text = dto.text,
+                    image = dto.image,
+                    linkId = dto.linkId,
+                    extras = dto.extras,
+                )
+            }
     }
 
 }

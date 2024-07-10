@@ -6,6 +6,7 @@ import data.entity.DataResponse
 import data.entity.ExceptionResponse
 import data.entity.FailureResponse
 import data.entity.JokesResponse
+import data.entity.NotificationResponse
 import data.entity.ResultResponse
 import data.entity.SubscriptionResponse
 import data.utils.ProfileStorage
@@ -75,6 +76,14 @@ class MainApi(
         httpClient.get {
             authBlock {
                 url { path("/api/v1/subscriptions/me") }
+            }
+        }
+    }
+
+    suspend fun getNotifications() = parseRequestResult<NotificationResponse> {
+        httpClient.get {
+            authBlock {
+                url { path("/api/v1/notifications") }
             }
         }
     }
