@@ -11,9 +11,25 @@ class PushSender {
 		});
 	}
 
-	async sendPush(message, tokens) {
+	async sendPush(msg, tokens) {
 		console.log("send Push:");
 		console.log(admin);
+
+		// const registrationTokens = ['TOKEN_1', 'TOKEN_2', 'TOKEN_3'];
+		const message = {
+		  notification: {
+		    title: 'Новый анекдот',
+		    body: 'Hello, this is a test notification for multiple devices!'
+		  },
+		  tokens: tokens
+		};
+		admin.messaging().sendMulticast(message)
+		  .then((response) => {
+		    console.log('Multicast notification sent:', response);
+		  })
+		  .catch((error) => {
+		    console.error('Error sending multicast notification:', error);
+		  });
 	}
 
 }
