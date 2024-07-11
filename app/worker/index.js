@@ -16,10 +16,10 @@ async function launch(context) {
     await mailer.init();
     context.mailer = mailer;
 
-    pushSender.sendPush("todo", [
-        "dMFX3x94RmOngId8Twbk2J:APA91bHIjMYfo0M1DmPru-Eh-geUwS1PsBsznEpHYIFVPYT_6uu5oa_PP9jN-u6pEuR8Eur4SAZgzudaJvyoV5amVDO2IIzOykTrySZYuttn2jplUKZ-egFr2fnjiHvtt1frDH55gLO1",
-        "esFT4_iUTxmToOG5v3hgND:APA91bGIOAToVV1nA9_sq6VZXEpOBZQBUrAEeC1P_HwIZIXXzLBlXlZJ7EY0y6pzgS_VDiYWPesXRWp2XRw-JYflVW-8oJ5xyvogtX6B4c8z9QPJoui1Abws0xYIbLw0bQs34MqNYuU6"
-    ]);
+    // pushSender.sendPush("todo", [
+    //     "dMFX3x94RmOngId8Twbk2J:APA91bHIjMYfo0M1DmPru-Eh-geUwS1PsBsznEpHYIFVPYT_6uu5oa_PP9jN-u6pEuR8Eur4SAZgzudaJvyoV5amVDO2IIzOykTrySZYuttn2jplUKZ-egFr2fnjiHvtt1frDH55gLO1",
+    //     "esFT4_iUTxmToOG5v3hgND:APA91bGIOAToVV1nA9_sq6VZXEpOBZQBUrAEeC1P_HwIZIXXzLBlXlZJ7EY0y6pzgS_VDiYWPesXRWp2XRw-JYflVW-8oJ5xyvogtX6B4c8z9QPJoui1Abws0xYIbLw0bQs34MqNYuU6"
+    // ]);
 
     /*
     TODO: раскомментировать:
