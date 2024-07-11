@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import domain.model.Notification
@@ -181,6 +182,8 @@ class NotificationsScreen : BaseScreen<NotificationsViewModel>() {
                 .padding(8.dp)
         ) {
             Spacer(modifier = Modifier.size(8.dp))
+            Text(text = notification.title.orEmpty(), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.size(4.dp))
             Text(text = notification.text.orEmpty(), fontSize = 16.sp)
         }
     }
