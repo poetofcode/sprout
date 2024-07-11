@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { XMLParser } = require('fast-xml-parser');
 const createMailer = require('../utils/mailer.js').createMailer;
+const createPushSender = require('../utils/push_sender.js').create;
 var iconv = require('iconv-lite');
 
 const parser = new XMLParser();
@@ -11,8 +12,11 @@ async function launch(context) {
     // TODO оборачивать вызов в try/catch
 
     const mailer = createMailer(context);
+    const pushSender = createPushSender();
     await mailer.init();
     context.mailer = mailer;
+
+    pushSender.sendPush("todo", []);
 
     /*
     TODO: раскомментировать:
