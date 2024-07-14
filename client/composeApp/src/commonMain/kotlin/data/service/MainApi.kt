@@ -96,7 +96,7 @@ class MainApi(
     suspend fun saveFirebasePushToken(pushToken: String) {
         httpClient.post {
             authBlock {
-                url { path("/api/v1/session/push_token") }
+                url { path("/api/v1/sessions/push_token") }
                 setBody(SaveFirebasePushTokenRequestBody(
                     pushToken = pushToken
                 ))

@@ -19,6 +19,7 @@ import presentation.App
 import presentation.base.Config
 import presentation.base.ViewModelStore
 import presentation.factories.*
+import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.navigation.SetBackHandlerEffect
 import presentation.navigation.SharedMemory
 import specific.AndroidContentProvider
@@ -52,6 +53,12 @@ class MainActivity : ComponentActivity() {
         )
     )
 
+    private var firebasePushToken: String? = null
+
+    private val profileRepository by lazy {
+        repositoryFactory.createProfileRepository()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,7 +67,8 @@ class MainActivity : ComponentActivity() {
             Log.d("mylog", msg)
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
-            saveTokenOnServer(token)
+            firebasePushToken = token
+            saveTokenOnServer()
         }
 
         setContent {
@@ -81,13 +89,29 @@ class MainActivity : ComponentActivity() {
                     }
                 }.launchIn(this)
         }
+
+        listenToSharedEvents()
     }
 
-    private fun saveTokenOnServer(token: String) {
-        val profileRepository = repositoryFactory.createProfileRepository()
+    private fun listenToSharedEvents() {
+        SharedMemory.eventFlow
+            .onEach { event ->
+                when (event) {
+                    is OnReceivedTokenSharedEvent -> {
+                        saveTokenOnServer()
+                    }
+                }
+            }
+            .launchIn(lifecycleScope)
+    }
+
+    private fun saveTokenOnServer() {
+        if (profileRepository.fetchProfileLocal() == null) {
+            return
+        }
         lifecycleScope.launch {
             try {
-                profileRepository.saveFirebasePushToken(token)
+                profileRepository.saveFirebasePushToken(firebasePushToken ?: return@launch)
             } catch (t: Throwable) {
                 t.printStackTrace()
             }
