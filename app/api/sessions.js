@@ -40,7 +40,14 @@ class SessionMiddleware {
 
             try {
                 const clientIP = parseIp(req);
-                const session = await this.repositories.sessions.createSession(foundUser._id, clientIP);
+                const clientType = req.header('x-client-type');
+                const clientVersion = req.header('x-client-version');
+                const session = await this.repositories.sessions.createSession(
+                    foundUser._id, 
+                    clientIP,
+                    clientType,
+                    clientVersion
+                );
                 res.send(utils.wrapResult(session));
             }
             catch(err) {
