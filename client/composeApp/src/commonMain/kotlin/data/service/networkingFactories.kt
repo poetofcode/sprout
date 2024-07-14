@@ -2,6 +2,7 @@ package data.service
 
 import data.utils.ProfileStorage
 import io.ktor.client.HttpClient
+import presentation.base.Config
 
 interface NetworkingFactory {
 
@@ -13,6 +14,8 @@ interface NetworkingFactory {
 
 class NetworkingFactoryImpl(
     private val profileStorage: ProfileStorage,
+    private val deviceType: Config.DeviceTypes,
+    private val appVersion: String = "0.1",
 ) : NetworkingFactory {
     
     override fun createHttpClient(): HttpClient {
@@ -25,6 +28,8 @@ class NetworkingFactoryImpl(
         return MainApi(
             httpClient = createHttpClient(),
             profileStorage = profileStorage,
+            deviceType = deviceType,
+            appVersion = appVersion,
         )
     }
 

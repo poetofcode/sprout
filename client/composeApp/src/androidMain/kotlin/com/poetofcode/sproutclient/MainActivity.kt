@@ -23,7 +23,7 @@ import presentation.navigation.SharedMemory
 import specific.AndroidContentProvider
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity() : ComponentActivity() {
     // val repositoryFactory = MockRepositoryFactory()
     val profileStorage = ProfileStorageImpl(
         AndroidContentProvider(
@@ -32,7 +32,10 @@ class MainActivity : ComponentActivity() {
         )
     )
 
-    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl(profileStorage)
+    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl(
+        profileStorage,
+        Config.DeviceTypes.ANDROID,
+    )
 
     val repositoryFactory = RepositoryFactoryImpl(
         api = networkingFactory.createApi(),

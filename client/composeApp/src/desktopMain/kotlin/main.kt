@@ -48,7 +48,10 @@ fun main() = application {
             relativePath = "appcache",
         )
     )
-    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl(profileStorage)
+    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl(
+        profileStorage,
+        Config.DeviceTypes.DESKTOP,
+    )
 
     val repositoryFactory = RepositoryFactoryImpl(
         api = networkingFactory.createApi(),

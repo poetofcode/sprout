@@ -16,6 +16,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
@@ -24,10 +25,13 @@ import io.ktor.http.contentType
 import io.ktor.http.path
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import presentation.base.Config
 
 class MainApi(
     private val httpClient: HttpClient,
     private val profileStorage: ProfileStorage,
+    private val deviceType: Config.DeviceTypes,
+    private val appVersion: String,
 ) {
 
     suspend fun fetchJokes() = parseRequestResult<JokesResponse> {
@@ -108,6 +112,8 @@ class MainApi(
 
     private fun HttpRequestBuilder.nonAuthBlock(block: HttpRequestBuilder.() -> Unit) {
         contentType(ContentType.Application.Json)
+        header("x-client-type", "desktop")
+        header("x-client-version", "1.0")
         block()
     }
 
