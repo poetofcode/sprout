@@ -27,6 +27,8 @@ interface ProfileRepository {
 
     suspend fun fetchNotifications() : List<Notification>
 
+    suspend fun saveFirebasePushToken(pushToken: String)
+
 }
 
 class ProfileRepositoryImpl(
@@ -94,6 +96,10 @@ class ProfileRepositoryImpl(
                     extras = dto.extras,
                 )
             }
+    }
+
+    override suspend fun saveFirebasePushToken(pushToken: String) {
+        api.saveFirebasePushToken(pushToken)
     }
 
 }

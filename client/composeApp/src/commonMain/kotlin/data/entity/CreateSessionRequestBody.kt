@@ -7,3 +7,5 @@ data class CreateSessionRequestBody(
     val login: String,
     val password: String,
 )
+
+

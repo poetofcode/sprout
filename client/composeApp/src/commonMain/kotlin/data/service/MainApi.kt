@@ -8,6 +8,7 @@ import data.entity.FailureResponse
 import data.entity.JokesResponse
 import data.entity.NotificationResponse
 import data.entity.ResultResponse
+import data.entity.SaveFirebasePushTokenRequestBody
 import data.entity.SubscriptionResponse
 import data.utils.ProfileStorage
 import io.ktor.client.HttpClient
@@ -88,6 +89,17 @@ class MainApi(
         httpClient.get {
             authBlock {
                 url { path("/api/v1/notifications") }
+            }
+        }
+    }
+
+    suspend fun saveFirebasePushToken(pushToken: String) {
+        httpClient.post {
+            authBlock {
+                url { path("/api/v1/session/push_token") }
+                setBody(SaveFirebasePushTokenRequestBody(
+                    pushToken = pushToken
+                ))
             }
         }
     }
