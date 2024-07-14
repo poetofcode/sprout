@@ -112,8 +112,8 @@ class MainApi(
 
     private fun HttpRequestBuilder.nonAuthBlock(block: HttpRequestBuilder.() -> Unit) {
         contentType(ContentType.Application.Json)
-        header("x-client-type", "desktop")
-        header("x-client-version", "1.0")
+        header("x-client-type", deviceType.title)
+        header("x-client-version", appVersion)
         block()
     }
 
