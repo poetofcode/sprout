@@ -97,9 +97,17 @@ class SessionMiddleware {
 
     saveFirebasePushToken() {
         return async(req, res, next) => {
-            try {
+            try {    
+                if(!req.body) {
+                    return next(utils.buildError(400, 'Body is empty'))
+                }
                 const currentSession = res.locals.session;
-                const pushToken = req.params.pushToken;
+                const pushToken = req.body.pushToken;
+
+                if (!pushToken || pushToken == 'undefined') {
+                    return next(utils.buildError(400, '"pushToken" is empty'))
+                }
+
                 await this.repositories.sessions.saveSessionParams(
                     currentSession._id,
                     { pushToken: pushToken }

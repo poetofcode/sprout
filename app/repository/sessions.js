@@ -46,10 +46,14 @@ class SessionRepository {
         return result;
     }
 
-    async saveSessionParams(sessionId, params) {
-        console.log(`saveSessionParams, sessionId: ${sessionId}, params: ${params}`);
-        // const result = await this.sessionCollection.deleteOne({ token : token });
-        // return result;
+    async saveSessionParams(sessionId, newParams) {
+        const res = await this.sessionCollection.updateOne(
+            { _id: sessionId },
+            { 
+                $set: { params: newParams }
+            }
+        );
+        return res;
     }
 
 }
