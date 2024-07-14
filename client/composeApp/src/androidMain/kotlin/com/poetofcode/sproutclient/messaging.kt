@@ -13,7 +13,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 fun Context.retrieveFirebasePushToken(onSuccess: (String) -> Unit) {
     FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
         if (!task.isSuccessful) {
-            task.exception.printStackTrace()
+            task.exception?.printStackTrace()
             return@OnCompleteListener
         }
 
