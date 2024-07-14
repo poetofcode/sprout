@@ -22,6 +22,7 @@ async function initRoutes(router, context) {
 	router.get('/sessions', sessionMiddleware.fetchSessions());
 	router.get('/sessions/:token', sessionMiddleware.fetchSessionByToken());
 	router.delete('/sessions/:token', sessionMiddleware.deleteSessionByToken());
+	router.post('/sessions/push_token', sessionMiddleware.saveFirebasePushToken());
 
 	router.post('/users', middlewares.users.createUser());
 	router.post('/users/me/notifications/seen/', middlewares.users.markNotificationsAsSeen());

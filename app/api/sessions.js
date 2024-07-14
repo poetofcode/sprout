@@ -95,6 +95,23 @@ class SessionMiddleware {
         }
     }
 
+    saveFirebasePushToken() {
+        return async(req, res, next) => {
+            try {
+                const currentSession = res.locals.session;
+                const pushToken = req.params.pushToken;
+                await this.repositories.sessions.saveSessionParams(
+                    currentSession._id,
+                    { pushToken: pushToken }
+                )
+                res.send(utils.wrapResult('ok'));
+            }
+            catch (err) {
+                next(err);
+            }
+        }
+    }
+
 }
 
 const parseIp = (req) =>

@@ -46,6 +46,12 @@ class SessionRepository {
         return result;
     }
 
+    async saveSessionParams(sessionId, params) {
+        console.log(`saveSessionParams, sessionId: ${sessionId}, params: ${params}`);
+        // const result = await this.sessionCollection.deleteOne({ token : token });
+        // return result;
+    }
+
 }
 
 exports.create = (context) => new SessionRepository(context);
