@@ -1,12 +1,13 @@
-package com.poetofcode.SproutClient
+package com.poetofcode.sproutclient
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
-import com.poetofcode.sproutclient.retrieveToken
 import data.repository.RepositoryFactoryImpl
 import data.service.NetworkingFactory
 import data.service.NetworkingFactoryImpl
@@ -23,7 +24,7 @@ import presentation.navigation.SharedMemory
 import specific.AndroidContentProvider
 
 
-class MainActivity() : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     // val repositoryFactory = MockRepositoryFactory()
     val profileStorage = ProfileStorageImpl(
         AndroidContentProvider(
@@ -54,7 +55,13 @@ class MainActivity() : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        baseContext.retrieveToken()
+        retrieveFirebasePushToken { token ->
+            val msg = "FCM Token: $token"
+            Log.d("mylog", msg)
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+
+            saveTokenOnServer(token)
+        }
 
         setContent {
             App(
@@ -73,6 +80,17 @@ class MainActivity() : ComponentActivity() {
                         backHandleCallback = effect.cb
                     }
                 }.launchIn(this)
+        }
+    }
+
+    private fun saveTokenOnServer(token: String) {
+        val profileRepository = repositoryFactory.createProfileRepository()
+        lifecycleScope.launch {
+            try {
+                profileRepository.saveFirebasePushToken(token)
+            } catch (t: Throwable) {
+                t.printStackTrace()
+            }
         }
     }
 
