@@ -59,12 +59,6 @@ class ProfileViewModel(
     override fun obtainSharedEvent(event: SharedEvent) {
         when (event) {
             is OnReceivedTokenSharedEvent -> {
-                profileRepository.saveProfileLocal(
-                    Profile(
-                        token = event.token,
-                        email = event.email,
-                    )
-                )
                 fetchProfile()
             }
 

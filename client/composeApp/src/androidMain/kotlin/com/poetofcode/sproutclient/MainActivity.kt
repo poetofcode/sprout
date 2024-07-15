@@ -117,7 +117,7 @@ class MainActivity : ComponentActivity() {
     private fun saveTokenOnServer() {
         println("mylog ${111}")
         lifecycleScope.launch {
-            delay(100)
+            // delay(100)
             try {
                 profileRepository.saveFirebasePushToken(firebasePushToken ?: return@launch)
                 println("mylog ${222}")

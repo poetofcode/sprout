@@ -57,6 +57,13 @@ class ProfileRepositoryImpl(
                     token = response.token,
                     email = response.user.login,
                 )
+            }.also { profile ->
+                saveProfileLocal(
+                    Profile(
+                        token = profile.token,
+                        email = profile.email,
+                    )
+                )
             }
     }
 
