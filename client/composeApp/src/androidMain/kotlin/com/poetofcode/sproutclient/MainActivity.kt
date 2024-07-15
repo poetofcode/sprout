@@ -7,11 +7,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.withStarted
 import data.repository.RepositoryFactoryImpl
 import data.service.NetworkingFactory
 import data.service.NetworkingFactoryImpl
 import data.utils.ProfileStorageImpl
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -94,24 +99,28 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun listenToSharedEvents() {
-        SharedMemory.eventFlow
-            .onEach { event ->
+        lifecycleScope.launch {
+            withStarted {}
+
+            SharedMemory.eventFlow.collect { event ->
+                println("mylog New event: ${event}")
                 when (event) {
                     is OnReceivedTokenSharedEvent -> {
+                        println("mylog OnAuth ${event.email}")
                         saveTokenOnServer()
                     }
                 }
             }
-            .launchIn(lifecycleScope)
+        }
     }
 
     private fun saveTokenOnServer() {
-        if (profileRepository.fetchProfileLocal() == null) {
-            return
-        }
+        println("mylog ${111}")
         lifecycleScope.launch {
+            delay(100)
             try {
                 profileRepository.saveFirebasePushToken(firebasePushToken ?: return@launch)
+                println("mylog ${222}")
             } catch (t: Throwable) {
                 t.printStackTrace()
             }
