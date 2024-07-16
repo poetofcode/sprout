@@ -15,9 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -83,7 +81,7 @@ val LocalMainAppState = staticCompositionLocalOf<MainAppState> {
 fun App(config: Config) {
     CompositionLocalProvider(LocalMainAppState provides MainAppState()) {
         MaterialTheme {
-            val selectedTab = remember { mutableStateOf<Tabs>(Tabs.HOME) }
+            val selectedTab = remember { mutableStateOf<Tabs>(HOME) }
             val navState = remember {
                 NavStateImpl(viewModelStore = config.viewModelStore).apply {
                     push(HomeTabScreen())
@@ -117,7 +115,7 @@ fun App(config: Config) {
                                 contentScale = ContentScale.None,
                                 colorFilter = ColorFilter.tint(
                                     if (isSelected) {
-                                        MaterialTheme.colors.primary
+                                        MaterialTheme.colorScheme.primary
                                     } else {
                                         Color.Gray
                                     }
