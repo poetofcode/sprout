@@ -5,6 +5,7 @@ const createPushSender = require('../utils/push_sender.js').create;
 var iconv = require('iconv-lite');
 
 const parser = new XMLParser();
+const pushSender = createPushSender();
 
 async function launch(context) {
     console.log("Workers started");
@@ -98,8 +99,6 @@ const notificationWorker = async (context) => {
     console.log("Notifications with sessions ----------");
     console.log(mergedArr);
 
-    const pushSender = createPushSender();
-
     const sendPromises = mergedArr.map((item) => {
         const pushTokens = item.sessions.filter((s) => {
             return s.params && s.params.pushToken
@@ -152,7 +151,7 @@ async function getLastJoke(db) {
 
 
 const workers = [
-    // jokeWorker,
+    jokeWorker,
     debugWorker,
     notificationWorker
 ]
