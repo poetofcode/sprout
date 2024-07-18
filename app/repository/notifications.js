@@ -6,7 +6,6 @@ const defaultSkip = 0;
 
 class NotificationRepository {
 
-
 	constructor(context) {
 		this.context = context;
 		this.notificationCollection = context.getDb().collection('notifications');
@@ -35,11 +34,12 @@ class NotificationRepository {
 		console.log(inserted);
 	}
 
-	async getNotifications(limit, skip) {
+	async getNotifications(limit, skip, query) {
 		const l = limit || defaultLimit;
 		const s = skip || defaultSkip;
+		const q = query || {};
         const arr = await this.notificationCollection
-        	.find({})
+        	.find(q)
         	.sort({ _id: -1 })
         	.limit(l)
         	.skip(s)
@@ -55,6 +55,17 @@ class NotificationRepository {
             throw new Error('Not found notification');
         }
         return found;
+	}
+
+
+	async getUnreadNotifications(limit, skip) {
+		const l = limit || defaultLimit;
+		const s = skip || defaultSkip;
+		return getNotifications(l, s, {
+			// TODO тут нужно проверять какое-то условие прочитанности
+			//      а его скорее всего нужно будет устанавливать 
+			//		при установке прочитки seen для юзера
+		});
 	}
 
 }
