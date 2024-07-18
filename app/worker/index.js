@@ -30,10 +30,10 @@ async function launch(context) {
     */
 
 
-    setInterval(async () => {
-        const workerPromises = workers.map((worker) => worker(context));
-        await Promise.all(workerPromises);
-    }, 10000);
+    // setInterval(async () => {
+    //     const workerPromises = workers.map((worker) => worker(context));
+    //     await Promise.all(workerPromises);
+    // }, 10000);
 
 
     const workerPromises = workers.map((worker) => worker(context));
@@ -70,6 +70,7 @@ const notificationWorker = async (context) => {
     const userIds = context.repositories.subscriptions.getSubscriptions();
     const lastJoke = await getLastJoke(context.getDb());
 
+    // Создаём нотификации
     const notificationPromises = userIds.map((userId) => {
         return context.repositories.notifications.createNotification(
             {
@@ -82,6 +83,13 @@ const notificationWorker = async (context) => {
         )
     });
     await Promise.all(notificationPromises);
+
+    // Достаём непрочитанные нотификации
+    const unreadNotifications = await context.repositories.notifications.getUnreadNotifications();
+    unreadNotifications.forEach((item) => {
+        console.log("----------");
+        console.log(item);
+    });
 }
 
 const debugWorker = async (context) => {
