@@ -18,8 +18,9 @@ class PushSender {
 		// const registrationTokens = ['TOKEN_1', 'TOKEN_2', 'TOKEN_3'];
 		const message = {
 		  notification: {
-		    title: 'Новый анекдот',
-		    body: 'Hello, this is a test notification for multiple devices!'
+		    title: msg.title,
+		    body: msg.text,
+		    // TODO use msg.image
 		  },
 		  tokens: tokens
 		};

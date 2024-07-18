@@ -12,7 +12,7 @@ async function launch(context) {
     // TODO оборачивать вызов в try/catch
 
     const mailer = createMailer(context);
-    const pushSender = createPushSender();
+    // const pushSender = createPushSender();
     await mailer.init();
     context.mailer = mailer;
 
@@ -97,6 +97,21 @@ const notificationWorker = async (context) => {
 
     console.log("Notifications with sessions ----------");
     console.log(mergedArr);
+
+    const pushSender = createPushSender();
+
+    const sendPromises = mergedArr.map((item) => {
+        const pushTokens = item.sessions.filter((s) => {
+            return s.params && s.params.pushToken
+        })
+        .map((s) => s.params.pushToken );
+        item.pushTokens = pushTokens;
+        return item;
+    }).filter((item) => item.pushTokens.length > 0)
+    .map((item) => {
+        return pushSender.sendPush(item, item.pushTokens);
+    });
+    await Promise.all(sendPromises);
 }
 
 const debugWorker = async (context) => {
