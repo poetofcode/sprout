@@ -79,17 +79,24 @@ const notificationWorker = async (context) => {
                 image: "",
             },
             lastJoke._id,
-            userId._id
+            userId
         )
     });
     await Promise.all(notificationPromises);
 
     // Достаём непрочитанные нотификации
     const unreadNotifications = await context.repositories.notifications.getUnreadNotifications();
-    unreadNotifications.forEach((item) => {
-        console.log("----------");
-        console.log(item);
+    const sessionsPromises = unreadNotifications.map((item) => {
+        return context.repositories.sessions.fetchActiveSessionsByUserId(item.userId);
     });
+    const sessionsArr = await Promise.all(sessionsPromises);
+    const mergedArr = unreadNotifications.map((item, index) => {
+        item.sessions = sessionsArr[index];
+        return item;
+    });
+
+    console.log("Notifications with sessions ----------");
+    console.log(mergedArr);
 }
 
 const debugWorker = async (context) => {

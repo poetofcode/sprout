@@ -19,7 +19,7 @@ class NotificationRepository {
 			extras: ""
 		}
 		const inserted = await this.notificationCollection.updateOne(
-			{ linkId: linkId },
+			{ linkId: linkId, userId: new ObjectId(userId) },
 			{ 
 				$set: {
 					title: notification.title,

@@ -41,6 +41,17 @@ class SessionRepository {
         return session;
     }
 
+    async fetchActiveSessionsByUserId(userId) {
+        const sessions = await this.sessionCollection.find({ 
+            userId: userId 
+            // TODO Тут нужно запрашивать только актуальные сессии
+            //      например те, по которым была активность 
+            //      в какой то ограниченный период времени
+        }).toArray();
+        return sessions;
+    }
+
+
     async deleteSessionByToken(token) {
         const result = await this.sessionCollection.deleteOne({ token : token });
         return result;
