@@ -32,6 +32,19 @@ class NotificationStatusRepository {
 		console.log(inserted);
 	}
 
+	async filterPushTokensNotSent(notificationId, pushTokens) {
+        const arr = await this.statusesCollection
+        	.find({
+        		notificationId: notificationId,
+        		pushToken: {
+        			"$in": pushTokens
+        		}
+        	})
+        	.toArray();
+
+        return arr.map((item) => item.pusToken);
+	}
+
 
 }
 
