@@ -148,13 +148,17 @@ const notificationWorker = async (context) => {
 
     // Сохраняем статусы отправки
     const createStatusPromises = withPushTokens.map((item, index) => {
-        item.sendResponse = sendResponses[index].responses;
+        if (sendResponses[index] && sendResponses[index].responses) {
+            item.sendResponse = sendResponses[index].responses;
+        }
 
-            console.log('Status of item:');
-            console.log(item);
+        console.log('Status of item:');
+        console.log(item);
 
         return item;
-    }).map((item) => {
+    })
+    .filter((item) => !item.sendResponses)
+    .map((item) => {
         return Promise.all(item.pushTokens.map((t, idx) => {
             return context.repositories.notificationStatuses.createStatus(item._id, t, item.sendResponse[idx].success)
         }));
