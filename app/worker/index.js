@@ -66,7 +66,6 @@ const jokeWorker = async (context) => {
 
 const notificationWorker = async (context) => {
     console.log("Работает notificationWorker");
-    // console.log(context);
 
     const userIds = context.repositories.subscriptions.getSubscriptions();
     const lastJoke = await getLastJoke(context.getDb());
@@ -95,9 +94,6 @@ const notificationWorker = async (context) => {
         item.sessions = sessionsArr[index];
         return item;
     });
-
-    console.log("Notifications with sessions ----------");
-    console.log(mergedArr);
 
     const sendPromises = mergedArr.map((item) => {
         const pushTokens = item.sessions.filter((s) => {
