@@ -135,7 +135,10 @@ const notificationWorker = async (context) => {
     }).map((item) => {
        return pushSender.sendPush(item, item.pushTokens); 
     });
-    await Promise.all(withTokensNotSentPromises);    
+    const sendResponses = await Promise.all(withTokensNotSentPromises);
+
+    console.log('++++++++++++++++++++++++');
+    console.log(sendResponses);
 }
 
 const debugWorker = async (context) => {

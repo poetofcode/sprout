@@ -24,13 +24,7 @@ class PushSender {
 		  },
 		  tokens: tokens
 		};
-		admin.messaging().sendMulticast(message)
-		  .then((response) => {
-		    console.log('Multicast notification sent:', response);
-		  })
-		  .catch((error) => {
-		    console.error('Error sending multicast notification:', error);
-		  });
+		return admin.messaging().sendMulticast(message);
 	}
 
 }
