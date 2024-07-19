@@ -38,11 +38,13 @@ class NotificationStatusRepository {
         		notificationId: notificationId,
         		pushToken: {
         			"$in": pushTokens
-        		}
+        		},
+        		isSuccess: true
         	})
         	.toArray();
 
-        return arr.map((item) => item.pusToken);
+        const foundTokens = arr.map((item) => item.pushToken);
+        return pushTokens.filter((token) => !foundTokens.includes(token));
 	}
 
 

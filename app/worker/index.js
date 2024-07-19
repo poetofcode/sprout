@@ -95,6 +95,7 @@ const notificationWorker = async (context) => {
         return item;
     });
 
+    /*
     const sendPromises = mergedArr.map((item) => {
         const pushTokens = item.sessions.filter((s) => {
             return s.params && s.params.pushToken
@@ -107,6 +108,25 @@ const notificationWorker = async (context) => {
         return pushSender.sendPush(item, item.pushTokens);
     });
     await Promise.all(sendPromises);
+
+    */
+
+    const withPushTokens = mergedArr.map((item) => {
+        const pushTokens = item.sessions.filter((s) => {
+            return s.params && s.params.pushToken
+        })
+        .map((s) => s.params.pushToken );
+        item.pushTokens = pushTokens;
+        return item;
+    }).filter((item) => item.pushTokens.length > 0);
+
+    const notSentPromises = withPushTokens.map((item) => {
+        return context.repositories.notificationStatuses.filterPushTokensNotSent(item.notificationId, item.pushTokens);
+    });
+    const pushTokensNotSent = await Promise.all(notSentPromises);
+
+    console.log('==================');
+    console.log(pushTokensNotSent);
 }
 
 const debugWorker = async (context) => {
@@ -149,7 +169,7 @@ async function getLastJoke(db) {
 const workers = [
     jokeWorker,
     debugWorker,
-    // notificationWorker
+    notificationWorker
 ]
 
 
