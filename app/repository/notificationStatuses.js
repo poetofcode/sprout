@@ -33,6 +33,10 @@ class NotificationStatusRepository {
 	}
 
 	async filterPushTokensNotSent(notificationId, pushTokens) {
+		console.log('Push tokens IN:');
+		console.log(pushTokens);
+
+
         const arr = await this.statusesCollection
         	.find({
         		notificationId: notificationId,
@@ -42,6 +46,9 @@ class NotificationStatusRepository {
         		isSuccess: true
         	})
         	.toArray();
+
+		console.log('Arr:');
+		console.log(arr);
 
         const foundTokens = arr.map((item) => item.pushToken);
         return pushTokens.filter((token) => !foundTokens.includes(token));

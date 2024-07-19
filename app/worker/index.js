@@ -121,7 +121,7 @@ const notificationWorker = async (context) => {
     }).filter((item) => item.pushTokens.length > 0);
 
     const notSentPromises = withPushTokens.map((item) => {
-        return context.repositories.notificationStatuses.filterPushTokensNotSent(item.notificationId, item.pushTokens);
+        return context.repositories.notificationStatuses.filterPushTokensNotSent(item._id, item.pushTokens);
     });
     const pushTokensNotSent = await Promise.all(notSentPromises);
 
@@ -132,13 +132,34 @@ const notificationWorker = async (context) => {
     const withTokensNotSentPromises = withPushTokens.map((item, index) => {
         item.pushTokens = pushTokensNotSent[index];
         return item;
-    }).map((item) => {
+    })
+    .filter((item) => item.pushTokens.length > 0)
+    .map((item) => {
        return pushSender.sendPush(item, item.pushTokens); 
     });
     const sendResponses = await Promise.all(withTokensNotSentPromises);
 
     console.log('++++++++++++++++++++++++');
     console.log(sendResponses);
+
+    if (sendResponses.length == 0) {
+        return;
+    }
+
+    // Сохраняем статусы отправки
+    const createStatusPromises = withPushTokens.map((item, index) => {
+        item.sendResponse = sendResponses[index].responses;
+
+            console.log('Status of item:');
+            console.log(item);
+
+        return item;
+    }).map((item) => {
+        return Promise.all(item.pushTokens.map((t, idx) => {
+            return context.repositories.notificationStatuses.createStatus(item._id, t, item.sendResponse[idx].success)
+        }));
+    });
+    Promise.all(createStatusPromises);
 }
 
 const debugWorker = async (context) => {
