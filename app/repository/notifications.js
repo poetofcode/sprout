@@ -16,7 +16,8 @@ class NotificationRepository {
 			userId: new ObjectId(userId),
 			createdAt: new Date(),
 			linkId: linkId,
-			extras: ""
+			extras: "",
+			seen: false
 		}
 		const inserted = await this.notificationCollection.updateOne(
 			{ linkId: linkId, userId: new ObjectId(userId) },
@@ -66,6 +67,16 @@ class NotificationRepository {
 			//      а его скорее всего нужно будет устанавливать 
 			//		при установке прочитки seen для юзера
 		});
+	}
+
+	async markNotificationsOfUserAsSeen(userId) {
+		const seenAt = new Date();
+		this.notificationCollection.update(
+			{ userId: new ObjectId(userId) },
+			{ 
+				$set: { seen: true, seenAt: seenAt }
+			}
+		);
 	}
 
 }
