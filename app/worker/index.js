@@ -31,10 +31,10 @@ async function launch(context) {
     */
 
 
-    // setInterval(async () => {
-    //     const workerPromises = workers.map((worker) => worker(context));
-    //     await Promise.all(workerPromises);
-    // }, 10000);
+    setInterval(async () => {
+        const workerPromises = workers.map((worker) => worker(context));
+        await Promise.all(workerPromises);
+    }, 10000);
 
 
     const workerPromises = workers.map((worker) => worker(context));
@@ -94,22 +94,6 @@ const notificationWorker = async (context) => {
         item.sessions = sessionsArr[index];
         return item;
     });
-
-    /*
-    const sendPromises = mergedArr.map((item) => {
-        const pushTokens = item.sessions.filter((s) => {
-            return s.params && s.params.pushToken
-        })
-        .map((s) => s.params.pushToken );
-        item.pushTokens = pushTokens;
-        return item;
-    }).filter((item) => item.pushTokens.length > 0)
-    .map((item) => {
-        return pushSender.sendPush(item, item.pushTokens);
-    });
-    await Promise.all(sendPromises);
-
-    */
 
     const withPushTokens = mergedArr.map((item) => {
         const pushTokens = item.sessions.filter((s) => {
@@ -204,7 +188,7 @@ async function getLastJoke(db) {
 
 
 const workers = [
-    // jokeWorker,
+    jokeWorker,
     debugWorker,
     notificationWorker
 ]

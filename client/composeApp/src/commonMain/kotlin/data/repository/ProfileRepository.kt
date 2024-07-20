@@ -29,6 +29,8 @@ interface ProfileRepository {
 
     suspend fun saveFirebasePushToken(pushToken: String)
 
+    suspend fun markNotificationsAsSeen()
+
 }
 
 class ProfileRepositoryImpl(
@@ -108,5 +110,10 @@ class ProfileRepositoryImpl(
     override suspend fun saveFirebasePushToken(pushToken: String) {
         api.saveFirebasePushToken(pushToken)
     }
+
+    override suspend fun markNotificationsAsSeen() {
+        api.markNotificationsAsSeen()
+    }
+
 
 }

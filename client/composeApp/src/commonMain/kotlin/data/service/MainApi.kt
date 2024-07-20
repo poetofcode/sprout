@@ -104,6 +104,14 @@ class MainApi(
         }
     }
 
+    suspend fun markNotificationsAsSeen() {
+        httpClient.post {
+            authBlock {
+                url { path("/api/v1/users/me/notifications/seen/") }
+            }
+        }
+    }
+
     private suspend inline fun <reified T : Any> parseRequestResult(doRequest: () -> HttpResponse): ResultResponse<T> {
         var response: HttpResponse? = null
         val parsed: ResultResponse<T> = try {

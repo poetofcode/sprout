@@ -55,7 +55,13 @@ class NotificationsViewModel(
     }
 
     fun onShowNotifications() {
-        // TODO вызывать метод апи markNotificationsAsSeen
+        viewModelScope.launch {
+            try {
+                profileRepository.markNotificationsAsSeen()
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
     }
 
 }
