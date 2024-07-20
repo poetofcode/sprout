@@ -14,7 +14,7 @@ import presentation.navigation.NavigateBackEffect
 import presentation.navigation.NavigatorTag
 
 class NotificationsViewModel(
-    val profileRepository: ProfileRepository,
+    private val profileRepository: ProfileRepository,
 ) : BaseViewModel<NotificationsViewModel.State>() {
 
     data class State(
@@ -54,5 +54,8 @@ class NotificationsViewModel(
         postEffect(NavigateBackEffect(tag = NavigatorTag.ROOT))
     }
 
-}
+    fun onShowNotifications() {
+        // TODO вызывать метод апи markNotificationsAsSeen
+    }
 
+}
