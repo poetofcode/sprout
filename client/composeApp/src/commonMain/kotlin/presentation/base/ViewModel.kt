@@ -20,7 +20,9 @@ import presentation.navigation.SharedMemory
 import presentation.navigation.SideEffect
 import presentation.viewModelCoroutineScopeProvider
 
-interface ViewModel<S>
+interface ViewModel<S> {
+    fun onCleared()
+}
 
 
 abstract class BaseViewModel<S> : ViewModel<S> {
@@ -55,6 +57,10 @@ abstract class BaseViewModel<S> : ViewModel<S> {
     }
 
     protected open fun obtainSharedEvent(event: SharedEvent) {
+        // Override it in derived classes
+    }
+
+    override fun onCleared() {
         // Override it in derived classes
     }
 

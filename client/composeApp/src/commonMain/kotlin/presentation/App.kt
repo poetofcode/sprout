@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -136,6 +137,12 @@ fun App(config: Config) {
 
             LaunchedEffect(selectedTab.value) {
                 navState.moveToFront(selectedTab.value.key)
+            }
+
+            DisposableEffect(Unit) {
+                onDispose {
+                    config.viewModelStore.clearAll()
+                }
             }
         }
     }

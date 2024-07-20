@@ -109,4 +109,8 @@ class StartViewModel(
         postEffect(NavigateEffect(screen = NotificationsScreen(), tag = NavigatorTag.ROOT))
     }
 
+    override fun onCleared() {
+        println("mylog ${"On cleared !"}")
+    }
+
 }
