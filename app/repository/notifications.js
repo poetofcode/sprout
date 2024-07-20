@@ -31,7 +31,8 @@ class NotificationRepository {
 			},
 			{ upsert: true }
 		);
-		console.log(`iserted:`);
+		console.log(`Notification iserted:`);
+		console.log(entityOnCreate);
 		console.log(inserted);
 	}
 
@@ -72,7 +73,7 @@ class NotificationRepository {
 
 	async markNotificationsOfUserAsSeen(userId) {
 		const seenAt = new Date();
-		this.notificationCollection.update(
+		this.notificationCollection.updateMany(
 			{ userId: new ObjectId(userId) },
 			{ 
 				$set: { seen: true, seenAt: seenAt }
