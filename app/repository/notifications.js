@@ -63,9 +63,10 @@ class NotificationRepository {
 		const l = limit || defaultLimit;
 		const s = skip || defaultSkip;
 		return this.getNotifications(l, s, {
-			// TODO тут нужно проверять какое-то условие прочитанности
-			//      а его скорее всего нужно будет устанавливать 
-			//		при установке прочитки seen для юзера
+			'$or': [ 
+				{ seen: false }, 
+				{ seen: { '$exists': false } }
+			]
 		});
 	}
 

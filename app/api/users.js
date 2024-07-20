@@ -41,9 +41,7 @@ class UserMiddleware {
                 const currentUserId = res.locals.session.user._id.toString();
                 const result = await this.repositories.users.updateUserSettings(
                     currentUserId,
-                    {
-                        notificationsSeen: new Date()
-                    }
+                    { notificationsSeen: new Date() }
                 );
                 await this.repositories.notifications.markNotificationsOfUserAsSeen(currentUserId);
                 res.send(utils.wrapResult('ok'));
