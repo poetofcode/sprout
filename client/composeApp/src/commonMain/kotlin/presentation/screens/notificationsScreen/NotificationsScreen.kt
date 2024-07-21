@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import data.utils.DateFormatter
 import domain.model.Notification
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
@@ -189,7 +190,19 @@ class NotificationsScreen : BaseScreen<NotificationsViewModel>() {
                 .padding(8.dp)
         ) {
             Spacer(modifier = Modifier.size(8.dp))
-            Text(text = notification.title.orEmpty(), fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Row {
+                Text(
+                    text = notification.title.orEmpty(),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = DateFormatter.getHumanDate(notification.createdAt),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal
+                )
+            }
             Spacer(modifier = Modifier.size(4.dp))
             Text(text = notification.text.orEmpty(), fontSize = 16.sp)
         }
