@@ -3,8 +3,6 @@ const { utils } = require('../utils');
 async function launch(context) {
     console.log("Workers started");
 
-    // TODO оборачивать вызов в try/catch
-
     const workers = {};
     (await utils.requireAll('app/worker/')).forEach((name, value) => {
         workers[name] = value.create(context);
