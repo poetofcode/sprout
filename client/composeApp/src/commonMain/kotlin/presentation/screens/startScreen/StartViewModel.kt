@@ -112,7 +112,7 @@ class StartViewModel(
             try {
                 val notifications = profileRepository.fetchNotifications()
                 val newNotificationCount = notifications.filterNot { it.seen }.size
-                showDesktopNotification(newNotificationCount)
+                showDesktopNotification(notifications.filterNot { it.seen || it.silent }.size)
                 reduce {
                     copy(
                         unseenNotificationCount = newNotificationCount,

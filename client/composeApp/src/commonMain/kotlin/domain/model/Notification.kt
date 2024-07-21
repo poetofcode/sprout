@@ -8,5 +8,6 @@ data class Notification(
     val image: String,
     val linkId: String,
     val extras: String,
-    val seen: Boolean
+    val seen: Boolean,
+    val silent: Boolean
 )
