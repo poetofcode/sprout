@@ -172,7 +172,7 @@ async function getLastJoke(db) {
 
 
 const workers = [
-    // jokeWorker,
+    //jokeWorker,
     debugWorker,
     notificationWorker
 ]

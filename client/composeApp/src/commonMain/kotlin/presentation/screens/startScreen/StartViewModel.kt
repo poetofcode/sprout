@@ -4,6 +4,9 @@ import data.repository.JokeRepository
 import data.repository.ProfileRepository
 import domain.model.JokeModel
 import domain.model.Profile
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
@@ -24,6 +27,10 @@ class StartViewModel(
     val profileRepository: ProfileRepository,
 ) : BaseViewModel<StartViewModel.State>() {
 
+    companion object {
+        const val REFRESH_TIMEOUT_SEC = 10
+    }
+
     data class State(
         val jokes: List<JokeModel> = emptyList(),
         val readyState: Resource<Unit> = IdleResource,
@@ -32,6 +39,8 @@ class StartViewModel(
         val unseenNotificationCount: Int = 0
     )
 
+    private var refreshJob: Job? = null
+
     init {
         onReload()
     }
@@ -39,6 +48,21 @@ class StartViewModel(
     fun onReload() {
         fetchJokes()
         fetchProfile()
+    }
+    fun onScreenStart() {
+        startRefreshTimer()
+    }
+
+    private fun startRefreshTimer() {
+        if (refreshJob?.isActive == true) {
+            return
+        }
+        refreshJob = viewModelScope.launch {
+            while (refreshJob?.isActive == true) {
+                delay(REFRESH_TIMEOUT_SEC * 1000L)
+                onReload()
+            }
+        }
     }
 
     private fun fetchJokes() {
@@ -126,7 +150,7 @@ class StartViewModel(
     }
 
     override fun onCleared() {
-        println("mylog ${"On cleared !"}")
+        refreshJob?.cancel()
     }
 
 }

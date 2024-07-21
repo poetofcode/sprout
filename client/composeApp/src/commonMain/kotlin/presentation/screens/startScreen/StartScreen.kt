@@ -32,6 +32,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
@@ -64,6 +65,10 @@ class StartScreen : BaseScreen<StartViewModel>() {
 
     @Composable
     override fun Content() = with(viewModel.state.value) {
+        LaunchedEffect(Unit) {
+            viewModel.onScreenStart()
+        }
+
         MaterialTheme {
             Column {
                 TopAppBar(
