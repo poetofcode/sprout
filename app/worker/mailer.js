@@ -17,8 +17,7 @@ class MailerWorker {
         }
 
         const userIds = this.context.repositories.subscriptions.getSubscriptions();
-
-        const lastJoke = await getLastJoke(this.context.getDb());
+        const lastJoke = await this.context.repositories.jokes.getLastJoke();
         
         const sendPromises = userIds.map((userId) => this.sendOneMail(userId, lastJoke));
         await Promise.all(sendPromises);
@@ -28,12 +27,6 @@ class MailerWorker {
         const foundUser = await this.context.repositories.users.findUserById(userId);
         const mailerStatus = await this.mailer.send(foundUser.login, lastJoke.text);
     }
-}
-
-async function getLastJoke(db) {
-    const jokeCollection = db.collection('jokes');
-    const lastJoke = await jokeCollection.findOne({}, { sort: { _id: -1 } });
-    return lastJoke;
 }
 
 exports.create = (context) => new MailerWorker(context);

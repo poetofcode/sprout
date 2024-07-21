@@ -11,22 +11,35 @@ async function launch(context) {
     });
 
     const withIntervals = [
-        [ workers.jokes, seconds(10) ],
-        [ workers.mailer, seconds(5) ]
+        [ workers.jokes, seconds(120) ],
+        // [ workers.mailer, seconds(5) ]
+        [ new SerialWorker([workers.notifications, workers.pushes]), seconds(10) ]
     ];
 
     withIntervals.forEach((w) => {
-        console.log(w);
         const worker = w[0];
         const interval = w[1];
         utils.setIntervalImmediately(async () => { 
-            worker.doWork() 
+            worker.doWork()
         }, interval);
     });
 }
 
 function seconds(sec) {
     return sec * 1000;
+}
+
+class SerialWorker {
+
+    constructor(children) {
+        this.children = children;
+    }
+
+    async doWork() {
+        for (const w of this.children) {
+            await w.doWork();
+        }
+    }
 }
 
 exports.launch = launch;

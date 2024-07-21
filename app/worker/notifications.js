@@ -11,12 +11,12 @@ class NotificationWorker {
     async doWork() {
 	    console.log("Работает notificationWorker");
 
-	    const userIds = context.repositories.subscriptions.getSubscriptions();
-	    const lastJoke = await getLastJoke(context.getDb());
+	    const userIds = this.context.repositories.subscriptions.getSubscriptions();
+	    const lastJoke = await this.context.repositories.jokes.getLastJoke();
 
 	    // Создаём нотификации
 	    const notificationPromises = userIds.map((userId) => {
-	        return context.repositories.notifications.createNotification(
+	        return this.context.repositories.notifications.createNotification(
 	            {
 	                title: "Новый анекдот",
 	                text: lastJoke.text,

@@ -5,16 +5,16 @@ const createPushSender = require('../utils/push_sender.js').create;
 
 class PushWorker {
 
-	constructor(context) {
-		this.context = context;
+	constructor(ctx) {
+		this.context = ctx;
     	this.pushSender = createPushSender();
 	}
 
     async doWork() {
 	    // Достаём непрочитанные нотификации
-	    const unreadNotifications = await context.repositories.notifications.getUnreadNotifications();
+	    const unreadNotifications = await this.context.repositories.notifications.getUnreadNotifications();
 	    const sessionsPromises = unreadNotifications.map((item) => {
-	        return context.repositories.sessions.fetchActiveSessionsByUserId(item.userId);
+	        return this.context.repositories.sessions.fetchActiveSessionsByUserId(item.userId);
 	    });
 	    const sessionsArr = await Promise.all(sessionsPromises);
 	    const mergedArr = unreadNotifications.map((item, index) => {
@@ -32,7 +32,7 @@ class PushWorker {
 	    }).filter((item) => item.pushTokens.length > 0);
 
 	    const notSentPromises = withPushTokens.map((item) => {
-	        return context.repositories.notificationStatuses.filterPushTokensNotSent(item._id, item.pushTokens);
+	        return this.context.repositories.notificationStatuses.filterPushTokensNotSent(item._id, item.pushTokens);
 	    });
 	    const pushTokensNotSent = await Promise.all(notSentPromises);
 
@@ -62,7 +62,7 @@ class PushWorker {
 	    .filter((item) => !item.sendResponses)
 	    .map((item) => {
 	        return Promise.all(item.pushTokens.map((t, idx) => {
-	            return context.repositories.notificationStatuses.createStatus(item._id, t, item.sendResponse[idx].success)
+	            return this.context.repositories.notificationStatuses.createStatus(item._id, t, item.sendResponse[idx].success)
 	        }));
 	    });
 	    Promise.all(createStatusPromises);
