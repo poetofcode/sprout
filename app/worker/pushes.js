@@ -1,16 +1,22 @@
 const ObjectId = require("mongodb").ObjectId;
 const { utils } = require('../utils');
 var iconv = require('iconv-lite');
-const createPushSender = require('../utils/push_sender.js').create;
 
 class PushWorker {
 
 	constructor(ctx) {
 		this.context = ctx;
-    	this.pushSender = createPushSender();
+    	if (this.context.fcmEnabled) {
+			const createPushSender = require('../utils/push_sender.js').create;
+			this.pushSender = createPushSender();
+    	}
 	}
 
     async doWork() {
+    	if (!this.context.fcmEnabled) {
+    		return;
+    	}
+
 	    // Достаём непрочитанные нотификации
 	    const unreadNotifications = await this.context.repositories.notifications.getUnreadNotifications();
 	    const sessionsPromises = unreadNotifications.map((item) => {
