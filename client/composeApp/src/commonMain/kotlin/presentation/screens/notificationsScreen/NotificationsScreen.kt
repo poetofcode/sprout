@@ -190,12 +190,22 @@ class NotificationsScreen : BaseScreen<NotificationsViewModel>() {
                 .padding(8.dp)
         ) {
             Spacer(modifier = Modifier.size(8.dp))
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = notification.title.orEmpty(),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
+                Spacer(Modifier.size(8.dp))
+                if (!notification.seen) {
+                    Text(
+                        modifier = Modifier.background(Color.Blue, shape = RoundedCornerShape(10))
+                            .padding(horizontal = 5.dp),
+                        text = "НОВОЕ",
+                        fontSize = 10.sp,
+                        color = Color.White,
+                    )
+                }
                 Spacer(Modifier.weight(1f))
                 Text(
                     text = DateFormatter.getHumanDate(notification.createdAt),
