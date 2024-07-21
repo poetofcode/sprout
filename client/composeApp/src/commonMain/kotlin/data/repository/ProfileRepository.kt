@@ -103,6 +103,7 @@ class ProfileRepositoryImpl(
                     image = dto.image,
                     linkId = dto.linkId,
                     extras = dto.extras,
+                    seen = dto.seen ?: false
                 )
             }
     }

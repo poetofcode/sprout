@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -80,11 +81,16 @@ class StartScreen : BaseScreen<StartViewModel>() {
                             }
                         }
 
+                        val isNotificationUnseen = state.unseenNotificationCount > 0
                         IconButton(onClick = {
                             viewModel.navigateToNotificationsScreen()
                         }) {
                             Icon(
-                                imageVector = Icons.Default.Notifications,
+                                imageVector = if (!isNotificationUnseen) {
+                                    Icons.Outlined.Notifications
+                                } else {
+                                    Icons.Filled.Notifications
+                                },
                                 contentDescription = "Notifications",
                             )
                         }

@@ -7,7 +7,6 @@ import domain.model.Profile
 import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
-import presentation.base.postSideEffect
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
@@ -30,6 +29,7 @@ class StartViewModel(
         val readyState: Resource<Unit> = IdleResource,
         val profile: Profile? = null,
         val subscriptionState: Resource<Boolean> = IdleResource,
+        val unseenNotificationCount: Int = 0
     )
 
     init {
@@ -64,6 +64,7 @@ class StartViewModel(
             profile = profileRepository.fetchProfileLocal().apply {
                 this?.let {
                     fetchSubscription()
+                    fetchNotifications()
                 }
             }
         )
@@ -77,6 +78,24 @@ class StartViewModel(
         } catch (e: Throwable) {
             e.printStackTrace()
             reduce { copy(subscriptionState = ExceptionResource(e)) }
+        }
+    }
+
+    private fun fetchNotifications() {
+        viewModelScope.launch {
+            try {
+                val notifications = profileRepository.fetchNotifications()
+                println("mylog Notifs: ${notifications}")
+                reduce {
+                    copy(
+                        unseenNotificationCount = notifications.filterNot { it.seen }.size.apply {
+                             println("mylog Notifications unseen count: ${this}")
+                        },
+                    )
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
         }
     }
 

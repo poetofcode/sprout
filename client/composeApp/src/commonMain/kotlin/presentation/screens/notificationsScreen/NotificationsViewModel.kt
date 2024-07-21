@@ -34,10 +34,10 @@ class NotificationsViewModel(
         viewModelScope.launch {
             try {
                 reduce { copy(readyState = LoadingResource) }
-                val jokes = profileRepository.fetchNotifications()
+                val notifications = profileRepository.fetchNotifications()
                 reduce {
                     copy(
-                        notifications = jokes,
+                        notifications = notifications,
                         readyState = CompleteResource(Unit)
                     )
                 }

@@ -18,6 +18,7 @@ data class NotificationResponse(
         val image: String,
         val linkId: String,
         val extras: String,
+        val seen: Boolean? = null
     )
 }
 

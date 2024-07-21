@@ -40,6 +40,7 @@ class NotificationRepository {
 		const l = limit || defaultLimit;
 		const s = skip || defaultSkip;
 		const q = query || {};
+		q.seen = { $exists: true }
         const arr = await this.notificationCollection
         	.find(q)
         	.sort({ _id: -1 })
@@ -64,10 +65,7 @@ class NotificationRepository {
 		const l = limit || defaultLimit;
 		const s = skip || defaultSkip;
 		return this.getNotifications(l, s, {
-			'$or': [ 
-				{ seen: false }, 
-				{ seen: { '$exists': false } }
-			]
+			seen: false
 		});
 	}
 
