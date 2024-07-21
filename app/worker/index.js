@@ -19,8 +19,12 @@ async function launch(context) {
     withIntervals.forEach((w) => {
         const worker = w[0];
         const interval = w[1];
-        utils.setIntervalImmediately(async () => { 
-            worker.doWork()
+        utils.setIntervalImmediately(async () => {
+            try {
+                worker.doWork()
+            } catch(err) {
+                console.error(err);
+            }
         }, interval);
     });
 }
