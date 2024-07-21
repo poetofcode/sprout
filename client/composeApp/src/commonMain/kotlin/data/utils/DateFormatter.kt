@@ -1,16 +1,12 @@
 package data.utils
 
+import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Date
+import java.util.Locale
+
 
 object DateFormatter {
-
-    private val sourceDateFormat by lazy {
-        DateTimeFormatter.ISO_ZONED_DATE_TIME
-    }
 
     private val humanDateFormat by lazy {
         "dd.MM.yyyy 'в' HH:mm"
@@ -22,9 +18,9 @@ object DateFormatter {
 
     fun getHumanDate(date: String): String =
         runCatching {
-            val serverData = LocalDateTime.parse(date, sourceDateFormat)
-            val offset = OffsetDateTime.now().offset
-            val dateTe = Date.from(serverData.toInstant(offset))
-            SimpleDateFormat(humanDateFormat, locale).format(dateTe)
+            val df1: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+            val dateEdited = date.replace("Z", "-0000")
+            var result1: Date? = df1.parse(dateEdited)
+            SimpleDateFormat(humanDateFormat, locale).format(result1)
         }.getOrDefault(defaultValue = date)
 }
