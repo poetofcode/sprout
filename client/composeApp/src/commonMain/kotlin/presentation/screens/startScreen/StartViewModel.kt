@@ -85,12 +85,9 @@ class StartViewModel(
         viewModelScope.launch {
             try {
                 val notifications = profileRepository.fetchNotifications()
-                println("mylog Notifs: ${notifications}")
                 reduce {
                     copy(
-                        unseenNotificationCount = notifications.filterNot { it.seen }.size.apply {
-                             println("mylog Notifications unseen count: ${this}")
-                        },
+                        unseenNotificationCount = notifications.filterNot { it.seen }.size,
                     )
                 }
             } catch (e: Throwable) {
