@@ -21,5 +21,6 @@ composeApp/cache
 composeApp/DawnCache
 composeApp/GPUCache
 composeApp/appcache
+composeApp/google-services.json
 
 *.log
