@@ -9,10 +9,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Notification
+import androidx.compose.ui.window.Tray
+import androidx.compose.ui.window.TrayState
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberTrayState
 import androidx.compose.ui.window.rememberWindowState
 import data.repository.RepositoryFactoryImpl
 import data.service.NetworkingFactory
@@ -23,14 +27,20 @@ import data.utils.ProfileStorageImpl
 import data.utils.getValue
 import data.utils.setValue
 import dev.datlag.kcef.KCEF
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import presentation.App
+import presentation.TrayIcon
 import presentation.base.Config
 import presentation.base.ViewModelStore
 import presentation.factories.viewModelFactories
+import presentation.model.shared.OnReceivedTokenSharedEvent
+import presentation.model.shared.ShowDesktopNotificationSharedEvent
+import presentation.navigation.SharedMemory
 import java.io.File
 import kotlin.math.max
 
@@ -124,6 +134,19 @@ fun main() = application {
         }.launchIn(this)
     }
 
+    val trayState = rememberTrayState()
+
+    Tray(
+        state = trayState,
+        icon = TrayIcon,
+        menu = {
+            Item(
+                "Exit",
+                onClick = ::exitApplication
+            )
+        }
+    )
+
     Window(state = windowState, onCloseRequest = ::exitApplication, title = "SproutClient") {
         var restartRequired by remember { mutableStateOf(false) }
         var downloading by remember { mutableStateOf(0F) }
@@ -178,4 +201,23 @@ fun main() = application {
             }
         }
     }
+
+    vmStoreImpl.coroutineScope.listenToSharedEvents(trayState)
 }
+
+fun CoroutineScope.listenToSharedEvents(trayState: TrayState) = launch {
+    SharedMemory.eventFlow.collect { event ->
+        when (event) {
+            is ShowDesktopNotificationSharedEvent -> {
+                trayState.sendNotification(
+                    Notification(
+                        title = event.title,
+                        message = event.message,
+                        type = Notification.Type.Info
+                    )
+                )
+            }
+        }
+    }
+}
+

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
@@ -27,30 +26,35 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Notification
+import androidx.compose.ui.window.Tray
+import androidx.compose.ui.window.rememberTrayState
 import com.skydoves.flexible.bottomsheet.material.FlexibleBottomSheet
 import com.skydoves.flexible.core.FlexibleSheetSize
-import com.skydoves.flexible.core.FlexibleSheetValue
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.Tabs.HOME
 import presentation.Tabs.PROFILE
 import presentation.base.Config
+import presentation.model.shared.ShowDesktopNotificationSharedEvent
 import presentation.navigation.NavStateImpl
 import presentation.navigation.Navigator
 import presentation.navigation.NavigatorTag
+import presentation.navigation.SharedMemory
 import presentation.screens.homeTabScreen.HomeTabScreen
 import presentation.screens.profileTabScreen.ProfileTabScreen
 import sproutclient.composeapp.generated.resources.Res
 import sproutclient.composeapp.generated.resources.ic_home_24
 import sproutclient.composeapp.generated.resources.ic_person_24
-
 
 const val VERTICAL_PANEL_SIZE = 60
 const val VERTICAL_ICON_SIZE = 30
@@ -188,6 +192,7 @@ fun AppLayout(
             }
         }
     } else {
+        // Desktop
         Row(
             modifier = modifier.fillMaxSize()
         ) {
@@ -205,12 +210,34 @@ fun AppLayout(
                         menu.itemContent(tab)
                     }
                 }
+
+                Box(
+                    modifier = Modifier.clickable {
+                        SharedMemory.eventFlow.tryEmit(
+                            ShowDesktopNotificationSharedEvent(
+                                title = "Пример тайтла",
+                                message = "Текст сообщения"
+                            )
+                        )
+                    }.size(60.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    menu.itemContent(menu.tabs.last())
+                }
             }
 
             Box(Modifier.weight(1f)) {
                 content()
             }
         }
+    }
+}
+
+object TrayIcon : Painter() {
+    override val intrinsicSize = Size(256f, 256f)
+
+    override fun DrawScope.onDraw() {
+        drawOval(Color(0xFFFFA500))
     }
 }
 

@@ -7,4 +7,3 @@ data class OnReceivedTokenSharedEvent(
     val email: String,
 ) : SharedEvent
 
-object OnQuitProfileSharedEvent : SharedEvent
