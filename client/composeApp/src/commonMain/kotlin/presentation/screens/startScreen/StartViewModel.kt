@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
 import presentation.base.postEffect
+import presentation.base.postSharedEvent
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
@@ -17,6 +18,7 @@ import presentation.model.LoadingResource
 import presentation.model.Resource
 import presentation.model.shared.OnQuitProfileSharedEvent
 import presentation.model.shared.OnReceivedTokenSharedEvent
+import presentation.model.shared.ShowDesktopNotificationSharedEvent
 import presentation.navigation.NavigateEffect
 import presentation.navigation.NavigatorTag
 import presentation.navigation.SharedEvent
@@ -109,14 +111,27 @@ class StartViewModel(
         viewModelScope.launch {
             try {
                 val notifications = profileRepository.fetchNotifications()
+                val newNotificationCount = notifications.filterNot { it.seen }.size
+                showDesktopNotification(newNotificationCount)
                 reduce {
                     copy(
-                        unseenNotificationCount = notifications.filterNot { it.seen }.size,
+                        unseenNotificationCount = newNotificationCount,
                     )
                 }
             } catch (e: Throwable) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    private fun showDesktopNotification(newNotificationCount: Int) {
+        if (newNotificationCount > 0 && state.value.unseenNotificationCount != newNotificationCount) {
+            postSharedEvent(
+                ShowDesktopNotificationSharedEvent(
+                    title = "Sprout",
+                    message = "У вас $newNotificationCount новых сообщений"
+                )
+            )
         }
     }
 
