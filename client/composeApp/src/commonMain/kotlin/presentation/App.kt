@@ -33,9 +33,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Notification
-import androidx.compose.ui.window.Tray
-import androidx.compose.ui.window.rememberTrayState
 import com.skydoves.flexible.bottomsheet.material.FlexibleBottomSheet
 import com.skydoves.flexible.core.FlexibleSheetSize
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
@@ -45,11 +42,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.Tabs.HOME
 import presentation.Tabs.PROFILE
 import presentation.base.Config
-import presentation.model.shared.ShowDesktopNotificationSharedEvent
 import presentation.navigation.NavStateImpl
 import presentation.navigation.Navigator
 import presentation.navigation.NavigatorTag
-import presentation.navigation.SharedMemory
 import presentation.screens.homeTabScreen.HomeTabScreen
 import presentation.screens.profileTabScreen.ProfileTabScreen
 import sproutclient.composeapp.generated.resources.Res
@@ -209,20 +204,6 @@ fun AppLayout(
                     ) {
                         menu.itemContent(tab)
                     }
-                }
-
-                Box(
-                    modifier = Modifier.clickable {
-                        SharedMemory.eventFlow.tryEmit(
-                            ShowDesktopNotificationSharedEvent(
-                                title = "Пример тайтла",
-                                message = "Текст сообщения"
-                            )
-                        )
-                    }.size(60.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    menu.itemContent(menu.tabs.last())
                 }
             }
 
