@@ -15,6 +15,7 @@ class NotificationRepository {
 		const entityOnCreate = {
 			userId: new ObjectId(userId),
 			createdAt: new Date(),
+			silent: notification.silent,
 			linkId: linkId,
 			extras: "",
 			seen: false
@@ -65,7 +66,8 @@ class NotificationRepository {
 		const l = limit || defaultLimit;
 		const s = skip || defaultSkip;
 		return this.getNotifications(l, s, {
-			seen: false
+			seen: false,
+			silent: { '$ne': true }
 		});
 	}
 

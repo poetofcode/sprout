@@ -43,8 +43,6 @@ const jokeWorker = async (context) => {
 
     const newJoke = { text: joke };
     const insertResult = await jokeCollection.insertOne(newJoke);
-
-    console.log(insertResult);
 }
 
 
@@ -61,9 +59,10 @@ const notificationWorker = async (context) => {
                 title: "Новый анекдот",
                 text: lastJoke.text,
                 image: "",
+                silent: false
             },
             lastJoke._id,
-            userId
+            userId,
         )
     });
     await Promise.all(notificationPromises);
@@ -93,9 +92,6 @@ const notificationWorker = async (context) => {
     });
     const pushTokensNotSent = await Promise.all(notSentPromises);
 
-    console.log('==================');
-    console.log(pushTokensNotSent);
-
 
     const withTokensNotSentPromises = withPushTokens.map((item, index) => {
         item.pushTokens = pushTokensNotSent[index];
@@ -107,9 +103,6 @@ const notificationWorker = async (context) => {
     });
     const sendResponses = await Promise.all(withTokensNotSentPromises);
 
-    console.log('++++++++++++++++++++++++');
-    console.log(sendResponses);
-
     if (sendResponses.length == 0) {
         return;
     }
@@ -119,9 +112,6 @@ const notificationWorker = async (context) => {
         if (sendResponses[index] && sendResponses[index].responses) {
             item.sendResponse = sendResponses[index].responses;
         }
-
-        console.log('Status of item:');
-        console.log(item);
 
         return item;
     })
@@ -136,7 +126,6 @@ const notificationWorker = async (context) => {
 
 const debugWorker = async (context) => {
     console.log('Вывод debugWorker\'а:');
-    // console.log(context.repositories.subscriptions.getSubscriptions());
 
     const userIds = context.repositories.subscriptions.getSubscriptions();
 
@@ -148,15 +137,10 @@ const debugWorker = async (context) => {
 
 
     const lastJoke = await getLastJoke(context.getDb());
-    // console.log(`Last joke:`);
-    // console.log(lastJoke);
-
 
     async function sendOneMail(userId, lastJoke) {
         const foundUser = await context.repositories.users.findUserById(userId);
-        console.log(foundUser);
         const mailerStatus = await context.mailer.send(foundUser.login, lastJoke.text);
-        console.log(mailerStatus);
     }
     
     const sendPromises = userIds.map((userId) => sendOneMail(userId, lastJoke));
