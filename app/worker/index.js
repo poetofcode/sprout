@@ -10,29 +10,23 @@ async function launch(context) {
         workers[name] = value.create(context);
     });
 
-    console.log(workers);
+    const withIntervals = [
+        [ workers.jokes, seconds(10) ],
+        [ workers.mailer, seconds(5) ]
+    ];
 
-
-    // setInterval(async () => {
-    //     const workerPromises = workers.map((worker) => worker(context));
-    //     await Promise.all(workerPromises);
-    // }, 10000);
-
-
-    // const workerPromises = workers.map((worker) => worker(context));
-    // await Promise.all(workerPromises);
+    withIntervals.forEach((w) => {
+        console.log(w);
+        const worker = w[0];
+        const interval = w[1];
+        utils.setIntervalImmediately(async () => { 
+            worker.doWork() 
+        }, interval);
+    });
 }
 
-
-const notificationWorker = async (context) => {
+function seconds(sec) {
+    return sec * 1000;
 }
-
-
-const workers = [
-    // jokeWorker,
-    // debugWorker,
-    notificationWorker
-]
-
 
 exports.launch = launch;

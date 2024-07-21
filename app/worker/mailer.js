@@ -9,26 +9,25 @@ class MailerWorker {
     }
 
     async doWork() {
-        console.log('Вывод debugWorker\'а:');
+        console.log('Работает MailerWorker');
 
         if (!this.mailer) {
-            this.mailer = createMailer(context);
-            await mailer.init();
+            this.mailer = createMailer(this.context);
+            await this.mailer.init();
         }
 
-        const userIds = context.repositories.subscriptions.getSubscriptions();
+        const userIds = this.context.repositories.subscriptions.getSubscriptions();
 
-        const lastJoke = await getLastJoke(context.getDb());
-
-        async function sendOneMail(userId, lastJoke) {
-            const foundUser = await context.repositories.users.findUserById(userId);
-            const mailerStatus = await this.mailer.send(foundUser.login, lastJoke.text);
-        }
+        const lastJoke = await getLastJoke(this.context.getDb());
         
-        const sendPromises = userIds.map((userId) => sendOneMail(userId, lastJoke));
+        const sendPromises = userIds.map((userId) => this.sendOneMail(userId, lastJoke));
         await Promise.all(sendPromises);
     }
 
+    async sendOneMail(userId, lastJoke) {
+        const foundUser = await this.context.repositories.users.findUserById(userId);
+        const mailerStatus = await this.mailer.send(foundUser.login, lastJoke.text);
+    }
 }
 
 async function getLastJoke(db) {
@@ -37,4 +36,4 @@ async function getLastJoke(db) {
     return lastJoke;
 }
 
-exports.create = (context) => new MailerWorker(context); 
+exports.create = (context) => new MailerWorker(context);

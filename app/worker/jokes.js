@@ -12,6 +12,8 @@ class JokeWorker {
 	}
 
     async doWork() {
+        console.log('Работает JokeWorker');
+
 	    const response = await axios({
 	        method: 'get',
 	        url: `http://rzhunemogu.ru/Rand.aspx`,
@@ -22,7 +24,7 @@ class JokeWorker {
 	    const responseData = iconv.decode(response.data.toString('binary'), 'windows1251').toString();
 	    let parsed = this.parser.parse(responseData);
 	    const joke = parsed.root.content;
-	    const jokeCollection = context.getDb().collection('jokes');
+	    const jokeCollection = this.context.getDb().collection('jokes');
 
 	    const newJoke = { text: joke };
 	    const insertResult = await jokeCollection.insertOne(newJoke);
