@@ -129,13 +129,6 @@ const debugWorker = async (context) => {
 
     const userIds = context.repositories.subscriptions.getSubscriptions();
 
-    // Тут мы должны брать последний анекдот
-    // Потом мы должны пробегать по списку ids и вызывать что-то вроде:
-    //  находить в БД юзера с соответствующим id и находить его email
-    //  mailer.send(userEmail, lastJoke)
-    //  в этом mailer'е реализовать отсылку по емейлу
-
-
     const lastJoke = await getLastJoke(context.getDb());
 
     async function sendOneMail(userId, lastJoke) {
