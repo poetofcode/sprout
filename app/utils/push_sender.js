@@ -13,9 +13,6 @@ class PushSender {
 
 	async sendPush(msg, tokens) {
 		console.log("send Push:");
-		console.log(admin);
-
-		// const registrationTokens = ['TOKEN_1', 'TOKEN_2', 'TOKEN_3'];
 		const message = {
 		  notification: {
 		    title: msg.title,
