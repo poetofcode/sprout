@@ -12,14 +12,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -28,15 +26,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.skydoves.flexible.bottomsheet.material.FlexibleBottomSheet
 import com.skydoves.flexible.core.FlexibleSheetSize
-import com.skydoves.flexible.core.FlexibleSheetValue
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -51,7 +50,6 @@ import presentation.screens.profileTabScreen.ProfileTabScreen
 import sproutclient.composeapp.generated.resources.Res
 import sproutclient.composeapp.generated.resources.ic_home_24
 import sproutclient.composeapp.generated.resources.ic_person_24
-
 
 const val VERTICAL_PANEL_SIZE = 60
 const val VERTICAL_ICON_SIZE = 30
@@ -83,7 +81,7 @@ val LocalMainAppState = staticCompositionLocalOf<MainAppState> {
 fun App(config: Config) {
     CompositionLocalProvider(LocalMainAppState provides MainAppState()) {
         MaterialTheme {
-            val selectedTab = remember { mutableStateOf<Tabs>(Tabs.HOME) }
+            val selectedTab = remember { mutableStateOf<Tabs>(HOME) }
             val navState = remember {
                 NavStateImpl(viewModelStore = config.viewModelStore).apply {
                     push(HomeTabScreen())
@@ -117,7 +115,7 @@ fun App(config: Config) {
                                 contentScale = ContentScale.None,
                                 colorFilter = ColorFilter.tint(
                                     if (isSelected) {
-                                        MaterialTheme.colors.primary
+                                        MaterialTheme.colorScheme.primary
                                     } else {
                                         Color.Gray
                                     }
@@ -138,6 +136,12 @@ fun App(config: Config) {
 
             LaunchedEffect(selectedTab.value) {
                 navState.moveToFront(selectedTab.value.key)
+            }
+
+            DisposableEffect(Unit) {
+                onDispose {
+                    config.viewModelStore.clearAll()
+                }
             }
         }
     }
@@ -183,6 +187,7 @@ fun AppLayout(
             }
         }
     } else {
+        // Desktop
         Row(
             modifier = modifier.fillMaxSize()
         ) {
@@ -206,6 +211,14 @@ fun AppLayout(
                 content()
             }
         }
+    }
+}
+
+object TrayIcon : Painter() {
+    override val intrinsicSize = Size(256f, 256f)
+
+    override fun DrawScope.onDraw() {
+        drawOval(Color(0xFFFFA500))
     }
 }
 

@@ -6,7 +6,9 @@ import data.entity.DataResponse
 import data.entity.ExceptionResponse
 import data.entity.FailureResponse
 import data.entity.JokesResponse
+import data.entity.NotificationResponse
 import data.entity.ResultResponse
+import data.entity.SaveFirebasePushTokenRequestBody
 import data.entity.SubscriptionResponse
 import data.utils.ProfileStorage
 import io.ktor.client.HttpClient
@@ -15,6 +17,7 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
@@ -23,10 +26,13 @@ import io.ktor.http.contentType
 import io.ktor.http.path
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import presentation.base.Config
 
 class MainApi(
     private val httpClient: HttpClient,
     private val profileStorage: ProfileStorage,
+    private val deviceType: Config.DeviceTypes,
+    private val appVersion: String,
 ) {
 
     suspend fun fetchJokes() = parseRequestResult<JokesResponse> {
@@ -79,6 +85,33 @@ class MainApi(
         }
     }
 
+    suspend fun getNotifications() = parseRequestResult<NotificationResponse> {
+        httpClient.get {
+            authBlock {
+                url { path("/api/v1/notifications") }
+            }
+        }
+    }
+
+    suspend fun saveFirebasePushToken(pushToken: String) {
+        httpClient.post {
+            authBlock {
+                url { path("/api/v1/sessions/push_token") }
+                setBody(SaveFirebasePushTokenRequestBody(
+                    pushToken = pushToken
+                ))
+            }
+        }
+    }
+
+    suspend fun markNotificationsAsSeen() {
+        httpClient.post {
+            authBlock {
+                url { path("/api/v1/users/me/notifications/seen/") }
+            }
+        }
+    }
+
     private suspend inline fun <reified T : Any> parseRequestResult(doRequest: () -> HttpResponse): ResultResponse<T> {
         var response: HttpResponse? = null
         val parsed: ResultResponse<T> = try {
@@ -99,6 +132,8 @@ class MainApi(
 
     private fun HttpRequestBuilder.nonAuthBlock(block: HttpRequestBuilder.() -> Unit) {
         contentType(ContentType.Application.Json)
+        header("x-client-type", deviceType.title)
+        header("x-client-version", appVersion)
         block()
     }
 

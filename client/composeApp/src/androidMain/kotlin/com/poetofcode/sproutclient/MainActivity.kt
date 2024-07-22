@@ -1,11 +1,14 @@
-package com.poetofcode.SproutClient
+package com.poetofcode.sproutclient
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withStarted
 import data.repository.RepositoryFactoryImpl
 import data.service.NetworkingFactory
 import data.service.NetworkingFactoryImpl
@@ -16,7 +19,8 @@ import kotlinx.coroutines.launch
 import presentation.App
 import presentation.base.Config
 import presentation.base.ViewModelStore
-import presentation.factories.*
+import presentation.factories.viewModelFactories
+import presentation.model.shared.OnReceivedTokenSharedEvent
 import presentation.navigation.SetBackHandlerEffect
 import presentation.navigation.SharedMemory
 import specific.AndroidContentProvider
@@ -31,7 +35,10 @@ class MainActivity : ComponentActivity() {
         )
     )
 
-    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl(profileStorage)
+    val networkingFactory: NetworkingFactory = NetworkingFactoryImpl(
+        profileStorage,
+        Config.DeviceTypes.ANDROID,
+    )
 
     val repositoryFactory = RepositoryFactoryImpl(
         api = networkingFactory.createApi(),
@@ -47,8 +54,23 @@ class MainActivity : ComponentActivity() {
         )
     )
 
+    private var firebasePushToken: String? = null
+
+    private val profileRepository by lazy {
+        repositoryFactory.createProfileRepository()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        retrieveFirebasePushToken { token ->
+            val msg = "FCM Token: $token"
+            Log.d("mylog", msg)
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+
+            firebasePushToken = token
+            saveTokenOnServer()
+        }
 
         setContent {
             App(
@@ -67,6 +89,32 @@ class MainActivity : ComponentActivity() {
                         backHandleCallback = effect.cb
                     }
                 }.launchIn(this)
+        }
+
+        listenToSharedEvents()
+    }
+
+    private fun listenToSharedEvents() {
+        lifecycleScope.launch {
+            withStarted {}
+
+            SharedMemory.eventFlow.collect { event ->
+                when (event) {
+                    is OnReceivedTokenSharedEvent -> {
+                        saveTokenOnServer()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun saveTokenOnServer() {
+        lifecycleScope.launch {
+            try {
+                profileRepository.saveFirebasePushToken(firebasePushToken ?: return@launch)
+            } catch (t: Throwable) {
+                t.printStackTrace()
+            }
         }
     }
 

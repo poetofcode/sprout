@@ -15,7 +15,9 @@ data class NavigateEffect(
     val tag: NavigatorTag = NavigatorTag.CURRENT,
 ) : Effect
 
-data object NavigateBackEffect : Effect
+data class NavigateBackEffect(
+    val tag: NavigatorTag = NavigatorTag.CURRENT
+) : Effect
 
 data class SetBackHandlerEffect(
     val cb: () -> Boolean

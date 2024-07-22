@@ -20,7 +20,9 @@ import presentation.navigation.SharedMemory
 import presentation.navigation.SideEffect
 import presentation.viewModelCoroutineScopeProvider
 
-interface ViewModel<S>
+interface ViewModel<S> {
+    fun onCleared()
+}
 
 
 abstract class BaseViewModel<S> : ViewModel<S> {
@@ -58,6 +60,10 @@ abstract class BaseViewModel<S> : ViewModel<S> {
         // Override it in derived classes
     }
 
+    override fun onCleared() {
+        // Override it in derived classes
+    }
+
 }
 
 class EmptyViewModel : BaseViewModel<Unit>() {
@@ -75,8 +81,8 @@ fun BaseViewModel<*>.collectEffects() {
     effectFlow.onEach { effect ->
 
         when (effect) {
-            NavigateBackEffect -> {
-                val navigatorInfo = findNavigatorInfoByTag(navigators, NavigatorTag.CURRENT)
+            is NavigateBackEffect -> {
+                val navigatorInfo = findNavigatorInfoByTag(navigators, effect.tag)
                 navigatorInfo.navState.pop()
             }
 

@@ -15,6 +15,11 @@ class JokesRepository {
         return jokes
     }
 
+	async getLastJoke() {
+	    const lastJoke = await this.jokesCollection.findOne({}, { sort: { _id: -1 } });
+	    return lastJoke;
+	}
+
 }
 
 exports.create = (context) => new JokesRepository(context); 

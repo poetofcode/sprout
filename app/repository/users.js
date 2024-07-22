@@ -19,6 +19,7 @@ class UserRepository {
             createdAt: new Date(),
             login: login,
             password: utils.sha1(password),
+            settings: {},
             activated: false,
             deleted: false,
         }
@@ -38,6 +39,18 @@ class UserRepository {
     	delete found.deleted;
     	delete found.password;
     	return found;
+    }
+
+    async updateUserSettings(userId, newSettings) {
+        const res = await this.userCollection.updateOne(
+            { _id: new ObjectId(userId) },
+            { 
+                $set: { 
+                    settings: newSettings 
+                }
+            }
+        );
+        return res;
     }
 
 }

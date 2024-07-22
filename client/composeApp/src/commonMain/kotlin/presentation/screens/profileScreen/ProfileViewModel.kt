@@ -25,6 +25,18 @@ class ProfileViewModel(
 
     init {
         fetchProfile()
+
+        fetchNotifis()
+    }
+
+    fun fetchNotifis() {
+        viewModelScope.launch {
+            try {
+                val notifis = profileRepository.fetchNotifications()
+            } catch(t: Throwable) {
+                t.printStackTrace()
+            }
+        }
     }
 
     private fun fetchProfile() {
@@ -45,12 +57,6 @@ class ProfileViewModel(
     override fun obtainSharedEvent(event: SharedEvent) {
         when (event) {
             is OnReceivedTokenSharedEvent -> {
-                profileRepository.saveProfileLocal(
-                    Profile(
-                        token = event.token,
-                        email = event.email,
-                    )
-                )
                 fetchProfile()
             }
 

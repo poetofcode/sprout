@@ -4,8 +4,13 @@ import data.repository.JokeRepository
 import data.repository.ProfileRepository
 import domain.model.JokeModel
 import domain.model.Profile
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import presentation.base.BaseViewModel
+import presentation.base.postEffect
+import presentation.base.postSharedEvent
 import presentation.model.CompleteResource
 import presentation.model.ExceptionResource
 import presentation.model.IdleResource
@@ -13,19 +18,30 @@ import presentation.model.LoadingResource
 import presentation.model.Resource
 import presentation.model.shared.OnQuitProfileSharedEvent
 import presentation.model.shared.OnReceivedTokenSharedEvent
+import presentation.model.shared.ShowDesktopNotificationSharedEvent
+import presentation.navigation.NavigateEffect
+import presentation.navigation.NavigatorTag
 import presentation.navigation.SharedEvent
+import presentation.screens.notificationsScreen.NotificationsScreen
 
 class StartViewModel(
     val jokeRepository: JokeRepository,
     val profileRepository: ProfileRepository,
 ) : BaseViewModel<StartViewModel.State>() {
 
+    companion object {
+        const val REFRESH_TIMEOUT_SEC = 10
+    }
+
     data class State(
         val jokes: List<JokeModel> = emptyList(),
         val readyState: Resource<Unit> = IdleResource,
         val profile: Profile? = null,
         val subscriptionState: Resource<Boolean> = IdleResource,
+        val unseenNotificationCount: Int = 0
     )
+
+    private var refreshJob: Job? = null
 
     init {
         onReload()
@@ -34,6 +50,21 @@ class StartViewModel(
     fun onReload() {
         fetchJokes()
         fetchProfile()
+    }
+    fun onScreenStart() {
+        startRefreshTimer()
+    }
+
+    private fun startRefreshTimer() {
+        if (refreshJob?.isActive == true) {
+            return
+        }
+        refreshJob = viewModelScope.launch {
+            while (refreshJob?.isActive == true) {
+                delay(REFRESH_TIMEOUT_SEC * 1000L)
+                onReload()
+            }
+        }
     }
 
     private fun fetchJokes() {
@@ -59,6 +90,7 @@ class StartViewModel(
             profile = profileRepository.fetchProfileLocal().apply {
                 this?.let {
                     fetchSubscription()
+                    fetchNotifications()
                 }
             }
         )
@@ -72,6 +104,34 @@ class StartViewModel(
         } catch (e: Throwable) {
             e.printStackTrace()
             reduce { copy(subscriptionState = ExceptionResource(e)) }
+        }
+    }
+
+    private fun fetchNotifications() {
+        viewModelScope.launch {
+            try {
+                val notifications = profileRepository.fetchNotifications()
+                val newNotificationCount = notifications.filterNot { it.seen }.size
+                showDesktopNotification(notifications.filterNot { it.seen || it.silent }.size)
+                reduce {
+                    copy(
+                        unseenNotificationCount = newNotificationCount,
+                    )
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun showDesktopNotification(newNotificationCount: Int) {
+        if (newNotificationCount > 0 && state.value.unseenNotificationCount != newNotificationCount) {
+            postSharedEvent(
+                ShowDesktopNotificationSharedEvent(
+                    title = "Sprout",
+                    message = "У вас $newNotificationCount новых сообщений"
+                )
+            )
         }
     }
 
@@ -98,6 +158,14 @@ class StartViewModel(
             e.printStackTrace()
             reduce { copy(subscriptionState = ExceptionResource(e)) }
         }
+    }
+
+    fun navigateToNotificationsScreen() {
+        postEffect(NavigateEffect(screen = NotificationsScreen(), tag = NavigatorTag.ROOT))
+    }
+
+    override fun onCleared() {
+        refreshJob?.cancel()
     }
 
 }

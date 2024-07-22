@@ -9,12 +9,14 @@ class SessionRepository {
         this.sessionCollection = this.db.collection('sessions');
     }
 
-    async createSession(userId, clientIP) {
+    async createSession(userId, clientIP, clientType, clientVersion) {
         const newSession = {
             token: crypto.randomUUID(),
             createdAt: new Date(),
             userId: new ObjectId(userId),
-            ip: clientIP
+            ip: clientIP,
+            clientType: clientType,
+            clientVersion: clientVersion
         }
         const sessions = await this.sessionCollection.insertOne(newSession);
         const user = await this.context.repositories.users.findUserById(newSession.userId.toString());
@@ -39,9 +41,30 @@ class SessionRepository {
         return session;
     }
 
+    async fetchActiveSessionsByUserId(userId) {
+        const sessions = await this.sessionCollection.find({ 
+            userId: userId 
+            // TODO Тут нужно запрашивать только актуальные сессии
+            //      например те, по которым была активность 
+            //      в какой то ограниченный период времени
+        }).toArray();
+        return sessions;
+    }
+
+
     async deleteSessionByToken(token) {
         const result = await this.sessionCollection.deleteOne({ token : token });
         return result;
+    }
+
+    async saveSessionParams(sessionId, newParams) {
+        const res = await this.sessionCollection.updateOne(
+            { _id: sessionId },
+            { 
+                $set: { params: newParams }
+            }
+        );
+        return res;
     }
 
 }

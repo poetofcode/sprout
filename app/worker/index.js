@@ -1,96 +1,47 @@
-const axios = require('axios');
-const { XMLParser } = require('fast-xml-parser');
-const createMailer = require('../utils/mailer.js').createMailer;
-var iconv = require('iconv-lite');
-
-const parser = new XMLParser();
+const { utils } = require('../utils');
 
 async function launch(context) {
     console.log("Workers started");
 
-    // TODO оборачивать вызов в try/catch
-
-    const mailer = createMailer(context);
-    await mailer.init();
-    context.mailer = mailer;
-
-    /*
-    TODO: раскомментировать:
-
-    setInterval(() => {
-        workers.forEach((worker) => { await worker(context) });
-    }, 10000);
-    */
-
-
-    setInterval(async () => {
-        const workerPromises = workers.map((worker) => worker(context));
-        await Promise.all(workerPromises);
-    }, 10000);
-
-
-    const workerPromises = workers.map((worker) => worker(context));
-    await Promise.all(workerPromises);
-
-    // console.log(context);
-}
-
-
-const jokeWorker = async (context) => { 
-    const response = await axios({
-        method: 'get',
-        url: `http://rzhunemogu.ru/Rand.aspx`,
-        responseType: 'arraybuffer',
-        responseEncoding: 'binary'
+    const workers = {};
+    (await utils.requireAll('app/worker/')).forEach((name, value) => {
+        workers[name] = value.create(context);
     });
 
-    const responseData = iconv.decode(response.data.toString('binary'), 'windows1251').toString();
-    let parsed = parser.parse(responseData);
-    const joke = parsed.root.content;
-    const jokeCollection = context.getDb().collection('jokes');
+    const withIntervals = [
+        [ workers.jokes, seconds(120) ],
+        // [ workers.mailer, seconds(5) ]
+        [ new SerialWorker([workers.notifications, workers.pushes]), seconds(10) ]
+    ];
 
-    const newJoke = { text: joke };
-    const insertResult = await jokeCollection.insertOne(newJoke);
-
-    console.log(insertResult);
+    withIntervals.forEach((w) => {
+        const worker = w[0];
+        const interval = w[1];
+        utils.setIntervalImmediately(async () => {
+            try {
+                worker.doWork()
+            } catch(err) {
+                console.error(err);
+            }
+        }, interval);
+    });
 }
 
+function seconds(sec) {
+    return sec * 1000;
+}
 
-const debugWorker = async (context) => {
-    console.log('Вывод debugWorker\'а:');
-    // console.log(context.repositories.subscriptions.getSubscriptions());
+class SerialWorker {
 
-    const userIds = context.repositories.subscriptions.getSubscriptions();
-
-    // Тут мы должны брать последний анекдот
-    // Потом мы должны пробегать по списку ids и вызывать что-то вроде:
-    //  находить в БД юзера с соответствующим id и находить его email
-    //  mailer.send(userEmail, lastJoke)
-    //  в этом mailer'е реализовать отсылку по емейлу
-
-
-    const jokeCollection = context.getDb().collection('jokes');
-    const lastJoke = await jokeCollection.findOne({}, { sort: { _id: -1 } });
-    // console.log(`Last joke:`);
-    // console.log(lastJoke);
-
-
-    async function sendOneMail(userId, lastJoke) {
-        const foundUser = await context.repositories.users.findUserById(userId);
-        console.log(foundUser);
-        const mailerStatus = await context.mailer.send(foundUser.login, lastJoke.text);
-        console.log(mailerStatus);
+    constructor(children) {
+        this.children = children;
     }
-    
-    const sendPromises = userIds.map((userId) => sendOneMail(userId, lastJoke));
-    await Promise.all(sendPromises);
+
+    async doWork() {
+        for (const w of this.children) {
+            await w.doWork();
+        }
+    }
 }
-
-
-const workers = [
-    // jokeWorker,
-    debugWorker,
-]
-
 
 exports.launch = launch;

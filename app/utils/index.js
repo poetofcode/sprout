@@ -143,6 +143,12 @@ function isEmailValid(email) {
     return true;
 }
 
+function setIntervalImmediately(cb, intervalMs) {
+  cb();
+  return setInterval(cb, intervalMs);
+}
+
+
 exports.utils = {
   appDir: appDir,
 	logger: logger,
@@ -153,4 +159,5 @@ exports.utils = {
   requireAll: requireAll,
   sha1: sha1,
   isEmailValid: isEmailValid,
+  setIntervalImmediately: setIntervalImmediately
 }

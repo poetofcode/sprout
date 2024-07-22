@@ -12,9 +12,12 @@ data class Config(
 
 ) {
 
-    enum class DeviceTypes(val isMobile: Boolean) {
-        ANDROID(true),
-        DESKTOP(false)
+    enum class DeviceTypes(
+        val isMobile: Boolean,
+        val title: String
+    ) {
+        ANDROID(true, "android"),
+        DESKTOP(false, "desktop")
     }
 
 }

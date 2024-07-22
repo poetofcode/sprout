@@ -33,6 +33,11 @@ class ViewModelStore(
     
     fun removeViewModel(viewModel: ViewModel<*>) {
         viewModels.values.removeIf { it == viewModel }
+        viewModel.onCleared()
     }
-    
+
+    fun clearAll() {
+        viewModels.forEach { it.value.onCleared() }
+    }
+
 }

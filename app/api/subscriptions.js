@@ -2,7 +2,7 @@ const { utils } = require('../utils');
 
 class SubscriptionMiddleware {
 
-	constructor(context, repositories) {
+	constructor(context) {
 		this.context = context;
         this.repositories = context.repositories;
 	}

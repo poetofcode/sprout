@@ -22,14 +22,19 @@ async function initRoutes(router, context) {
 	router.get('/sessions', sessionMiddleware.fetchSessions());
 	router.get('/sessions/:token', sessionMiddleware.fetchSessionByToken());
 	router.delete('/sessions/:token', sessionMiddleware.deleteSessionByToken());
+	router.post('/sessions/push_token', sessionMiddleware.saveFirebasePushToken());
 
 	router.post('/users', middlewares.users.createUser());
+	router.post('/users/me/notifications/seen/', middlewares.users.markNotificationsAsSeen());
 
 	router.post('/subscriptions', middlewares.subscriptions.subscribe());
 	router.delete('/subscriptions', middlewares.subscriptions.unsubscribe());
 	router.get('/subscriptions/me', middlewares.subscriptions.getSubscription());
 
 	router.get('/jokes', middlewares.jokes.fetchJokes());
+
+	router.get('/notifications', middlewares.notifications.fetchNotifications());
+	router.get('/notifications/:id', middlewares.notifications.fetchNotificationById());
 
 	router.use(handleErrors);
 }
@@ -43,7 +48,7 @@ function handleTokenValidation(sessionMiddleware, sessionRepository) {
 		const isSessionsPost = req.path === '/sessions' && req.method === 'POST';
 		const isSessionByTokenGet = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'GET';
 		const isSessionByTokenDelete = req.path.startsWith("/sessions/") && req.path !== "/sessions/" && req.method === 'DELETE';
-		const isUserCreate = req.path.startsWith('/users') && req.method === 'POST';
+		const isUserCreate = req.path.startsWith('/users') && req.method === 'POST' && !req.path.startsWith('/users/');
 		const isJokesGet = req.path.startsWith('/jokes');
 
 		if (isSessionsPost || isSessionByTokenGet || isSessionByTokenDelete || isUserCreate || isJokesGet) {

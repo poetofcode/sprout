@@ -30,7 +30,7 @@ class HomeTabScreen() : BaseScreen<HomeTabViewModel>() {
         LaunchedEffect(Unit) {
             SharedMemory.effectFlow.collectLatest { effect ->
                 when (effect) {
-                    NavigateBackEffect -> {
+                    is NavigateBackEffect -> {
                         navState.pop()
                     }
 
