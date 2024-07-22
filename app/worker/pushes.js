@@ -6,16 +6,17 @@ class PushWorker {
 
 	constructor(ctx) {
 		this.context = ctx;
-    	if (this.context.fcmEnabled) {
+    	if (this.context.config.fcmEnabled) {
 			const createPushSender = require('../utils/push_sender.js').create;
 			this.pushSender = createPushSender();
     	}
 	}
 
     async doWork() {
-    	if (!this.context.fcmEnabled) {
+    	if (!this.context.config.fcmEnabled) {
     		return;
     	}
+	    console.log(`Работает PushWorker`);
 
 	    // Достаём непрочитанные нотификации
 	    const unreadNotifications = await this.context.repositories.notifications.getUnreadNotifications();

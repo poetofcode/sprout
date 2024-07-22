@@ -5,7 +5,7 @@
       "url": "mongodb://127.0.0.1:27017/",
       "name": "sprout"
     },
-    "fcmEnabled": false
+    "fcmEnabled": true
   },
   "prod": {
     "port": 3000,
