@@ -12,5 +12,8 @@
     "scaffold"
   ],
   "author": "poetofcode",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "fs-jetpack": "^5.1.0"
+  }
 }
