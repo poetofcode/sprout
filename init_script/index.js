@@ -5,11 +5,12 @@ const jetpack = require("fs-jetpack");
 		console.log("Starting...");
 
 		const src = jetpack.cwd("../app");
-		// const dst = jetpack.cwd("path/to/destination");
+		const dst = jetpack.cwd("../../scaffold");
 
 		src.find({ matching: "*" }).forEach((path) => {
 		  const content = src.read(path);
 		  // const transformedContent = transformTheFileHoweverYouWant(content);
+		  const transformedContent = content;
 
 		  console.log(`Walking path: ${path}`);
 
@@ -17,7 +18,7 @@ const jetpack = require("fs-jetpack");
 		  	console.log(`File contents:\n\n${content}\n\n`);
 		  }
 
-		  // dst.write(path, transformedContent);
+		  dst.write(`app/${path}`, transformedContent);
 		});
 
 	} catch(err) {
