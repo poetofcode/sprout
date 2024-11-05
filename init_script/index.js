@@ -65,13 +65,15 @@ class Logger {
 		const logReplacer = new Replacer('console.log("', 'console.log("Prefixed by Replacer: ');
 		const secondReplacer = new Replacer('Prefixed by Replacer: ', 'Prefixed by Replacer - ');
 		const copier = new Copier('app', '../../scaffold');
+		const loggerBefore = new Logger(`=================================\nProcessing path "$path"`);
+		const loggerAfter = new Logger(`End of processing, out path "$path"`);
 
 	  	const handlers = [
-	  		new Logger(`=================================\nProcessing path "$path"`),
+	  		loggerBefore,
 	  		logReplacer, 
 	  		secondReplacer, 
 	  		copier,
-	  		new Logger(`End of processing, out path "$path"`)
+	  		loggerAfter
   		];
 
 		src.find({ matching: "*" }).forEach((path) => {
