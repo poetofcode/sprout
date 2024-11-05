@@ -21,12 +21,14 @@ class Replacer {
 
 class Copier {
 
-	constructor(subdir) {
-		this.subdir = subdir;
+	constructor(subDir, dstDir) {
+		this.subDir = subDir;
+		this.dstDir = dstDir;
 	}
 
 	process(path, content, next) {
-		const newPath = `${subdir}/${path}`;
+		const newPath = `${this.subDir}/${path}`;
+		const dst = jetpack.cwd(this.dstDir);
 		dst.write(newPath, content);
 		next(newPath, content);
 	}
@@ -39,11 +41,10 @@ class Copier {
 		console.log("Starting...");
 
 		const src = jetpack.cwd("../app");
-		const dst = jetpack.cwd("../../scaffold");
 
 		const logReplacer = new Replacer('console.log("', 'console.log("Prefixed by Replacer: ');
 		const secondReplacer = new Replacer('Prefixed by Replacer: ', 'Prefixed by Replacer - ');
-		const copier = new Copier('app');
+		const copier = new Copier('app', '../../scaffold');
 
 	  	const handlers = [logReplacer, secondReplacer, copier];
 
@@ -52,12 +53,28 @@ class Copier {
 
 		  console.log(`Walking path: ${path}`);
 
-		  // const secondHandler = (p, c) => {
-		  // 		secondReplacer.process(p, c, copier);
-		  // };
-		  // logReplacer.process(path, content, secondHandler);
 
-		  // logReplacer.process(path, content, copier);
+		  function run(p, c, hIndex) {
+		  	console.log(`run, hIndex = ${hIndex}`);
+
+		  	handlers[hIndex].process(p, c, (nextPath, nextContent) => {
+		  		if(hIndex + 1 > handlers.length - 1) {
+		  			return;
+		  		}
+		  		run(nextPath, nextContent, hIndex + 1);
+		  	})
+		  }
+
+		  run(path, content, 0);
+
+
+		  // handlers.reverse().forEach((h) => {
+		  // 	wrapper = (p, c) => {
+				// h.process(p, c, wrapper);
+		  // 	}; 
+		  // });
+
+		  // wrapper(path, content);
 
 		});
 
