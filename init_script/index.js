@@ -21,15 +21,32 @@ class Replacer {
 
 class Copier {
 
-	constructor(subDir, dstDir) {
+	constructor(subDir, dstDir, ignoreList) {
 		this.subDir = subDir;
 		this.dstDir = dstDir;
+		this.ignoreList = ignoreList;
 	}
 
 	process(path, content, next) {
 		const newPath = `${this.subDir}/${path}`;
+
+		let isIgnored = false;
+		this.ignoreList.forEach((item) => {
+			const itemRevertSlashes = item.replaceAll('/', '\\');
+			if (path.includes(item) || path.includes(itemRevertSlashes)) {
+				isIgnored = true;
+				return;
+			}
+		});
+		if (isIgnored) {
+			console.log(`Copy: path "${path}" ignored`);
+			next(path, content);
+			return;
+		}
+
 		const dst = jetpack.cwd(this.dstDir);
 		dst.write(newPath, content);
+
 		console.log(`Copied from "${path}" to "${newPath}"`);
 		next(newPath, content);
 	}
@@ -60,11 +77,22 @@ class Logger {
 	try {
 		console.log("Starting...");
 
-		const src = jetpack.cwd("../app");
+		const src = jetpack.cwd("../client");
 
 		const logReplacer = new Replacer('console.log("', 'console.log("Prefixed by Replacer: ');
 		const secondReplacer = new Replacer('Prefixed by Replacer: ', 'Prefixed by Replacer - ');
-		const copier = new Copier('app', '../../scaffold');
+		
+		const ignoreList = [
+			'build/',
+			'composeApp/kcef-bundle',
+			'composeApp/cache',
+			'composeApp/DawnCache',
+			'composeApp/GPUCache',
+			'composeApp/appcache',
+			'composeApp/google-services.json'
+		]
+
+		const copier = new Copier('client', '../../scaffold', ignoreList);
 		const loggerBefore = new Logger(`=================================\nProcessing path "$path"`);
 		const loggerAfter = new Logger(`End of processing, out path "$path"`);
 
