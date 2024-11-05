@@ -53,10 +53,7 @@ class Copier {
 
 		  console.log(`Walking path: ${path}`);
 
-
 		  function run(p, c, hIndex) {
-		  	console.log(`run, hIndex = ${hIndex}`);
-
 		  	handlers[hIndex].process(p, c, (nextPath, nextContent) => {
 		  		if(hIndex + 1 > handlers.length - 1) {
 		  			return;
@@ -66,16 +63,6 @@ class Copier {
 		  }
 
 		  run(path, content, 0);
-
-
-		  // handlers.reverse().forEach((h) => {
-		  // 	wrapper = (p, c) => {
-				// h.process(p, c, wrapper);
-		  // 	}; 
-		  // });
-
-		  // wrapper(path, content);
-
 		});
 
 	} catch(err) {
