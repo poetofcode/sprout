@@ -53,6 +53,34 @@ class Copier {
 
 }
 
+class Reader {
+
+	constructor(srcDir, ignoreList) {
+		this.src = jetpack.cwd(srcDir);
+		this.ignoreList = ignoreList;
+	}
+
+	process(path, content, next) {
+		let isIgnored = false;
+		this.ignoreList.forEach((item) => {
+			const itemRevertSlashes = item.replaceAll('/', '\\');
+			if (path.includes(item) || path.includes(itemRevertSlashes)) {
+				isIgnored = true;
+				return;
+			}
+		});
+		if (isIgnored) {
+			console.log(`Reader: path "${path}" ignored`);
+			return;
+		}
+
+		content = this.src.read(path);
+		console.log(`Read content from "${path}"`);
+		next(path, content);
+	}
+
+}
+
 
 class Logger {
 
@@ -77,8 +105,6 @@ class Logger {
 	try {
 		console.log("Starting...");
 
-		const src = jetpack.cwd("../client");
-
 		const logReplacer = new Replacer('console.log("', 'console.log("Prefixed by Replacer: ');
 		const secondReplacer = new Replacer('Prefixed by Replacer: ', 'Prefixed by Replacer - ');
 		
@@ -92,20 +118,24 @@ class Logger {
 			'composeApp/google-services.json'
 		]
 
+		const reader = new Reader("../client", ignoreList);
 		const copier = new Copier('client', '../../scaffold', ignoreList);
 		const loggerBefore = new Logger(`=================================\nProcessing path "$path"`);
 		const loggerAfter = new Logger(`End of processing, out path "$path"`);
 
 	  	const handlers = [
 	  		loggerBefore,
+	  		reader,
 	  		logReplacer, 
 	  		secondReplacer, 
 	  		copier,
 	  		loggerAfter
   		];
 
-		src.find({ matching: "*" }).forEach((path) => {
-		  const content = src.read(path);
+		// const src = jetpack.cwd("../client");
+
+		jetpack.cwd("../client").find({ matching: "*" }).forEach((path) => {
+		  // const content = src.read(path);
 
 		  function run(p, c, hIndex) {
 		  	handlers[hIndex].process(p, c, (nextPath, nextContent) => {
@@ -116,7 +146,7 @@ class Logger {
 		  	})
 		  }
 
-		  run(path, content, 0);
+		  run(path, 'Not read yet', 0);
 		});
 
 	} catch(err) {
