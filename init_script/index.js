@@ -30,7 +30,27 @@ class Copier {
 		const newPath = `${this.subDir}/${path}`;
 		const dst = jetpack.cwd(this.dstDir);
 		dst.write(newPath, content);
+		console.log(`Copied from "${path}" to "${newPath}"`);
 		next(newPath, content);
+	}
+
+}
+
+
+class Logger {
+
+	/*
+		Pattern example: "File $path and its content $content"
+	*/
+
+	constructor(pattern) {
+		this.pattern = pattern;
+	}
+
+	process(path, content, next) {
+		const out = this.pattern.replaceAll(`$path`, path).replaceAll(`$content`, content);
+		console.log(out);
+		next(path, content);
 	}
 
 }
@@ -46,12 +66,16 @@ class Copier {
 		const secondReplacer = new Replacer('Prefixed by Replacer: ', 'Prefixed by Replacer - ');
 		const copier = new Copier('app', '../../scaffold');
 
-	  	const handlers = [logReplacer, secondReplacer, copier];
+	  	const handlers = [
+	  		new Logger(`=================================\nProcessing path "$path"`),
+	  		logReplacer, 
+	  		secondReplacer, 
+	  		copier,
+	  		new Logger(`End of processing, out path "$path"`)
+  		];
 
 		src.find({ matching: "*" }).forEach((path) => {
 		  const content = src.read(path);
-
-		  console.log(`Walking path: ${path}`);
 
 		  function run(p, c, hIndex) {
 		  	handlers[hIndex].process(p, c, (nextPath, nextContent) => {
