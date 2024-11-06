@@ -138,6 +138,7 @@ class Logger {
 		const logReplacer = new Replacer('console.log("', 'console.log("Prefixed by Replacer: ');
 		const secondReplacer = new Replacer('Prefixed by Replacer: ', 'Prefixed by Replacer - ');
 		const packageReplacer = new Replacer('com.poetofcode.sproutclient', 'org.example.new_app');
+		const filter = new Filter(['.kt', '.js', '.json', '.ks', '.gradle']);
 
 		const ignoreList = [
 			'build/',
@@ -156,6 +157,7 @@ class Logger {
 
 	  	const handlers = [
 	  		loggerBefore,
+	  		filter,
 	  		reader,
 	  		// logReplacer, 
 	  		// packageReplacer,
