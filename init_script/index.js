@@ -45,13 +45,43 @@ class Copier {
 		}
 
 		const dst = jetpack.cwd(this.dstDir);
-		dst.write(newPath, content);
+		// dst.write(newPath, content);
+
+		jetpack.copy(`../client/${path}`, `${this.dstDir}/${newPath}`, { overwrite: true });
 
 		console.log(`Copied from "${path}" to "${newPath}"`);
 		next(newPath, content);
 	}
 
 }
+
+
+class Filter {
+
+	constructor(extensions) {
+		this.extensions = extensions;
+	}
+
+	process(path, content, next) {
+		if (this.extensions == null) {
+			next(path, content);
+			return;
+		}
+
+		const isNotProcess = this.extensions.some((ext) => {
+			return path.includes(ext);
+		});
+
+		if (isNotProcess) {
+			// TODO
+			//  копировать напрямую
+		} else {
+			next(path, content, next);
+		}
+	}
+
+}
+
 
 class Reader {
 
@@ -107,7 +137,8 @@ class Logger {
 
 		const logReplacer = new Replacer('console.log("', 'console.log("Prefixed by Replacer: ');
 		const secondReplacer = new Replacer('Prefixed by Replacer: ', 'Prefixed by Replacer - ');
-		
+		const packageReplacer = new Replacer('com.poetofcode.sproutclient', 'org.example.new_app');
+
 		const ignoreList = [
 			'build/',
 			'composeApp/kcef-bundle',
@@ -126,8 +157,9 @@ class Logger {
 	  	const handlers = [
 	  		loggerBefore,
 	  		reader,
-	  		logReplacer, 
-	  		secondReplacer, 
+	  		// logReplacer, 
+	  		// packageReplacer,
+	  		// secondReplacer, 
 	  		copier,
 	  		loggerAfter
   		];
