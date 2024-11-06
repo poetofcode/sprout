@@ -68,15 +68,16 @@ class Filter {
 			return;
 		}
 
-		const isNotProcess = this.extensions.some((ext) => {
+		const isProcess = this.extensions.some((ext) => {
 			return path.includes(ext);
 		});
 
-		if (isNotProcess) {
+		if (isProcess) {
+			next(path, content, next);
+		} else {
 			// TODO
 			//  копировать напрямую
-		} else {
-			next(path, content, next);
+			console.log(`Filter: file '$path' copied without changes`);
 		}
 	}
 
@@ -138,7 +139,16 @@ class Logger {
 		const logReplacer = new Replacer('console.log("', 'console.log("Prefixed by Replacer: ');
 		const secondReplacer = new Replacer('Prefixed by Replacer: ', 'Prefixed by Replacer - ');
 		const packageReplacer = new Replacer('com.poetofcode.sproutclient', 'org.example.new_app');
-		const filter = new Filter(['.kt', '.js', '.json', '.ks', '.gradle']);
+		const filter = new Filter([
+			'.kt', 
+			'.js', 
+			'.json', 
+			'.kt', 
+			'.kts', 
+			'.gradle',
+			'.properties',
+			'.toml'
+		]);
 
 		const ignoreList = [
 			'build/',
