@@ -152,7 +152,8 @@ class Logger {
 			'.kts', 
 			'.gradle',
 			'.properties',
-			'.toml'
+			'.toml',
+			'.xml'
 		], '../client', '../../scaffold');
 
 		const ignoreList = [
