@@ -45,9 +45,9 @@ class Copier {
 		}
 
 		const dst = jetpack.cwd(this.dstDir);
-		// dst.write(newPath, content);
+		dst.write(newPath, content);
 
-		jetpack.copy(`../client/${path}`, `${this.dstDir}/${newPath}`, { overwrite: true });
+		// jetpack.copy(`../client/${path}`, `${this.dstDir}/${newPath}`, { overwrite: true });
 
 		console.log(`Copied from "${path}" to "${newPath}"`);
 		next(newPath, content);
@@ -58,8 +58,10 @@ class Copier {
 
 class Filter {
 
-	constructor(extensions) {
+	constructor(extensions, srcRoot, dstRoot) {
 		this.extensions = extensions;
+		this.srcRoot = srcRoot;
+		this.dstRoot = dstRoot;
 	}
 
 	process(path, content, next) {
@@ -75,9 +77,12 @@ class Filter {
 		if (isProcess) {
 			next(path, content, next);
 		} else {
-			// TODO
-			//  копировать напрямую
-			console.log(`Filter: file '$path' copied without changes`);
+			console.log(`Filter: file '${path}' copied without changes`);
+			jetpack.copy(
+				`${this.srcRoot}/${path}`, 
+				`${this.dstRoot}/${path}`, 
+				{ overwrite: true }
+			);
 		}
 	}
 
@@ -148,7 +153,7 @@ class Logger {
 			'.gradle',
 			'.properties',
 			'.toml'
-		]);
+		], '../client', '../../scaffold');
 
 		const ignoreList = [
 			'build/',
@@ -168,11 +173,12 @@ class Logger {
 	  	const handlers = [
 	  		loggerBefore,
 	  		filter,
-	  		reader,
+	  		
+	  		// reader,
 	  		// logReplacer, 
 	  		// packageReplacer,
 	  		// secondReplacer, 
-	  		copier,
+	  		// copier,
 	  		loggerAfter
   		];
 
