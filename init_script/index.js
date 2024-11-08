@@ -58,13 +58,27 @@ class Copier {
 
 class Filter {
 
-	constructor(extensions, srcRoot, dstRoot) {
+	constructor(extensions, srcRoot, dstRoot, ignoreList) {
 		this.extensions = extensions;
 		this.srcRoot = srcRoot;
 		this.dstRoot = dstRoot;
+		this.ignoreList = ignoreList;
 	}
 
 	process(path, content, next) {
+		let isIgnored = false;
+		this.ignoreList.forEach((item) => {
+			const itemRevertSlashes = item.replaceAll('/', '\\');
+			if (path.includes(item) || path.includes(itemRevertSlashes)) {
+				isIgnored = true;
+				return;
+			}
+		});
+		if (isIgnored) {
+			console.log(`Filter: path "${path}" ignored`);
+			return;
+		}
+
 		if (this.extensions == null) {
 			next(path, content);
 			return;
@@ -141,20 +155,7 @@ class Logger {
 	try {
 		console.log("Starting...");
 
-		const logReplacer = new Replacer('console.log("', 'console.log("Prefixed by Replacer: ');
-		const secondReplacer = new Replacer('Prefixed by Replacer: ', 'Prefixed by Replacer - ');
 		const packageReplacer = new Replacer('com.poetofcode.sproutclient', 'org.example.new_app');
-		const filter = new Filter([
-			'.kt', 
-			'.js', 
-			'.json', 
-			'.kt', 
-			'.kts', 
-			'.gradle',
-			'.properties',
-			'.toml',
-			'.xml'
-		], '../client', '../../scaffold');
 
 		const ignoreList = [
 			'build/',
@@ -166,6 +167,19 @@ class Logger {
 			'composeApp/google-services.json'
 		]
 
+		const filter = new Filter([
+			'.kt', 
+			'.js', 
+			'.json', 
+			'.kt', 
+			'.kts', 
+			'.gradle',
+			'.properties',
+			'.toml',
+			'.xml'
+		], '../client', '../../scaffold', ignoreList);
+
+
 		const reader = new Reader("../client", ignoreList);
 		const copier = new Copier('client', '../../scaffold', ignoreList);
 		const loggerBefore = new Logger(`=================================\nProcessing path "$path"`);
@@ -174,20 +188,13 @@ class Logger {
 	  	const handlers = [
 	  		loggerBefore,
 	  		filter,
-	  		
-	  		// reader,
-	  		// logReplacer, 
-	  		// packageReplacer,
-	  		// secondReplacer, 
-	  		// copier,
+	  		reader,
+	  		packageReplacer,
+	  		copier,
 	  		loggerAfter
   		];
 
-		// const src = jetpack.cwd("../client");
-
 		jetpack.cwd("../client").find({ matching: "*" }).forEach((path) => {
-		  // const content = src.read(path);
-
 		  function run(p, c, hIndex) {
 		  	handlers[hIndex].process(p, c, (nextPath, nextContent) => {
 		  		if(hIndex + 1 > handlers.length - 1) {
