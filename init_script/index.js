@@ -21,33 +21,16 @@ class Replacer {
 
 class Copier {
 
-	constructor(subDir, dstDir, ignoreList) {
+	constructor(subDir, dstDir) {
 		this.subDir = subDir;
 		this.dstDir = dstDir;
-		this.ignoreList = ignoreList;
 	}
 
 	process(path, content, next) {
 		const newPath = `${this.subDir}/${path}`;
 
-		let isIgnored = false;
-		this.ignoreList.forEach((item) => {
-			const itemRevertSlashes = item.replaceAll('/', '\\');
-			if (path.includes(item) || path.includes(itemRevertSlashes)) {
-				isIgnored = true;
-				return;
-			}
-		});
-		if (isIgnored) {
-			console.log(`Copy: path "${path}" ignored`);
-			next(path, content);
-			return;
-		}
-
 		const dst = jetpack.cwd(this.dstDir);
 		dst.write(newPath, content);
-
-		// jetpack.copy(`../client/${path}`, `${this.dstDir}/${newPath}`, { overwrite: true });
 
 		console.log(`Copied from "${path}" to "${newPath}"`);
 		next(newPath, content);
@@ -107,25 +90,11 @@ class Filter {
 
 class Reader {
 
-	constructor(srcDir, ignoreList) {
+	constructor(srcDir) {
 		this.src = jetpack.cwd(srcDir);
-		this.ignoreList = ignoreList;
 	}
 
 	process(path, content, next) {
-		let isIgnored = false;
-		this.ignoreList.forEach((item) => {
-			const itemRevertSlashes = item.replaceAll('/', '\\');
-			if (path.includes(item) || path.includes(itemRevertSlashes)) {
-				isIgnored = true;
-				return;
-			}
-		});
-		if (isIgnored) {
-			console.log(`Reader: path "${path}" ignored`);
-			return;
-		}
-
 		content = this.src.read(path);
 		console.log(`Read content from "${path}"`);
 		next(path, content);
@@ -182,8 +151,8 @@ class Logger {
 		], '../client', '../../scaffold', 'client', ignoreList);
 
 
-		const reader = new Reader("../client", ignoreList);
-		const copier = new Copier('client', '../../scaffold', ignoreList);
+		const reader = new Reader("../client");
+		const copier = new Copier('client', '../../scaffold');
 		const loggerBefore = new Logger(`=================================\nProcessing path "$path"`);
 		const loggerAfter = new Logger(`End of processing, out path "$path"`);
 
