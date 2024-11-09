@@ -124,6 +124,15 @@ class Logger {
 	try {
 		console.log("Starting...");
 
+
+		// Config parameters
+		//
+		const srcDir = '../client';
+		const dstDir = '../../scaffold/client';
+
+
+		// Handlers 
+		//
 		const packageReplacer = new Replacer('com.poetofcode.sproutclient', 'org.example.new_app');
 
 		const ignoreList = [
@@ -146,11 +155,11 @@ class Logger {
 			'.properties',
 			'.toml',
 			'.xml'
-		], '../client', '../../scaffold/client', ignoreList);
+		], srcDir, dstDir, ignoreList);
 
 
-		const reader = new Reader("../client");
-		const copier = new Copier('../../scaffold/client');
+		const reader = new Reader(srcDir);
+		const copier = new Copier(dstDir);
 		const loggerBefore = new Logger(`=================================\nProcessing path "$path"`);
 		const loggerAfter = new Logger(`End of processing, out path "$path"`);
 
@@ -163,7 +172,7 @@ class Logger {
 	  		loggerAfter
   		];
 
-		jetpack.cwd("../client").find({ matching: "*" }).forEach((path) => {
+		jetpack.cwd(srcDir).find({ matching: "*" }).forEach((path) => {
 		  function run(p, c, hIndex) {
 		  	handlers[hIndex].process(p, c, (nextPath, nextContent) => {
 		  		if(hIndex + 1 > handlers.length - 1) {
