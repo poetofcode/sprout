@@ -241,7 +241,8 @@ function processServer() {
 	// Handlers 
 	//
 	const ignoreList = [
-		'jokes.js'
+		'jokes.js',
+		'subscriptions.js'
 	]
 	const extToProceed = [
 		'.js', 
@@ -261,7 +262,11 @@ function processServer() {
   		loggerBefore,
   		filter,
   		reader,
-  		new Replacer('SproutClient', appName, true),
+  		new Replacer(oldName, appName, true),
+  		new Replacer(`router.post('/subscriptions'`, `// router.post('/subscriptions'`, false),
+  		new Replacer(`router.delete('/subscriptions'`, `// router.delete('/subscriptions'`, false),
+  		new Replacer(`router.get('/subscriptions`, `// router.get('/subscriptions`, false),
+  		new Replacer(`router.get('/jokes'`, `// router.get('/jokes'`, false),
   		copier,
   		loggerAfter
 	];
