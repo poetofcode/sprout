@@ -145,7 +145,7 @@ class Logger {
 			'composeApp/google-services.json'
 		]
 
-		const filter = new Filter([
+		const extToProceed = [
 			'.kt', 
 			'.js', 
 			'.json', 
@@ -155,13 +155,16 @@ class Logger {
 			'.properties',
 			'.toml',
 			'.xml'
-		], srcDir, dstDir, ignoreList);
+		];
 
+		const logPatternStart = `=================================\nProcessing path "$path"`;
+		const logPatterEnd = `End of processing, out path "$path"`;
 
+		const filter = new Filter(extToProceed, srcDir, dstDir, ignoreList);
 		const reader = new Reader(srcDir);
 		const copier = new Copier(dstDir);
-		const loggerBefore = new Logger(`=================================\nProcessing path "$path"`);
-		const loggerAfter = new Logger(`End of processing, out path "$path"`);
+		const loggerBefore = new Logger(logPatterStart);
+		const loggerAfter = new Logger(logPatterEnd);
 
 	  	const handlers = [
 	  		loggerBefore,
