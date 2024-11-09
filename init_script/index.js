@@ -199,8 +199,8 @@ function processClient() {
 		'.xml'
 	];
 
-	const logPatternStart = `=================================\nProcessing path "$path"`;
-	const logPatternEnd = `End of processing, out path "$path"`;
+	const logPatternStart = `=================================\nProcessing path "${srcDir}"`;
+	const logPatternEnd = `End of processing, out path "${srcDir}"`;
 
 	const filter = new Filter(extToProceed, srcDir, dstDir, ignoreList);
 	const reader = new Reader(srcDir);
@@ -230,11 +230,52 @@ function processClient() {
 }
 
 
+function processServer() {
+	// Config parameters
+	//
+	const srcDir = '../app';
+	const dstDir = '../../scaffold/app';
+	const appName = 'NewApp';
+	const oldName = 'Sprout';
+
+	// Handlers 
+	//
+	const ignoreList = [
+		'jokes.js'
+	]
+	const extToProceed = [
+		'.js', 
+		'.json'
+	];
+
+	const logPatternStart = `=================================\nProcessing path "${srcDir}"`;
+	const logPatternEnd = `End of processing, out path "${srcDir}"`;
+
+	const filter = new Filter(extToProceed, srcDir, dstDir, ignoreList);
+	const reader = new Reader(srcDir);
+	const copier = new Copier(dstDir);
+	const loggerBefore = new Logger(logPatternStart);
+	const loggerAfter = new Logger(logPatternEnd);
+
+  	const handlers = [
+  		loggerBefore,
+  		filter,
+  		reader,
+  		new Replacer('SproutClient', appName, true),
+  		copier,
+  		loggerAfter
+	];
+
+	executeHandlers(srcDir, handlers);
+}
+
+
 (async () => {
 	try {
 		console.log("Starting...");
 
-		processClient()
+		processClient();
+		processServer();
 
 	} catch(err) {
 	    return console.log(err);
