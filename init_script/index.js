@@ -2,17 +2,20 @@ const jetpack = require("fs-jetpack");
 
 class Replacer {
 
-	constructor(source, replaced) {
+	constructor(source, replaced, ignoreCase) {
 		this.source = source;
 		this.replaced = replaced;
+		this.ignoreCase = ignoreCase;
 	}
 
 	process(path, content, next) {
-		if (!content.includes(this.source)) {
+		const sourcePrepared = this.ignoreCase ? this.source.toLowerCase() : this.source;
+		const contentPrepared = this.ignoreCase ? content.toLowerCase() : content;
+		if (!contentPrepared.includes(this.sourcePrepared)) {
 			next(path, content);
 			return;
 		}
-		console.log(`Replacer working on "${path}", replaced string "${this.source}"`);
+		console.log(`Replacer working on "${path}", replaced string "${this.source} on string "${this.replaced}"`);
 		const newContent = content.replaceAll(this.source, this.replaced);
 		next(path, newContent);
 	}
@@ -23,16 +26,38 @@ class Copier {
 
 	constructor(dstDir) {
 		this.dstDir = dstDir;
+		this.dst = jetpack.cwd(this.dstDir);
 	}
 
 	process(path, content, next) {
 		const newPath = `${this.dstDir}/${path}`;
-
-		const dst = jetpack.cwd(this.dstDir);
-		dst.write(path, content);
-
+		this.dst.write(path, content);
 		console.log(`Copied from "${path}" to "${newPath}"`);
 		next(newPath, content);
+	}
+
+}
+
+class PackageCopier extends Copier {
+
+	constructor(dstDir, srcPackage, targetPackage) {
+		super(dstDir);
+		this.srcPackage = srcPackage;
+		this.targetPackage = targetPackage;
+	}
+
+	process(path, content, next) {
+		const srcPackageAsPath = this.srcPackage.replaceAll('.', '/');
+		const targetPackageAsPath = this.targetPackage.replaceAll('.', '/');
+		const pathClean = path.replaceAll('\\', '/').replaceAll('//', '/');
+
+		if (pathClean.toLowerCase().includes(srcPackageAsPath.toLowerCase())) {
+			const newPath = pathClean.toLowerCase().replace(srcPackageAsPath.toLowerCase(), targetPackageAsPath);
+			this.dst.write(newPath, content);
+			console.log(`PackageCopier: copied from "${path}" to "${newPath}. Exit script"`);			
+		} else {
+			next(path, content);
+		}
 	}
 
 }
@@ -130,8 +155,7 @@ class Logger {
 
 		// Handlers 
 		//
-		const packageReplacer = new Replacer('com.poetofcode.sproutclient', targetPackage);
-
+		const srcPackage = 'com.poetofcode.sproutclient';
 		const ignoreList = [
 			'build/',
 			'composeApp/kcef-bundle',
@@ -141,7 +165,6 @@ class Logger {
 			'composeApp/appcache',
 			'composeApp/google-services.json'
 		]
-
 		const extToProceed = [
 			'.kt', 
 			'.js', 
@@ -155,19 +178,22 @@ class Logger {
 		];
 
 		const logPatternStart = `=================================\nProcessing path "$path"`;
-		const logPatterEnd = `End of processing, out path "$path"`;
+		const logPatternEnd = `End of processing, out path "$path"`;
 
 		const filter = new Filter(extToProceed, srcDir, dstDir, ignoreList);
 		const reader = new Reader(srcDir);
+		const packageReplacer = new Replacer(srcPackage, targetPackage, true);
+		const packageCopier = new PackageCopier(dstDir, srcPackage, targetPackage);
 		const copier = new Copier(dstDir);
-		const loggerBefore = new Logger(logPatterStart);
-		const loggerAfter = new Logger(logPatterEnd);
+		const loggerBefore = new Logger(logPatternStart);
+		const loggerAfter = new Logger(logPatternEnd);
 
 	  	const handlers = [
 	  		loggerBefore,
 	  		filter,
 	  		reader,
 	  		packageReplacer,
+	  		packageCopier,
 	  		copier,
 	  		loggerAfter
   		];
