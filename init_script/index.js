@@ -151,73 +151,82 @@ class Logger {
 
 }
 
+function executeHandlers(srcDir, handlers) {
+	jetpack.cwd(srcDir).find({ matching: "*" }).forEach((path) => {
+	  function run(p, c, hIndex) {
+	  	handlers[hIndex].process(p, c, (nextPath, nextContent) => {
+	  		if(hIndex + 1 > handlers.length - 1) {
+	  			return;
+	  		}
+	  		run(nextPath, nextContent, hIndex + 1);
+	  	})
+	  }
+
+	  run(path, 'Not read yet', 0);
+	});
+}
+
+function processClient() {
+	// Config parameters
+	//
+	const srcDir = '../client';
+	const dstDir = '../../scaffold/client';
+	const targetPackage = 'org.example.new_app';
+
+	// Handlers 
+	//
+	const srcPackage = 'com.poetofcode.sproutclient';
+	const ignoreList = [
+		'build/',
+		'composeApp/kcef-bundle',
+		'composeApp/cache',
+		'composeApp/DawnCache',
+		'composeApp/GPUCache',
+		'composeApp/appcache',
+		'composeApp/google-services.json'
+	]
+	const extToProceed = [
+		'.kt', 
+		'.js', 
+		'.json', 
+		'.kt', 
+		'.kts', 
+		'.gradle',
+		'.properties',
+		'.toml',
+		'.xml'
+	];
+
+	const logPatternStart = `=================================\nProcessing path "$path"`;
+	const logPatternEnd = `End of processing, out path "$path"`;
+
+	const filter = new Filter(extToProceed, srcDir, dstDir, ignoreList);
+	const reader = new Reader(srcDir);
+	const packageReplacer = new Replacer(srcPackage, targetPackage, true);
+	const packageCopier = new PackageCopier(dstDir, srcPackage, targetPackage);
+	const copier = new Copier(dstDir);
+	const loggerBefore = new Logger(logPatternStart);
+	const loggerAfter = new Logger(logPatternEnd);
+
+  	const handlers = [
+  		loggerBefore,
+  		filter,
+  		reader,
+  		packageReplacer,
+  		packageCopier,
+  		copier,
+  		loggerAfter
+	];
+
+	executeHandlers(srcDir, handlers);
+}
+
 
 (async () => {
 	try {
-		// Config parameters
-		//
-		const srcDir = '../client';
-		const dstDir = '../../scaffold/client';
-		const targetPackage = 'org.example.new_app';
-
-		// Handlers 
-		//
-		const srcPackage = 'com.poetofcode.sproutclient';
-		const ignoreList = [
-			'build/',
-			'composeApp/kcef-bundle',
-			'composeApp/cache',
-			'composeApp/DawnCache',
-			'composeApp/GPUCache',
-			'composeApp/appcache',
-			'composeApp/google-services.json'
-		]
-		const extToProceed = [
-			'.kt', 
-			'.js', 
-			'.json', 
-			'.kt', 
-			'.kts', 
-			'.gradle',
-			'.properties',
-			'.toml',
-			'.xml'
-		];
-
-		const logPatternStart = `=================================\nProcessing path "$path"`;
-		const logPatternEnd = `End of processing, out path "$path"`;
-
-		const filter = new Filter(extToProceed, srcDir, dstDir, ignoreList);
-		const reader = new Reader(srcDir);
-		const packageReplacer = new Replacer(srcPackage, targetPackage, true);
-		const packageCopier = new PackageCopier(dstDir, srcPackage, targetPackage);
-		const copier = new Copier(dstDir);
-		const loggerBefore = new Logger(logPatternStart);
-		const loggerAfter = new Logger(logPatternEnd);
-
-	  	const handlers = [
-	  		loggerBefore,
-	  		filter,
-	  		reader,
-	  		packageReplacer,
-	  		packageCopier,
-	  		copier,
-	  		loggerAfter
-  		];
-
 		console.log("Starting...");
-		jetpack.cwd(srcDir).find({ matching: "*" }).forEach((path) => {
-		  function run(p, c, hIndex) {
-		  	handlers[hIndex].process(p, c, (nextPath, nextContent) => {
-		  		if(hIndex + 1 > handlers.length - 1) {
-		  			return;
-		  		}
-		  		run(nextPath, nextContent, hIndex + 1);
-		  	})
-		  }
-
-		  run(path, 'Not read yet', 0);
-		});
+		
+		processClient()
 
 	} catch(err) {
 	    return console.log(err);
