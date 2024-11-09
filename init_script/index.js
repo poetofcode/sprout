@@ -11,7 +11,7 @@ class Replacer {
 	process(path, content, next) {
 		const sourcePrepared = this.ignoreCase ? this.source.toLowerCase() : this.source;
 		const contentPrepared = this.ignoreCase ? content.toLowerCase() : content;
-		if (!contentPrepared.includes(this.sourcePrepared)) {
+		if (!contentPrepared.includes(sourcePrepared)) {
 			next(path, content);
 			return;
 		}
@@ -51,8 +51,8 @@ class PackageCopier extends Copier {
 		const targetPackageAsPath = this.targetPackage.replaceAll('.', '/');
 		const pathClean = path.replaceAll('\\', '/').replaceAll('//', '/');
 
-		if (pathClean.toLowerCase().includes(srcPackageAsPath.toLowerCase())) {
-			const newPath = pathClean.toLowerCase().replace(srcPackageAsPath.toLowerCase(), targetPackageAsPath);
+		if (pathClean.includes(srcPackageAsPath)) {
+			const newPath = pathClean.replace(srcPackageAsPath, targetPackageAsPath);
 			this.dst.write(newPath, content);
 			console.log(`PackageCopier: copied from "${path}" to "${newPath}. Exit script"`);			
 		} else {
