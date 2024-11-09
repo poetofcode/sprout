@@ -129,11 +129,11 @@ class Logger {
 		//
 		const srcDir = '../client';
 		const dstDir = '../../scaffold/client';
-
+		const targetPackage = 'org.example.new_app';
 
 		// Handlers 
 		//
-		const packageReplacer = new Replacer('com.poetofcode.sproutclient', 'org.example.new_app');
+		const packageReplacer = new Replacer('com.poetofcode.sproutclient', targetPackage);
 
 		const ignoreList = [
 			'build/',
