@@ -58,9 +58,10 @@ class Copier {
 
 class Filter {
 
-	constructor(extensions, srcRoot, dstRoot, ignoreList) {
+	constructor(extensions, srcRoot, dstRoot, subDir, ignoreList) {
 		this.extensions = extensions;
 		this.srcRoot = srcRoot;
+		this.subDir = subDir;
 		this.dstRoot = dstRoot;
 		this.ignoreList = ignoreList;
 	}
@@ -94,7 +95,7 @@ class Filter {
 			console.log(`Filter: file '${path}' copied without changes`);
 			jetpack.copy(
 				`${this.srcRoot}/${path}`, 
-				`${this.dstRoot}/${path}`, 
+				`${this.dstRoot}/${this.subDir}/${path}`, 
 				{ overwrite: true }
 			);
 		}
@@ -177,7 +178,7 @@ class Logger {
 			'.properties',
 			'.toml',
 			'.xml'
-		], '../client', '../../scaffold', ignoreList);
+		], '../client', 'client', '../../scaffold', ignoreList);
 
 
 		const reader = new Reader("../client", ignoreList);
