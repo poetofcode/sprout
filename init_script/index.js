@@ -173,6 +173,7 @@ function processClient() {
 	const dstDir = '../../scaffold/client';
 	const targetPackage = 'org.example.new_app';
 	const appName = 'NewApp';
+	const oldName = 'SproutClient';
 
 	// Handlers 
 	//
@@ -214,6 +215,11 @@ function processClient() {
   		filter,
   		reader,
   		packageReplacer,
+  		new Replacer(
+  			`${oldName}.composeapp.generated.resources`.toLowerCase(), 
+  			`${appName}.composeapp.generated.resources`.toLowerCase(), 
+  			true
+		),
   		new Replacer('SproutClient', appName, true),
   		packageCopier,
   		copier,
