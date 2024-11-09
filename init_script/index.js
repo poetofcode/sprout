@@ -21,16 +21,15 @@ class Replacer {
 
 class Copier {
 
-	constructor(subDir, dstDir) {
-		this.subDir = subDir;
+	constructor(dstDir) {
 		this.dstDir = dstDir;
 	}
 
 	process(path, content, next) {
-		const newPath = `${this.subDir}/${path}`;
+		const newPath = `${this.dstDir}/${path}`;
 
 		const dst = jetpack.cwd(this.dstDir);
-		dst.write(newPath, content);
+		dst.write(path, content);
 
 		console.log(`Copied from "${path}" to "${newPath}"`);
 		next(newPath, content);
@@ -41,10 +40,9 @@ class Copier {
 
 class Filter {
 
-	constructor(extensions, srcRoot, dstRoot, subDir, ignoreList) {
+	constructor(extensions, srcRoot, dstRoot, ignoreList) {
 		this.extensions = extensions;
 		this.srcRoot = srcRoot;
-		this.subDir = subDir;
 		this.dstRoot = dstRoot;
 		this.ignoreList = ignoreList;
 	}
@@ -75,7 +73,7 @@ class Filter {
 		if (isProcess) {
 			next(path, content, next);
 		} else {
-			const newPath = `${this.dstRoot}/${this.subDir}/${path}`;
+			const newPath = `${this.dstRoot}/${path}`;
 			console.log(`Filter: file '${path}' copied without changes, new path: ${newPath}`);
 			jetpack.copy(
 				`${this.srcRoot}/${path}`, 
@@ -148,11 +146,11 @@ class Logger {
 			'.properties',
 			'.toml',
 			'.xml'
-		], '../client', '../../scaffold', 'client', ignoreList);
+		], '../client', '../../scaffold/client', ignoreList);
 
 
 		const reader = new Reader("../client");
-		const copier = new Copier('client', '../../scaffold');
+		const copier = new Copier('../../scaffold/client');
 		const loggerBefore = new Logger(`=================================\nProcessing path "$path"`);
 		const loggerAfter = new Logger(`End of processing, out path "$path"`);
 
