@@ -122,9 +122,6 @@ class Logger {
 
 (async () => {
 	try {
-		console.log("Starting...");
-
-
 		// Config parameters
 		//
 		const srcDir = '../client';
@@ -175,6 +172,7 @@ class Logger {
 	  		loggerAfter
   		];
 
+		console.log("Starting...");
 		jetpack.cwd(srcDir).find({ matching: "*" }).forEach((path) => {
 		  function run(p, c, hIndex) {
 		  	handlers[hIndex].process(p, c, (nextPath, nextContent) => {
