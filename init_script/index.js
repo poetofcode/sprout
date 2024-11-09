@@ -172,6 +172,7 @@ function processClient() {
 	const srcDir = '../client';
 	const dstDir = '../../scaffold/client';
 	const targetPackage = 'org.example.new_app';
+	const appName = 'NewApp';
 
 	// Handlers 
 	//
@@ -213,6 +214,7 @@ function processClient() {
   		filter,
   		reader,
   		packageReplacer,
+  		new Replacer('SproutClient', appName, true),
   		packageCopier,
   		copier,
   		loggerAfter
@@ -225,7 +227,7 @@ function processClient() {
 (async () => {
 	try {
 		console.log("Starting...");
-		
+
 		processClient()
 
 	} catch(err) {
