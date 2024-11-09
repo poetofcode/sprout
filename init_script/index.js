@@ -92,10 +92,11 @@ class Filter {
 		if (isProcess) {
 			next(path, content, next);
 		} else {
-			console.log(`Filter: file '${path}' copied without changes`);
+			const newPath = `${this.dstRoot}/${this.subDir}/${path}`;
+			console.log(`Filter: file '${path}' copied without changes, new path: ${newPath}`);
 			jetpack.copy(
 				`${this.srcRoot}/${path}`, 
-				`${this.dstRoot}/${this.subDir}/${path}`, 
+				newPath, 
 				{ overwrite: true }
 			);
 		}
@@ -178,7 +179,7 @@ class Logger {
 			'.properties',
 			'.toml',
 			'.xml'
-		], '../client', 'client', '../../scaffold', ignoreList);
+		], '../client', '../../scaffold', 'client', ignoreList);
 
 
 		const reader = new Reader("../client", ignoreList);
