@@ -1,5 +1,12 @@
 const jetpack = require("fs-jetpack");
 
+String.prototype.replaceAll = function(strReplace, strWith) {
+    // See http://stackoverflow.com/a/3561711/556609
+    var esc = strReplace.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    var reg = new RegExp(esc, 'ig');
+    return this.replace(reg, strWith);
+};
+
 class Replacer {
 
 	constructor(source, replaced, ignoreCase) {
