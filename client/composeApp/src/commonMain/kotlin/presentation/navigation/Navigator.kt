@@ -19,6 +19,8 @@ interface NavState {
     fun pop()
 
     fun moveToFront(screenId: String)
+
+    fun isContainsScreenWithId(screenId: String) : Boolean
 }
 
 class NavStateImpl(val viewModelStore: ViewModelStore) : NavState {
@@ -51,6 +53,10 @@ class NavStateImpl(val viewModelStore: ViewModelStore) : NavState {
             currScreens.add(found)
             _screens.value = currScreens
         }
+    }
+
+    override fun isContainsScreenWithId(screenId: String): Boolean {
+        return screens.value.firstOrNull { it.screenId == screenId } != null
     }
 
 }

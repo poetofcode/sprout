@@ -227,9 +227,16 @@ fun ModalBottomSheet() {
     val localMainAppState = LocalMainAppState.current
     val scope = rememberCoroutineScope()
     val sheetState = rememberFlexibleBottomSheetState(
-        flexibleSheetSize = FlexibleSheetSize(fullyExpanded = 0.5f),
+        flexibleSheetSize = FlexibleSheetSize(
+            fullyExpanded = 1f,
+            intermediatelyExpanded = 0.5f,
+            slightlyExpanded = 0.0f,
+        ),
         isModal = true,
+        // skipIntermediatelyExpanded = true,
+        containSystemBars = true,
         skipSlightlyExpanded = true,
+        allowNestedScroll = true
     )
 
     if (localMainAppState.bottomSheetState.value.isVisible) {

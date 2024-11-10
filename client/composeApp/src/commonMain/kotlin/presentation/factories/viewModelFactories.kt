@@ -9,6 +9,7 @@ import presentation.screens.homeTabScreen.HomeTabViewModel
 import presentation.screens.notificationsScreen.NotificationsViewModel
 import presentation.screens.profileScreen.ProfileViewModel
 import presentation.screens.profileTabScreen.ProfileTabViewModel
+import presentation.screens.regScreen.RegViewModel
 import presentation.screens.startScreen.StartViewModel
 
 class HomeTabViewModelFactory() : ViewModelFactory<HomeTabViewModel> {
@@ -24,8 +25,7 @@ class HomeTabViewModelFactory() : ViewModelFactory<HomeTabViewModel> {
 class StartViewModelFactory(
     val jokeRepository: JokeRepository,
     val profileRepository: ProfileRepository,
-)
-    : ViewModelFactory<StartViewModel> {
+) : ViewModelFactory<StartViewModel> {
     override fun createViewModel(): StartViewModel {
         return StartViewModel(
             jokeRepository = jokeRepository,
@@ -50,8 +50,8 @@ class ProfileTabViewModelFactory
 
 }
 
-class ProfileViewModelFactory(val profileRepository: ProfileRepository)
-    : ViewModelFactory<ProfileViewModel> {
+class ProfileViewModelFactory(val profileRepository: ProfileRepository) :
+    ViewModelFactory<ProfileViewModel> {
     override fun createViewModel(): ProfileViewModel {
         return ProfileViewModel(profileRepository)
     }
@@ -61,8 +61,8 @@ class ProfileViewModelFactory(val profileRepository: ProfileRepository)
 
 }
 
-class AuthViewModelFactory(private val profileRepository: ProfileRepository)
-    : ViewModelFactory<AuthViewModel> {
+class AuthViewModelFactory(private val profileRepository: ProfileRepository) :
+    ViewModelFactory<AuthViewModel> {
     override fun createViewModel(): AuthViewModel {
         return AuthViewModel(profileRepository)
     }
@@ -72,8 +72,19 @@ class AuthViewModelFactory(private val profileRepository: ProfileRepository)
 
 }
 
-class NotificationsViewModelFactory(private val profileRepository: ProfileRepository)
-    : ViewModelFactory<NotificationsViewModel> {
+class RegViewModelFactory(private val profileRepository: ProfileRepository) :
+    ViewModelFactory<RegViewModel> {
+    override fun createViewModel(): RegViewModel {
+        return RegViewModel(profileRepository)
+    }
+
+    override val vmTypeName: String
+        get() = RegViewModel::class.java.typeName
+
+}
+
+class NotificationsViewModelFactory(private val profileRepository: ProfileRepository) :
+    ViewModelFactory<NotificationsViewModel> {
     override fun createViewModel(): NotificationsViewModel {
         return NotificationsViewModel(profileRepository)
     }
@@ -97,6 +108,7 @@ fun viewModelFactories(
         ProfileTabViewModelFactory(),
         ProfileViewModelFactory(profileRepository),
         AuthViewModelFactory(profileRepository),
+        RegViewModelFactory(profileRepository),
         NotificationsViewModelFactory(profileRepository),
     )
 }

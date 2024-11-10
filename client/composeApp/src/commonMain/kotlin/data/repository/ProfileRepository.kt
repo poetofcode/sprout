@@ -17,6 +17,8 @@ interface ProfileRepository {
 
     suspend fun createSession(email: String, password: String): Profile
 
+    suspend fun createAccount(email: String, password: String)
+
     suspend fun deleteSession()
 
     suspend fun createSubscription()
@@ -67,6 +69,10 @@ class ProfileRepositoryImpl(
                     )
                 )
             }
+    }
+
+    override suspend fun createAccount(email: String, password: String) {
+        return api.createAccount(CreateSessionRequestBody(email, password))
     }
 
     override suspend fun deleteSession() {

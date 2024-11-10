@@ -86,12 +86,21 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                 )
                 Button(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
-                        .padding(vertical = 30.dp),
+                        .padding(top = 30.dp),
                     onClick = {
                         viewModel.onSignInToAccountButtonClick()
                     }
                 ) {
                     Text(text = "Войти в аккаунт")
+                }
+                OutlinedButton(
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                        .padding(top = 10.dp),
+                    onClick = {
+                        viewModel.onRegistrationButtonClick()
+                    }
+                ) {
+                    Text(text = "Регистрация")
                 }
             }
         }

@@ -63,6 +63,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Делает активити защищённым от скриншотов, отображения контента в миниатюре и т.д.
+        // window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+
         retrieveFirebasePushToken { token ->
             val msg = "FCM Token: $token"
             Log.d("mylog", msg)

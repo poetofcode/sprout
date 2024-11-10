@@ -24,8 +24,6 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.path
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import presentation.base.Config
 
 class MainApi(
@@ -37,8 +35,10 @@ class MainApi(
 
     suspend fun fetchJokes() = parseRequestResult<JokesResponse> {
         httpClient.get {
-            nonAuthBlock {
-                url { path("/api/v1/jokes") }
+            authBlock {
+                url {
+                    path("/api/v1/jokes")
+                }
             }
         }
     }
@@ -144,6 +144,15 @@ class MainApi(
             }
         }
         block()
+    }
+
+    suspend fun createAccount(requestBody: CreateSessionRequestBody) {
+        httpClient.post {
+            nonAuthBlock {
+                url { path("/api/v1/users") }
+                setBody(requestBody)
+            }
+        }
     }
 
 }

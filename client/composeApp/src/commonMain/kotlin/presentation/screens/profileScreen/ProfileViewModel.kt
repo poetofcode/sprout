@@ -14,6 +14,7 @@ import presentation.navigation.HideBottomSheetEffect
 import presentation.navigation.NavigateEffect
 import presentation.navigation.SharedEvent
 import presentation.screens.authScreen.AuthScreen
+import presentation.screens.regScreen.RegScreen
 
 class ProfileViewModel(
     private val profileRepository: ProfileRepository
@@ -77,6 +78,14 @@ class ProfileViewModel(
             joinAll()
             postSharedEvent(OnQuitProfileSharedEvent)
         }
+    }
+
+    fun onRegistrationButtonClick() {
+        postEffect(
+            NavigateEffect(
+                RegScreen(),
+            )
+        )
     }
 
 

@@ -160,8 +160,8 @@ class NotificationsScreen : BaseScreen<NotificationsViewModel>() {
                 modifier = Modifier.fillMaxHeight().padding().weight(1f),
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                items(notifications) { joke ->
-                    Notification(notification = joke)
+                items(notifications) { notification ->
+                    Notification(notification = notification)
                 }
             }
 

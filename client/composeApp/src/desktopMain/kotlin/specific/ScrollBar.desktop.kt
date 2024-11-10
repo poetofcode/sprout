@@ -17,7 +17,11 @@ actual fun ScrollBar(
     val adapter: ScrollbarAdapter = when (state) {
         is ScrollableComponentState.LazyListComponentState -> {
             rememberScrollbarAdapter(state.state)
-        } 
+        }
+
+        is ScrollableComponentState.ColumnComponentState -> {
+            rememberScrollbarAdapter(state.state)
+        }
 
         else -> throw Exception("Not implemented")
     } 
