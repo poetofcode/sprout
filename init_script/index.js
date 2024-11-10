@@ -173,10 +173,11 @@ function processClient() {
 	const dstDir = '../../scaffold/client';
 	const targetPackage = 'org.example.new_app';
 	const appName = 'NewApp';
-	const oldName = 'SproutClient';
 
 	// Handlers 
 	//
+	const oldName = 'SproutClient';
+	const oldNameShort = 'Sprout';
 	const srcPackage = 'com.poetofcode.sproutclient';
 	const ignoreList = [
 		'build/',
@@ -220,7 +221,8 @@ function processClient() {
   			`${appName}.composeapp.generated.resources`.toLowerCase(), 
   			true
 		),
-  		new Replacer('SproutClient', appName, true),
+  		new Replacer(oldName, appName, true),
+  		new Replacer(oldNameShort, appName, true),
   		packageCopier,
   		copier,
   		loggerAfter
@@ -236,10 +238,10 @@ function processApi() {
 	const srcDir = '../app';
 	const dstDir = '../../scaffold/app';
 	const appName = 'NewApp';
-	const oldName = 'Sprout';
 
 	// Handlers 
 	//
+	const oldName = 'Sprout';
 	const ignoreList = [
 		'jokes.js',
 		'subscriptions.js'
