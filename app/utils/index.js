@@ -148,6 +148,10 @@ function setIntervalImmediately(cb, intervalMs) {
   return setInterval(cb, intervalMs);
 }
 
+function deepCopy(stuff) {
+  return JSON.parse(JSON.stringify(stuff));
+}
+
 
 exports.utils = {
   appDir: appDir,
@@ -159,5 +163,6 @@ exports.utils = {
   requireAll: requireAll,
   sha1: sha1,
   isEmailValid: isEmailValid,
-  setIntervalImmediately: setIntervalImmediately
+  setIntervalImmediately: setIntervalImmediately,
+  deepCopy: deepCopy
 }

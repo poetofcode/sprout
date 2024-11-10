@@ -21,7 +21,7 @@ class PushSender {
 		  },
 		  tokens: tokens
 		};
-		return admin.messaging().sendMulticast(message);
+		return admin.messaging().sendEachForMulticast(message);
 	}
 
 }

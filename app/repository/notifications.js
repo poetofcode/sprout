@@ -18,20 +18,12 @@ class NotificationRepository {
 			silent: notification.silent,
 			linkId: linkId,
 			extras: "",
-			seen: false
+			seen: false,
+			title: notification.title,
+			text: notification.text,
+			image: notification.image,
 		}
-		const inserted = await this.notificationCollection.updateOne(
-			{ linkId: linkId, userId: new ObjectId(userId) },
-			{ 
-				$set: {
-					title: notification.title,
-					text: notification.text,
-					image: notification.image,
-				},
-				$setOnInsert: entityOnCreate
-			},
-			{ upsert: true }
-		);
+		const inserted = await this.notificationCollection.insertOne(entityOnCreate);
 		console.log(`Notification iserted:`);
 		console.log(entityOnCreate);
 		console.log(inserted);

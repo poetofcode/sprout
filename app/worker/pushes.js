@@ -10,7 +10,33 @@ class PushWorker {
 			const createPushSender = require('../utils/push_sender.js').create;
 			this.pushSender = createPushSender();
     	}
+
+    	// this.sendTestPush();
 	}
+
+
+	// async sendTestPush() {
+	// 	const token = 'ekFu_m9-QZmDaLgMTp9WWc:APA91bEDWZxJezv0OUBKXVETahSs1xnzabVkao-tzMFG9ymeg0IZ1cBw8JjFe3PwMy7XKMNmRug0TpxnNs_cYz4Ha-LJV-lwtanWeOVJe_A8iKrgshVzWw-uprPRjC_kuXBS32pEKnrA';
+	// 	this.pushSender.sendPush({
+	// 		title: "Пуш", text: "Хард пуш месседж"
+	// 	}, [token])
+	// 	    .then((response) => {
+	// 	        // Просмотр успешных отправок
+	// 	        console.log(`${response.successCount} сообщений успешно отправлено`);
+	// 	        console.log(`${response.failureCount} сообщений не удалось отправить`);
+
+	// 	        // Если есть ошибки, пройтись по каждому результату
+	// 	        response.responses.forEach((resp, idx) => {
+	// 	            if (!resp.success) {
+	// 	                console.error(`Ошибка при отправке на устройство с токеном ${token}:`, resp.error);
+	// 	            }
+	// 	        });
+	// 	    })
+	// 	    .catch((error) => {
+	// 	        console.error('Ошибка при отправке сообщения:', error);
+	// 	    });
+	// }
+
 
     async doWork() {
     	if (!this.context.config.fcmEnabled) {
@@ -50,29 +76,39 @@ class PushWorker {
 	    })
 	    .filter((item) => item.pushTokens.length > 0)
 	    .map((item) => {
-	       return this.pushSender.sendPush(item, item.pushTokens); 
+	    	const res = this.pushSender.sendPush(item, item.pushTokens);
+	       return res;
 	    });
-	    const sendResponses = await Promise.all(withTokensNotSentPromises);
 
-	    if (sendResponses.length == 0) {
-	        return;
-	    }
+	    try {
+		    const sendResponses = await Promise.all(withTokensNotSentPromises);
 
-	    // Сохраняем статусы отправки
-	    const createStatusPromises = withPushTokens.map((item, index) => {
-	        if (sendResponses[index] && sendResponses[index].responses) {
-	            item.sendResponse = sendResponses[index].responses;
-	        }
+		    // console.log("Send responses:");
+		    // console.log(sendResponses);
 
-	        return item;
-	    })
-	    .filter((item) => !item.sendResponses)
-	    .map((item) => {
-	        return Promise.all(item.pushTokens.map((t, idx) => {
-	            return this.context.repositories.notificationStatuses.createStatus(item._id, t, item.sendResponse[idx].success)
-	        }));
-	    });
-	    Promise.all(createStatusPromises);
+		    if (sendResponses.length == 0) {
+		        return;
+		    }
+
+		    // Сохраняем статусы отправки
+		    const createStatusPromises = withPushTokens.map((item, index) => {
+		        if (sendResponses[index] && sendResponses[index].responses) {
+		            item.sendResponse = sendResponses[index].responses;
+		        }
+
+		        return item;
+		    })
+		    .filter((item) => !item.sendResponses)
+		    .map((item) => {
+		        return Promise.all(item.pushTokens.map((t, idx) => {
+		        	const error = item.sendResponse[idx].success ? null : item.sendResponse[idx].error;
+		            return this.context.repositories.notificationStatuses.createStatus(item._id, t, item.sendResponse[idx].success, error)
+		        }));
+		    });
+		    Promise.all(createStatusPromises);
+		} catch (err) {
+			console.log("Sending pushes error:", err);
+		}
     }
 
 }

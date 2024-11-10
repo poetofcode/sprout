@@ -53,6 +53,11 @@ class UserRepository {
         return res;
     }
 
+    async fetchAll() {
+        const users = await this.userCollection.find({}).toArray();
+        return users;
+    }
+
 }
 
 exports.create = (context) => new UserRepository(context); 

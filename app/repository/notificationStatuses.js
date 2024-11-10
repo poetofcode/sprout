@@ -8,7 +8,7 @@ class NotificationStatusRepository {
 		this.statusesCollection = context.getDb().collection('notification_statuses');
 	}
 
-	async createStatus(notificationId, pushToken, isSuccess) {
+	async createStatus(notificationId, pushToken, isSuccess, error) {
 		const entityOnCreate = {
 			notificationId: notificationId,
 			createdAt: new Date(),
@@ -20,7 +20,10 @@ class NotificationStatusRepository {
 				pushToken: pushToken
 			},
 			{ 
-				$set: {
+				$set: error ? {
+					isSuccess: isSuccess,
+					error: error
+				} : {
 					isSuccess: isSuccess
 				},
 				$setOnInsert: entityOnCreate
@@ -36,7 +39,7 @@ class NotificationStatusRepository {
         		pushToken: {
         			"$in": pushTokens
         		},
-        		isSuccess: true
+        		// isSuccess: true		// даже ошибочные пуши мы не отсылаем заново
         	})
         	.toArray();
 
