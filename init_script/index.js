@@ -230,7 +230,7 @@ function processClient() {
 }
 
 
-function processServer() {
+function processApi() {
 	// Config parameters
 	//
 	const srcDir = '../app';
@@ -267,6 +267,60 @@ function processServer() {
   		new Replacer(`router.delete('/subscriptions'`, `// router.delete('/subscriptions'`, false),
   		new Replacer(`router.get('/subscriptions`, `// router.get('/subscriptions`, false),
   		new Replacer(`router.get('/jokes'`, `// router.get('/jokes'`, false),
+  		new Replacer(`[ workers.jokes, seconds(120) ]`, `// [ workers.jokes, seconds(120) ]`),
+  		new Replacer(`[ new SerialWorker([workers.notifications`, `// [ new SerialWorker([workers.notifications`),
+  		copier,
+  		loggerAfter
+	];
+
+	executeHandlers(srcDir, handlers);
+}
+
+
+function processRoot() {
+	// Config parameters
+	//
+	const srcDir = '../';
+	const dstDir = '../../scaffold/';
+	const appName = 'NewApp';
+	const dbName = appName.toLowerCase();
+
+
+	// Handlers 
+	//
+	const oldName = 'Sprout';
+	const oldDbName = oldName.toLowerCase();
+
+	const ignoreList = [
+		'app/',
+		'client/',
+		'init_script/',
+		'.git/',
+		'firebaseServiceAccountKey.json',
+		'package-lock.json'
+	]
+	const extToProceed = [
+		'.js', 
+		'.json',
+		'.md'
+	];
+
+	const logPatternStart = `=================================\nProcessing path "${srcDir}"`;
+	const logPatternEnd = `End of processing, out path "${srcDir}"`;
+
+	const filter = new Filter(extToProceed, srcDir, dstDir, ignoreList);
+	const reader = new Reader(srcDir);
+	const copier = new Copier(dstDir);
+	const loggerBefore = new Logger(logPatternStart);
+	const loggerAfter = new Logger(logPatternEnd);
+
+  	const handlers = [
+  		loggerBefore,
+  		filter,
+  		reader,
+  		new Replacer(oldName, appName, true),
+  		new Replacer(`"name": "${oldDbName}"`, `"name": "${dbName}"`, true),
+  		new Replacer(`"fcmEnabled": true`, `"fcmEnabled": false`, true),
   		copier,
   		loggerAfter
 	];
@@ -280,7 +334,8 @@ function processServer() {
 		console.log("Starting...");
 
 		processClient();
-		processServer();
+		processApi();
+		processRoot();
 
 	} catch(err) {
 	    return console.log(err);
