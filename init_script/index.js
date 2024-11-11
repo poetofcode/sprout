@@ -197,7 +197,8 @@ function processClient() {
 		'.gradle',
 		'.properties',
 		'.toml',
-		'.xml'
+		'.xml',
+		'.name'
 	];
 
 	const logPatternStart = `=================================\nProcessing path "${srcDir}"`;
