@@ -172,7 +172,7 @@ function processClient() {
 	const srcDir = '../client';
 	const dstDir = '../../scaffold/client';
 	const targetPackage = 'org.example.new_app';
-	const appName = 'NewApp';
+	const appName = 'FreshCross';
 
 	// Handlers 
 	//
@@ -246,7 +246,7 @@ function processApi() {
 	//
 	const srcDir = '../app';
 	const dstDir = '../../scaffold/app';
-	const appName = 'NewApp';
+	const appName = 'FreshCross';
 
 	// Handlers 
 	//
@@ -293,8 +293,8 @@ function processRoot() {
 	//
 	const srcDir = '../';
 	const dstDir = '../../scaffold/';
-	const appName = 'NewApp';
-	const dbName = appName.toLowerCase();
+	const appName = 'FreshCross';
+	const dbName = 'NewApp'.toLowerCase();
 
 
 	// Handlers 
@@ -329,9 +329,9 @@ function processRoot() {
   		loggerBefore,
   		filter,
   		reader,
-  		new Replacer(oldName, appName, true),
   		new Replacer(`"name": "${oldDbName}"`, `"name": "${dbName}"`, true),
   		new Replacer(`"fcmEnabled": true`, `"fcmEnabled": false`, true),
+  		new Replacer(oldName, appName, true),
   		copier,
   		loggerAfter
 	];
