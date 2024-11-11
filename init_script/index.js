@@ -186,7 +186,8 @@ function processClient() {
 		'composeApp/DawnCache',
 		'composeApp/GPUCache',
 		'composeApp/appcache',
-		'composeApp/google-services.json'
+		'composeApp/google-services.json',
+		'startScreen/'
 	]
 	const extToProceed = [
 		'.kt', 
@@ -224,6 +225,13 @@ function processClient() {
 		),
   		new Replacer(oldName, appName, true),
   		new Replacer(oldNameShort, appName, true),
+  		new Replacer('import presentation.screens.startScreen.StartScreen', ''),
+  		new Replacer('push(StartScreen())', '// push(StartScreen())'),
+  		new Replacer('import presentation.screens.startScreen.StartViewModel', ''),
+  		new Replacer('class StartViewModelFactory(', '/*\nclass StartViewModelFactory('),
+  		new Replacer('// end of StartViewModelFactory', '*/'),
+  		new Replacer('  StartViewModelFactory(', '/*\nStartViewModelFactory('),
+  		new Replacer('), // end of using StartViewModelFactory', '),\n*/'),
   		packageCopier,
   		copier,
   		loggerAfter

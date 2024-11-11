@@ -37,7 +37,7 @@ class StartViewModelFactory(
         get() = StartViewModel::class.java.typeName
 
 }
-
+// end of StartViewModelFactory
 
 class ProfileTabViewModelFactory
     : ViewModelFactory<ProfileTabViewModel> {
@@ -104,7 +104,7 @@ fun viewModelFactories(
         StartViewModelFactory(
             repositoryFactory.createJokeRepository(),
             profileRepository
-        ),
+        ), // end of using StartViewModelFactory
         ProfileTabViewModelFactory(),
         ProfileViewModelFactory(profileRepository),
         AuthViewModelFactory(profileRepository),
