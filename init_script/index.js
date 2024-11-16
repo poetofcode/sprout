@@ -382,8 +382,10 @@ function processRoot() {
 
 
   		for (const q of questions) {
-			const answer = await rl.question(`${q.text()}: `);
-			q.handle(answer);
+			const answer = (await rl.question(`${q.text()}: `)).trim();
+			if (answer != '') {
+				q.handle(answer);
+			}
   		}
 
 		console.log('Result ==============================');
