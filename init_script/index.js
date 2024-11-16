@@ -172,16 +172,16 @@ function executeHandlers(srcDir, handlers) {
 	});
 }
 
-function processClient() {
+function processClient(params) {
 	// Config parameters
 	//
-	const srcDir = '../client';
-	const dstDir = '../../scaffold/client';
-	const targetPackage = 'org.example.new_app';
-	const appName = 'FreshCross';
+	const dstDir = `${params.dest}/client`;
+	const targetPackage = params.packageName; // 'org.example.new_app';
+	const appName = params.appName; // 'FreshCross';
 
 	// Handlers 
 	//
+	const srcDir = '../client';
 	const oldName = 'SproutClient';
 	const oldNameShort = 'Sprout';
 	const srcPackage = 'com.poetofcode.sproutclient';
@@ -247,15 +247,15 @@ function processClient() {
 }
 
 
-function processApi() {
+function processApi(params) {
 	// Config parameters
 	//
-	const srcDir = '../app';
-	const dstDir = '../../scaffold/app';
-	const appName = 'FreshCross';
+	const dstDir = `${params.dest}/app`;
+	const appName = params.appName; // 'FreshCross';
 
 	// Handlers 
 	//
+	const srcDir = '../app';
 	const oldName = 'Sprout';
 	const ignoreList = [
 		'jokes.js',
@@ -294,17 +294,17 @@ function processApi() {
 }
 
 
-function processRoot() {
+function processRoot(params) {
 	// Config parameters
 	//
-	const srcDir = '../';
-	const dstDir = '../../scaffold/';
-	const appName = 'FreshCross';
-	const dbName = 'NewApp'.toLowerCase();
+	const dstDir = params.dest;
+	const appName = params.appName; // 'FreshCross';
+	const dbName = params.dbName; // 'NewApp'.toLowerCase();
 
 
 	// Handlers 
 	//
+	const srcDir = '../';
 	const oldName = 'Sprout';
 	const oldDbName = oldName.toLowerCase();
 
@@ -345,6 +345,8 @@ function processRoot() {
 	executeHandlers(srcDir, handlers);
 }
 
+// 9370010937
+
 
 (async () => {
 	try {
@@ -354,8 +356,9 @@ function processRoot() {
 
 		const params = {
 			appName: defaultName,
-			dest: `../${defaultName}`,
-			dbName: `${defaultName.toLowerCase()}`
+			dest: `../../${defaultName}`,
+			dbName: `${defaultName.toLowerCase()}`,
+			packageName: `com.example.${defaultName.toLowerCase()}`
 		};
 
 		console.log('Initial ==============================');
@@ -377,6 +380,10 @@ function processRoot() {
 			{
 				text: () => `DB name? [${prepare(params.dbName)}]`,
 				handle: (answer) => { params.dbName = answer ? answer : prepare(params.dbName) }
+			},
+			{
+				text: () => `Package name? [${prepare(params.packageName)}]`,
+				handle: (answer) => { params.packageName = answer ? answer : prepare(params.packageName) }
 			},
 		];
 
