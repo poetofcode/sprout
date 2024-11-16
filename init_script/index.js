@@ -1,4 +1,10 @@
 const jetpack = require("fs-jetpack");
+const readline = require('node:readline/promises');
+const {
+    stdin: input,
+    stdout: output,
+} = require('node:process');
+
 
 String.prototype.replaceAll = function(strReplace, strWith) {
     // See http://stackoverflow.com/a/3561711/556609
@@ -344,9 +350,50 @@ function processRoot() {
 	try {
 		console.log("Starting...");
 
-		processClient();
-		processApi();
-		processRoot();
+		const defaultAppName = 'NewApp';
+		const defaultDest = `../${defaultAppName}`;
+		const defaultDbName = 'new_name';
+
+		const params = {
+			appName: defaultAppName,
+			dest: defaultDest,
+			dbName: defaultDbName
+		};
+
+		console.log('Initial ==============================');
+		console.log(params);
+
+		const questions = [
+			{
+				text: () => `New app name? [${defaultAppName}]`,
+				handle: (answer) => { params.appName = answer }
+			},
+			{
+				text: () => `Destination directory? [${defaultDest}]`,
+				handle: (answer) => { params.dest = answer }
+			},
+			{
+				text: () => `DB name? [${defaultDbName}]`,
+				handle: (answer) => { params.dbName = answer }
+			},
+		];
+
+		const rl = readline.createInterface({ input, output });
+
+
+  		for (const q of questions) {
+			const answer = await rl.question(`${q.text()}: `);
+			q.handle(answer);
+  		}
+
+		console.log('Result ==============================');
+		console.log(params);
+
+		rl.close();
+
+		// processClient();
+		// processApi();
+		// processRoot();
 
 	} catch(err) {
 	    return console.log(err);
