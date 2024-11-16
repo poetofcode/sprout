@@ -350,31 +350,33 @@ function processRoot() {
 	try {
 		console.log("Starting...");
 
-		const defaultAppName = 'NewApp';
-		const defaultDest = `../${defaultAppName}`;
-		const defaultDbName = 'new_name';
+		const defaultName = 'NewApp';
 
 		const params = {
-			appName: defaultAppName,
-			dest: defaultDest,
-			dbName: defaultDbName
+			appName: defaultName,
+			dest: `../${defaultName}`,
+			dbName: `${defaultName.toLowerCase()}`
 		};
 
 		console.log('Initial ==============================');
 		console.log(params);
 
+		const prepare = (src) => src
+			.replace(defaultName, params.appName)
+			.replace(defaultName.toLowerCase(), params.appName.toLowerCase());
+
 		const questions = [
 			{
-				text: () => `New app name? [${defaultAppName}]`,
-				handle: (answer) => { params.appName = answer }
+				text: () => `New app name? [${prepare(params.appName)}]`,
+				handle: (answer) => { params.appName = answer ? answer : prepare(params.appName) }
 			},
 			{
-				text: () => `Destination directory? [${defaultDest}]`,
-				handle: (answer) => { params.dest = answer }
+				text: () => `Destination directory? [${prepare(params.dest)}]`,
+				handle: (answer) => { params.dest = answer ? answer : prepare(params.dest) }
 			},
 			{
-				text: () => `DB name? [${defaultDbName}]`,
-				handle: (answer) => { params.dbName = answer }
+				text: () => `DB name? [${prepare(params.dbName)}]`,
+				handle: (answer) => { params.dbName = answer ? answer : prepare(params.dbName) }
 			},
 		];
 
@@ -385,6 +387,8 @@ function processRoot() {
 			const answer = (await rl.question(`${q.text()}: `)).trim();
 			if (answer != '') {
 				q.handle(answer);
+			} else {
+				q.handle(null);
 			}
   		}
 
