@@ -353,16 +353,12 @@ function processRoot(params) {
 		console.log("Starting...");
 
 		const defaultName = 'NewApp';
-
 		const params = {
 			appName: defaultName,
 			dest: `../../${defaultName}`,
 			dbName: `${defaultName.toLowerCase()}`,
 			packageName: `com.example.${defaultName.toLowerCase()}`
 		};
-
-		console.log('Initial ==============================');
-		console.log(params);
 
 		const prepare = (src) => src
 			.replace(defaultName, params.appName)
@@ -399,14 +395,11 @@ function processRoot(params) {
 			}
   		}
 
-		console.log('Result ==============================');
-		console.log(params);
-
 		rl.close();
 
-		// processClient();
-		// processApi();
-		// processRoot();
+		processClient(params);
+		processApi(params);
+		processRoot(params);
 
 	} catch(err) {
 	    return console.log(err);
