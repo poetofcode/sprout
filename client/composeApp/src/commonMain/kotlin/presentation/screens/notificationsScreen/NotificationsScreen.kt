@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -177,45 +178,50 @@ class NotificationsScreen : BaseScreen<NotificationsViewModel>() {
     @Composable
     private fun Notification(notification: Notification) {
         // val context = LocalContext.current
-        Column(
-            modifier = Modifier
-                .clickable {
-                    // Do nothing
-                }
-                .padding(vertical = 5.dp)
-                .fillMaxWidth()
-                .background(
-                    color = Color.LightGray, // MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .padding(8.dp)
-        ) {
-            Spacer(modifier = Modifier.size(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = notification.title.orEmpty(),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(Modifier.size(8.dp))
-                if (!notification.seen) {
+        Surface {
+            Column(
+                modifier = Modifier
+                    .clickable {
+                        // Do nothing
+                    }
+                    .padding(vertical = 5.dp)
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .padding(8.dp)
+            ) {
+                Spacer(modifier = Modifier.size(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        modifier = Modifier.background(Color.Blue, shape = RoundedCornerShape(10))
-                            .padding(horizontal = 5.dp),
-                        text = "НОВОЕ",
-                        fontSize = 10.sp,
-                        color = Color.White,
+                        text = notification.title.orEmpty(),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(Modifier.size(8.dp))
+                    if (!notification.seen) {
+                        Text(
+                            modifier = Modifier.background(
+                                Color.Blue,
+                                shape = RoundedCornerShape(10)
+                            )
+                                .padding(horizontal = 5.dp),
+                            text = "НОВОЕ",
+                            fontSize = 10.sp,
+                            color = Color.White,
+                        )
+                    }
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        text = DateFormatter.getHumanDate(notification.createdAt),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal
                     )
                 }
-                Spacer(Modifier.weight(1f))
-                Text(
-                    text = DateFormatter.getHumanDate(notification.createdAt),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal
-                )
+                Spacer(modifier = Modifier.size(4.dp))
+                Text(text = notification.text.orEmpty(), fontSize = 16.sp)
             }
-            Spacer(modifier = Modifier.size(4.dp))
-            Text(text = notification.text.orEmpty(), fontSize = 16.sp)
         }
     }
 
