@@ -121,7 +121,7 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                     )
                     Text(
                         text = state.profile?.email.orEmpty(),
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 6.dp),
                     )
@@ -177,7 +177,6 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
         }.fillMaxWidth().padding(10.dp)) {
             Text(
                 text = text,
-                color = Color.Black,
                 textDecoration = TextDecoration.Underline,
                 modifier = Modifier.align(Alignment.Center),
             )
