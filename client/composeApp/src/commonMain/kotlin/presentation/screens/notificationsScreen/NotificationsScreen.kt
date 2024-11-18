@@ -44,6 +44,7 @@ import presentation.model.ExceptionResource
 import presentation.model.IdleResource
 import presentation.model.LoadingResource
 import presentation.navigation.BaseScreen
+import presentation.theme.AppTheme
 import specific.BackHandler
 import specific.ScrollBar
 import specific.ScrollBarOrientation
@@ -68,7 +69,7 @@ class NotificationsScreen : BaseScreen<NotificationsViewModel>() {
             true
         }
 
-        MaterialTheme {
+        AppTheme {
             Column {
                 TopAppBar(
                     title = { Text(text = "Уведомления") },

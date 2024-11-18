@@ -47,6 +47,7 @@ import presentation.model.ExceptionResource
 import presentation.model.IdleResource
 import presentation.model.LoadingResource
 import presentation.navigation.BaseScreen
+import presentation.theme.AppTheme
 import specific.ScrollBar
 import specific.ScrollBarOrientation
 import specific.ScrollableComponentState
@@ -69,7 +70,7 @@ class StartScreen : BaseScreen<StartViewModel>() {
             viewModel.onScreenStart()
         }
 
-        MaterialTheme {
+        AppTheme {
             Column {
                 TopAppBar(
                     title = { Text(text = "Главная") },

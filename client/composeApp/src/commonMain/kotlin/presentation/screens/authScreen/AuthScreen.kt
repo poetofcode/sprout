@@ -29,6 +29,7 @@ import presentation.model.ExceptionResource
 import presentation.model.IdleResource
 import presentation.model.LoadingResource
 import presentation.navigation.BaseScreen
+import presentation.theme.AppTheme
 import specific.BackHandler
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,7 +48,7 @@ class AuthScreen : BaseScreen<AuthViewModel>() {
     override fun Content() {
         BackHandler { viewModel.onBackClick(); true }
 
-        MaterialTheme {
+        AppTheme {
 
             Column {
                 TopAppBar(

@@ -47,6 +47,7 @@ import presentation.navigation.Navigator
 import presentation.navigation.NavigatorTag
 import presentation.screens.homeTabScreen.HomeTabScreen
 import presentation.screens.profileTabScreen.ProfileTabScreen
+import presentation.theme.AppTheme
 import sproutclient.composeapp.generated.resources.Res
 import sproutclient.composeapp.generated.resources.ic_home_24
 import sproutclient.composeapp.generated.resources.ic_person_24
@@ -80,7 +81,7 @@ val LocalMainAppState = staticCompositionLocalOf<MainAppState> {
 @Preview
 fun App(config: Config) {
     CompositionLocalProvider(LocalMainAppState provides MainAppState()) {
-        MaterialTheme {
+        AppTheme {
             val selectedTab = remember { mutableStateOf<Tabs>(HOME) }
             val navState = remember {
                 NavStateImpl(viewModelStore = config.viewModelStore).apply {
