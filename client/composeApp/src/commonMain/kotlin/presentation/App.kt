@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -154,7 +155,7 @@ fun AppLayout(
     menu: Menu,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit = {},
-) {
+) = Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh) {
     val isMenuVisible = LocalMainAppState.current.isMenuVisible.value
 
     if (deviceType.isMobile) {
@@ -169,8 +170,8 @@ fun AppLayout(
             if (isMenuVisible) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.LightGray),
+                        .fillMaxWidth(),
+//                        .background(Color.LightGray),
                     contentAlignment = Alignment.Center
                 ) {
                     Row(
@@ -196,7 +197,7 @@ fun AppLayout(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(VERTICAL_PANEL_SIZE.dp)
-                    .background(Color.LightGray),
+//                    .background(Color.LightGray),
             ) {
                 menu.tabs.forEach { tab ->
                     Box(
