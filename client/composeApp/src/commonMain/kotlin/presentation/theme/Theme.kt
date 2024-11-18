@@ -10,6 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
+// ******************************************************************** //
+//                                                                      //
+// Theme builder:                                                       //
+//      https://material-foundation.github.io/material-theme-builder/   //
+//                                                                      //
+// ******************************************************************** //
+
+
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,
