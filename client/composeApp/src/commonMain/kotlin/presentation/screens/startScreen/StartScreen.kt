@@ -118,26 +118,30 @@ class StartScreen : BaseScreen<StartViewModel>() {
 
     @Composable
     fun SubscriptionBar(modifier: Modifier) {
-        Box(
-            modifier
+        Surface(
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            modifier = modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .background(Color.Cyan)
         ) {
-            WrapPostResource(resource = state.subscriptionState, onReload = { viewModel.fetchSubscription() }) {
-                Row(
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                        .padding(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(text = "Подписка", fontSize = 18.sp)
-                    Switch(
-                        checked = it.result,
-                        onCheckedChange = {
-                            viewModel.onSubscriptionChanged(enableSubscription = it)
-                        }
-                    )
+            Box {
+                WrapPostResource(
+                    resource = state.subscriptionState,
+                    onReload = { viewModel.fetchSubscription() }) {
+                    Row(
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                            .padding(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(text = "Подписка", fontSize = 18.sp)
+                        Switch(
+                            checked = it.result,
+                            onCheckedChange = {
+                                viewModel.onSubscriptionChanged(enableSubscription = it)
+                            }
+                        )
+                    }
                 }
             }
         }
