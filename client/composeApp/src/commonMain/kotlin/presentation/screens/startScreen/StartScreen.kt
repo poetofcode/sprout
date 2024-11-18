@@ -28,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -209,22 +210,24 @@ class StartScreen : BaseScreen<StartViewModel>() {
     @Composable
     private fun Joke(joke: JokeModel) {
         // val context = LocalContext.current
-        Column(
-            modifier = Modifier
-                .clickable {
-                    //>>>>>>>>
-                    // Do nothing
-                }
-                .padding(vertical = 5.dp)
-                .fillMaxWidth()
-                .background(
-                    color = Color.LightGray, // MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(10.dp)
-                )
-                .padding(8.dp)
-        ) {
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(text = joke.text.orEmpty(), fontSize = 16.sp)
+        Surface {
+            Column(
+                modifier = Modifier
+                    .clickable {
+                        //>>>>>>>>
+                        // Do nothing
+                    }
+                    .padding(vertical = 5.dp)
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .padding(8.dp)
+            ) {
+                Spacer(modifier = Modifier.size(8.dp))
+                Text(text = joke.text.orEmpty(), fontSize = 16.sp)
+            }
         }
     }
 
