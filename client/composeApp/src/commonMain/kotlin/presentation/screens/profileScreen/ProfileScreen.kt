@@ -1,5 +1,6 @@
 package presentation.screens.profileScreen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -26,6 +29,7 @@ import presentation.navigation.BaseScreen
 import presentation.navigation.HideBottomSheetEffect
 import presentation.navigation.ShowModalBottomSheetEffect
 import presentation.navigation.postSideEffect
+import presentation.theme.AppTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +48,7 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
     override fun Content() {
         val isAuth = state.profile != null
 
-//        MaterialTheme {
+        AppTheme {
             Column {
                 TopAppBar(
                     title = { Text(text = "Профиль") },
@@ -73,7 +77,7 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
 
             }
         }
-//    }
+    }
 
     @Composable
     fun UnsignedProfile() {
@@ -136,11 +140,13 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
     }
 
     @Composable
-    fun ConfirmContent() {
+    fun ConfirmContent() = Surface {
         Column(
-            Modifier.fillMaxWidth().padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text("Вы действительно хотите выйти из аккаунта?")
             Row(Modifier.padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {

@@ -244,8 +244,8 @@ fun ModalBottomSheet() {
         FlexibleBottomSheet(
             modifier = Modifier,
             sheetState = sheetState,
-            containerColor = Color.White,
-            scrimColor = Color.Black.copy(alpha = 0.3f),
+            containerColor = MaterialTheme.colorScheme.surface,
+            scrimColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.3f),
             onDismissRequest = {
                 localMainAppState.bottomSheetState.value =
                     localMainAppState.bottomSheetState.value.copy(

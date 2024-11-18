@@ -19,7 +19,7 @@ class HomeTabScreen() : BaseScreen<HomeTabViewModel>() {
 
     private val navState by lazy {
         NavStateImpl(viewModelStore).apply {
-            push(StartScreen())
+            // push(StartScreen())
         }
     }
 
