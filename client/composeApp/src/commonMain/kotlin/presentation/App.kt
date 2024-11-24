@@ -3,6 +3,7 @@ package presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -91,8 +92,9 @@ fun App(config: Config) {
         LocalMainAppState provides MainAppState(),
     ) {
         val localMainAppState = LocalMainAppState.current
+        val isSystemDarkTheme = isSystemInDarkTheme()
         LaunchedEffect(Unit) {
-            localMainAppState.isDarkMode.value = isDarkMode ?: false // TODO get from system dark mode
+            localMainAppState.isDarkMode.value = isDarkMode ?:isSystemDarkTheme
         }
 
         CompositionLocalProvider(LocalDarkMode provides localMainAppState.isDarkMode.value) {
