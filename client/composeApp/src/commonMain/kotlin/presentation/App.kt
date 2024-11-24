@@ -63,7 +63,7 @@ const val HORIZONTAL_ICON_SIZE = 60
 data class MainAppState(
     val isMenuVisible: MutableState<Boolean> = mutableStateOf(false),
     val bottomSheetState: MutableState<BottomSheetState> = mutableStateOf(BottomSheetState()),
-    val isDarkMode: MutableState<Boolean> = mutableStateOf(true),  // isSystemInDarkTheme()
+    val isDarkMode: MutableState<Boolean> = mutableStateOf(false),  // isSystemInDarkTheme()
 ) {
     fun reduceBottomSheetState(cb: BottomSheetState.() -> BottomSheetState) {
         bottomSheetState.value = cb(bottomSheetState.value)

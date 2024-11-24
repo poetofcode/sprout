@@ -12,18 +12,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import presentation.LocalMainAppState
 import presentation.Tabs
 import presentation.navigation.BaseScreen
 import presentation.navigation.HideBottomSheetEffect
@@ -47,6 +51,8 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
     @Composable
     override fun Content() {
         val isAuth = state.profile != null
+
+        // val localMainAppState = LocalMainAppState.current
 
         AppTheme {
             Column {
@@ -74,7 +80,6 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                         SignedProfile()
                     }
                 }
-
             }
         }
     }
@@ -106,6 +111,11 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                 ) {
                     Text(text = "Регистрация")
                 }
+
+                CommonPrefs(modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 20.dp)
+                )
             }
         }
     }
@@ -135,6 +145,34 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                         ConfirmContent()
                     })
                 }
+
+                CommonPrefs(modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 20.dp)
+                )
+            }
+        }
+    }
+
+    @Composable
+    fun CommonPrefs(modifier: Modifier = Modifier) {
+        val localMainAppState = LocalMainAppState.current
+
+        Column(modifier) {
+            HorizontalDivider()
+
+            Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
+                Switch(
+                    checked = localMainAppState.isDarkMode.value,
+                    onCheckedChange = {
+                        localMainAppState.isDarkMode.value = it
+                    }
+                )
+
+                Text(
+                    text = "Тёмная тема",
+                    modifier = Modifier,
+                )
             }
         }
     }
