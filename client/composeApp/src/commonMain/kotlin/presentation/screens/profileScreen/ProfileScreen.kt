@@ -158,7 +158,7 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
     fun CommonPrefs(modifier: Modifier = Modifier) {
         val localMainAppState = LocalMainAppState.current
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
             HorizontalDivider()
 
             Row(
