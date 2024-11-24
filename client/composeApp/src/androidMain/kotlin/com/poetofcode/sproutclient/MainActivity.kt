@@ -12,6 +12,7 @@ import androidx.lifecycle.withStarted
 import data.repository.RepositoryFactoryImpl
 import data.service.NetworkingFactory
 import data.service.NetworkingFactoryImpl
+import data.utils.ContentBasedPersistentStorage
 import data.utils.ProfileStorageImpl
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -81,6 +82,12 @@ class MainActivity : ComponentActivity() {
                     deviceType = Config.DeviceTypes.ANDROID,
                     viewModelStore = vmStoreImpl,
                     repositoryFactory = repositoryFactory,
+                    storage = ContentBasedPersistentStorage(
+                        AndroidContentProvider(
+                            fileName = "config.json",
+                            context = this,
+                        )
+                    ),
                 )
             )
         }

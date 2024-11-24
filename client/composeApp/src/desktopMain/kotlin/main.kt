@@ -187,6 +187,7 @@ fun main() = application {
                         deviceType = Config.DeviceTypes.DESKTOP,
                         viewModelStore = vmStoreImpl,
                         repositoryFactory = repositoryFactory,
+                        storage = storage,
                     )
                 )
 

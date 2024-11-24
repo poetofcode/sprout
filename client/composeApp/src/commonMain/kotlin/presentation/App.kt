@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.skydoves.flexible.bottomsheet.material.FlexibleBottomSheet
 import com.skydoves.flexible.core.FlexibleSheetSize
 import com.skydoves.flexible.core.rememberFlexibleBottomSheetState
+import data.utils.getValue
+import data.utils.setValue
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -83,11 +85,24 @@ val LocalMainAppState = staticCompositionLocalOf<MainAppState> {
 @Composable
 @Preview
 fun App(config: Config) {
+    var isDarkMode: Boolean? by config.storage
+
     CompositionLocalProvider(
         LocalMainAppState provides MainAppState(),
     ) {
-        val isDarkMode = LocalMainAppState.current.isDarkMode.value
-        CompositionLocalProvider(LocalDarkMode provides isDarkMode) {
+        val localMainAppState = LocalMainAppState.current
+        LaunchedEffect(Unit) {
+            localMainAppState.isDarkMode.value = isDarkMode ?: false // TODO get from system dark mode
+        }
+
+        CompositionLocalProvider(LocalDarkMode provides localMainAppState.isDarkMode.value) {
+            val localDarkMode = LocalDarkMode.current
+            LaunchedEffect(localDarkMode) {
+                if (isDarkMode != localDarkMode) {
+                    isDarkMode = localDarkMode
+                }
+            }
+
             AppTheme {
                 val selectedTab = remember { mutableStateOf<Tabs>(HOME) }
                 val navState = remember {
