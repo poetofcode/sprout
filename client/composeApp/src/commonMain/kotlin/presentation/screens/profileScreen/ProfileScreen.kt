@@ -1,6 +1,5 @@
 package presentation.screens.profileScreen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +19,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -112,9 +110,10 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                     Text(text = "Регистрация")
                 }
 
-                CommonPrefs(modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 20.dp)
+                CommonPrefs(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 20.dp)
                 )
             }
         }
@@ -146,9 +145,10 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
                     })
                 }
 
-                CommonPrefs(modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 20.dp)
+                CommonPrefs(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 20.dp)
                 )
             }
         }
@@ -158,20 +158,22 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
     fun CommonPrefs(modifier: Modifier = Modifier) {
         val localMainAppState = LocalMainAppState.current
 
-        Column(modifier) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             HorizontalDivider()
 
-            Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.padding(top = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Switch(
                     checked = localMainAppState.isDarkMode.value,
                     onCheckedChange = {
                         localMainAppState.isDarkMode.value = it
                     }
                 )
-
                 Text(
                     text = "Тёмная тема",
-                    modifier = Modifier,
+                    modifier = Modifier.padding(start = 16.dp),
                 )
             }
         }
@@ -187,7 +189,10 @@ class ProfileScreen : BaseScreen<ProfileViewModel>() {
             verticalArrangement = Arrangement.Center,
         ) {
             Text("Вы действительно хотите выйти из аккаунта?")
-            Row(Modifier.padding(top = 16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Row(
+                Modifier.padding(top = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 OutlinedButton(
                     modifier = Modifier,
                     onClick = {
