@@ -62,7 +62,8 @@ const val HORIZONTAL_ICON_SIZE = 60
 
 data class MainAppState(
     val isMenuVisible: MutableState<Boolean> = mutableStateOf(false),
-    val bottomSheetState: MutableState<BottomSheetState> = mutableStateOf(BottomSheetState())
+    val bottomSheetState: MutableState<BottomSheetState> = mutableStateOf(BottomSheetState()),
+    val isDarkMode: MutableState<Boolean> = mutableStateOf(true),  // isSystemInDarkTheme()
 ) {
     fun reduceBottomSheetState(cb: BottomSheetState.() -> BottomSheetState) {
         bottomSheetState.value = cb(bottomSheetState.value)
@@ -84,69 +85,71 @@ val LocalMainAppState = staticCompositionLocalOf<MainAppState> {
 fun App(config: Config) {
     CompositionLocalProvider(
         LocalMainAppState provides MainAppState(),
-        LocalDarkMode provides true,
     ) {
-        AppTheme {
-            val selectedTab = remember { mutableStateOf<Tabs>(HOME) }
-            val navState = remember {
-                NavStateImpl(viewModelStore = config.viewModelStore).apply {
-                    push(HomeTabScreen())
-                    push(ProfileTabScreen())
-                }
-            }
-
-            AppLayout(
-                deviceType = config.deviceType,
-                menu = Menu(
-                    tabs = Tabs.entries,
-                    onTabClick = { tab ->
-                        selectedTab.value = tab
-                    },
-                    itemContent = { tab ->
-                        val isSelected = selectedTab.value == tab
-                        val iconSize = if (config.deviceType.isMobile) {
-                            HORIZONTAL_ICON_SIZE.dp
-                        } else {
-                            VERTICAL_ICON_SIZE.dp
-                        }
-                        Box(Modifier.size(iconSize), contentAlignment = Alignment.Center) {
-                            val icon = when (tab) {
-                                HOME -> Res.drawable.ic_home_24
-                                PROFILE -> Res.drawable.ic_person_24
-                            }
-
-                            Image(
-                                painter = painterResource(icon),
-                                contentDescription = null,
-                                contentScale = ContentScale.None,
-                                colorFilter = ColorFilter.tint(
-                                    if (isSelected) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        Color.Gray
-                                    }
-                                )
-                            )
-                        }
+        val isDarkMode = LocalMainAppState.current.isDarkMode.value
+        CompositionLocalProvider(LocalDarkMode provides isDarkMode) {
+            AppTheme {
+                val selectedTab = remember { mutableStateOf<Tabs>(HOME) }
+                val navState = remember {
+                    NavStateImpl(viewModelStore = config.viewModelStore).apply {
+                        push(HomeTabScreen())
+                        push(ProfileTabScreen())
                     }
-                ),
-            ) {
-                Navigator(
-                    modifier = Modifier.fillMaxWidth(),
-                    state = navState,
-                    tag = NavigatorTag.ROOT,
-                )
-            }
+                }
 
-            ModalBottomSheet()
+                AppLayout(
+                    deviceType = config.deviceType,
+                    menu = Menu(
+                        tabs = Tabs.entries,
+                        onTabClick = { tab ->
+                            selectedTab.value = tab
+                        },
+                        itemContent = { tab ->
+                            val isSelected = selectedTab.value == tab
+                            val iconSize = if (config.deviceType.isMobile) {
+                                HORIZONTAL_ICON_SIZE.dp
+                            } else {
+                                VERTICAL_ICON_SIZE.dp
+                            }
+                            Box(Modifier.size(iconSize), contentAlignment = Alignment.Center) {
+                                val icon = when (tab) {
+                                    HOME -> Res.drawable.ic_home_24
+                                    PROFILE -> Res.drawable.ic_person_24
+                                }
 
-            LaunchedEffect(selectedTab.value) {
-                navState.moveToFront(selectedTab.value.key)
-            }
+                                Image(
+                                    painter = painterResource(icon),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.None,
+                                    colorFilter = ColorFilter.tint(
+                                        if (isSelected) {
+                                            MaterialTheme.colorScheme.primary
+                                        } else {
+                                            Color.Gray
+                                        }
+                                    )
+                                )
+                            }
+                        }
+                    ),
+                ) {
+                    Navigator(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = navState,
+                        tag = NavigatorTag.ROOT,
+                    )
+                }
 
-            DisposableEffect(Unit) {
-                onDispose {
-                    config.viewModelStore.clearAll()
+                ModalBottomSheet()
+
+                LaunchedEffect(selectedTab.value) {
+                    navState.moveToFront(selectedTab.value.key)
+                }
+
+                DisposableEffect(Unit) {
+                    onDispose {
+                        config.viewModelStore.clearAll()
+                    }
                 }
             }
         }

@@ -264,7 +264,7 @@ val LocalDarkMode = staticCompositionLocalOf<Boolean> { false }
 
 @Composable
 fun AppTheme(
-    darkTheme: Boolean = LocalDarkMode.current,  // true, // isSystemInDarkTheme(),
+    darkTheme: Boolean = LocalDarkMode.current,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable() () -> Unit
