@@ -1,4 +1,5 @@
 import androidx.compose.material.Text
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +35,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import presentation.App
+import presentation.LocalMainAppState
+import presentation.MainAppState
 import presentation.TrayIcon
 import presentation.base.Config
 import presentation.base.ViewModelStore
@@ -182,15 +185,16 @@ fun main() = application {
             Text(text = "Restart required.")
         } else {
             if (initialized) {
-                App(
-                    Config(
+                CompositionLocalProvider(
+                    LocalMainAppState provides MainAppState(config = Config(
                         deviceType = Config.DeviceTypes.DESKTOP,
                         viewModelStore = vmStoreImpl,
                         repositoryFactory = repositoryFactory,
                         storage = storage,
-                    )
-                )
-
+                    )),
+                ) {
+                    App()
+                }
             } else {
                 Text(text = "Downloading $downloading%")
             }

@@ -64,6 +64,7 @@ const val HORIZONTAL_PANEL_SIZE = 60
 const val HORIZONTAL_ICON_SIZE = 60
 
 data class MainAppState(
+    val config: Config,
     val isMenuVisible: MutableState<Boolean> = mutableStateOf(false),
     val bottomSheetState: MutableState<BottomSheetState> = mutableStateOf(BottomSheetState()),
     val isDarkMode: MutableState<Boolean> = mutableStateOf(false),  // isSystemInDarkTheme()
@@ -85,88 +86,85 @@ val LocalMainAppState = staticCompositionLocalOf<MainAppState> {
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 @Preview
-fun App(config: Config) {
+fun App() {
+    val localMainAppState = LocalMainAppState.current
+    val config = localMainAppState.config
     var isDarkMode: Boolean? by config.storage
 
-    CompositionLocalProvider(
-        LocalMainAppState provides MainAppState(),
-    ) {
-        val localMainAppState = LocalMainAppState.current
-        val isSystemDarkTheme = isSystemInDarkTheme()
-        LaunchedEffect(Unit) {
-            localMainAppState.isDarkMode.value = isDarkMode ?:isSystemDarkTheme
+    val isSystemDarkTheme = isSystemInDarkTheme()
+    LaunchedEffect(Unit) {
+        localMainAppState.isDarkMode.value = isDarkMode ?: isSystemDarkTheme
+    }
+
+    CompositionLocalProvider(LocalDarkMode provides localMainAppState.isDarkMode.value) {
+        val localDarkMode = LocalDarkMode.current
+        LaunchedEffect(localDarkMode) {
+            if (isDarkMode != localDarkMode) {
+                isDarkMode = localDarkMode
+            }
         }
 
-        CompositionLocalProvider(LocalDarkMode provides localMainAppState.isDarkMode.value) {
-            val localDarkMode = LocalDarkMode.current
-            LaunchedEffect(localDarkMode) {
-                if (isDarkMode != localDarkMode) {
-                    isDarkMode = localDarkMode
+        AppTheme {
+            val selectedTab = remember { mutableStateOf<Tabs>(HOME) }
+            val navState = remember {
+                NavStateImpl(viewModelStore = config.viewModelStore).apply {
+                    push(HomeTabScreen())
+                    push(ProfileTabScreen())
                 }
             }
 
-            AppTheme {
-                val selectedTab = remember { mutableStateOf<Tabs>(HOME) }
-                val navState = remember {
-                    NavStateImpl(viewModelStore = config.viewModelStore).apply {
-                        push(HomeTabScreen())
-                        push(ProfileTabScreen())
-                    }
-                }
-
-                AppLayout(
-                    deviceType = config.deviceType,
-                    menu = Menu(
-                        tabs = Tabs.entries,
-                        onTabClick = { tab ->
-                            selectedTab.value = tab
-                        },
-                        itemContent = { tab ->
-                            val isSelected = selectedTab.value == tab
-                            val iconSize = if (config.deviceType.isMobile) {
-                                HORIZONTAL_ICON_SIZE.dp
-                            } else {
-                                VERTICAL_ICON_SIZE.dp
-                            }
-                            Box(Modifier.size(iconSize), contentAlignment = Alignment.Center) {
-                                val icon = when (tab) {
-                                    HOME -> Res.drawable.ic_home_24
-                                    PROFILE -> Res.drawable.ic_person_24
-                                }
-
-                                Image(
-                                    painter = painterResource(icon),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.None,
-                                    colorFilter = ColorFilter.tint(
-                                        if (isSelected) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            Color.Gray
-                                        }
-                                    )
-                                )
-                            }
+            AppLayout(
+                deviceType = config.deviceType,
+                menu = Menu(
+                    tabs = Tabs.entries,
+                    onTabClick = { tab ->
+                        selectedTab.value = tab
+                    },
+                    itemContent = { tab ->
+                        val isSelected = selectedTab.value == tab
+                        val iconSize = if (config.deviceType.isMobile) {
+                            HORIZONTAL_ICON_SIZE.dp
+                        } else {
+                            VERTICAL_ICON_SIZE.dp
                         }
-                    ),
-                ) {
-                    Navigator(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = navState,
-                        tag = NavigatorTag.ROOT,
-                    )
-                }
+                        Box(Modifier.size(iconSize), contentAlignment = Alignment.Center) {
+                            val icon = when (tab) {
+                                HOME -> Res.drawable.ic_home_24
+                                PROFILE -> Res.drawable.ic_person_24
+                            }
 
-                ModalBottomSheet()
-
-                LaunchedEffect(selectedTab.value) {
-                    navState.moveToFront(selectedTab.value.key)
-                }
-
-                DisposableEffect(Unit) {
-                    onDispose {
-                        config.viewModelStore.clearAll()
+                            Image(
+                                painter = painterResource(icon),
+                                contentDescription = null,
+                                contentScale = ContentScale.None,
+                                colorFilter = ColorFilter.tint(
+                                    if (isSelected) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        Color.Gray
+                                    }
+                                )
+                            )
+                        }
                     }
+                ),
+            ) {
+                Navigator(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = navState,
+                    tag = NavigatorTag.ROOT,
+                )
+            }
+
+            ModalBottomSheet()
+
+            LaunchedEffect(selectedTab.value) {
+                navState.moveToFront(selectedTab.value.key)
+            }
+
+            DisposableEffect(Unit) {
+                onDispose {
+                    config.viewModelStore.clearAll()
                 }
             }
         }
