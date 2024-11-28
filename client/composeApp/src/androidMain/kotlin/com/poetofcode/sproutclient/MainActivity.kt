@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.withStarted
@@ -18,6 +19,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import presentation.App
+import presentation.LocalMainAppState
+import presentation.MainAppState
 import presentation.base.Config
 import presentation.base.ViewModelStore
 import presentation.factories.viewModelFactories
@@ -77,8 +80,8 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            App(
-                Config(
+            CompositionLocalProvider(
+                LocalMainAppState provides MainAppState(config = Config(
                     deviceType = Config.DeviceTypes.ANDROID,
                     viewModelStore = vmStoreImpl,
                     repositoryFactory = repositoryFactory,
@@ -86,10 +89,11 @@ class MainActivity : ComponentActivity() {
                         AndroidContentProvider(
                             fileName = "config.json",
                             context = this,
-                        )
-                    ),
+                        )),
                 )
-            )
+            )) {
+                App()
+            }
         }
 
         lifecycleScope.launch {
